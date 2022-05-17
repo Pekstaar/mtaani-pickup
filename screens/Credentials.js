@@ -9,7 +9,7 @@ import {
   ScrollView,
   Spinner,
 } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ErrorAlert, SuccessAlert } from "../components";
 import { LabeledInput } from "../components/Input";
@@ -25,7 +25,7 @@ const Credentials = () => {
     password: "",
     confirmPassword: "",
   });
-  const { isSuccess, isLoading, isError, message } = useSelector(
+  const { isSuccess, isLoading, isError, message, user } = useSelector(
     (state) => state.auth
   );
   const [showModal, setShowModal] = useState({ type: "", show: false });
@@ -102,13 +102,13 @@ const Credentials = () => {
 
     dispatch(
       registerUser({
-        username: firstName + lastName,
-        f_name: firstName,
-        l_name: lastName,
+        username: firstName.trim() + lastName.trim(),
+        f_name: firstName.trim(),
+        l_name: lastName.trim(),
         role: "626760a2ee39c723cd41e736",
-        phone_number: phone,
-        password: password,
-        email,
+        phone_number: phone.trim(),
+        password: password.trim(),
+        email: email.trim(),
       })
     );
 
@@ -142,18 +142,13 @@ const Credentials = () => {
     }
 
     if (isSuccess) {
-      setModalMessage("Registraiton Successful! A verification will be sent");
-      setShowModal({ type: "success", show: true });
+      dispatch(reset());
+
+      console.log(user);
+
       navigation.navigate("verification", {
         phone: credentials.phone,
       });
-
-      dispatch(reset());
-
-      setTimeout(function () {
-        setShowModal((prev) => ({ ...prev, show: false, type: "" }));
-        setModalMessage("");
-      }, 2500);
     }
 
     if (isLoading) {

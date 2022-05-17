@@ -7,10 +7,6 @@ const { setData, removeData } = AsyncStorageService;
 const registerUser = async (userData) => {
   const response = await axios.post(`/register`, userData);
 
-  //   if (response.data) {
-  //     AsyncStorageService.setData("user", JSON.stringify(response?.data));
-  //   }
-
   return response.data;
 
   //   console.log(userData);
@@ -20,11 +16,14 @@ const registerUser = async (userData) => {
 const loginUser = async (loginDetails) => {
   const response = await axios.post(`/login`, loginDetails);
 
-  if (response.data) {
-    setData("user", JSON.stringify(response?.data));
-  }
-
   return response.data;
+};
+
+// activate user:
+const activateUser = async ({ id, code }) => {
+  const response = await axios.put(`/user/${id}/activate`, { code });
+
+  return response?.data;
 };
 
 // logout user
@@ -32,10 +31,13 @@ const logout = () => {
   removeData("user");
 };
 
+//
+
 const AuthService = {
   loginUser,
   registerUser,
   logout,
+  activateUser,
 };
 
 export default AuthService;

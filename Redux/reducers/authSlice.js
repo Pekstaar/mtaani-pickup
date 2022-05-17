@@ -1,9 +1,14 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorageService from "../../services/AsyncStorageService";
 import AuthService from "../../services/AuthService";
 
-let user = null;
+const getUser = async () => {
+  return await AsyncStorage.getItem("user");
+};
 
+let user = getUser();
+console.log(user);
 const initialState = {
   user: user ? user : null,
   isError: false,
@@ -19,7 +24,13 @@ export const registerUser = createAsyncThunk(
     try {
       return await AuthService.registerUser({ ...user });
     } catch (e) {
-      const message = e?.response?.data?.message || e?.message || e;
+      const message =
+        e?.response?.data?.error?.message ||
+        e?.response?.data?.message ||
+        e?.message ||
+        e;
+
+      console.log(e.response);
 
       return thunkApi.rejectWithValue(message);
     }
@@ -30,9 +41,24 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (user, thunkApi) => {
     try {
-      return await AuthService.loginUser({ ...user });
+      return await AuthService.loginUser(user);
     } catch (e) {
       const message = e?.response?.data?.message || e?.message || e;
+
+      return thunkApi.rejectWithValue(message);
+    }
+  }
+);
+
+// Verify user
+export const verifyUser = createAsyncThunk(
+  "auth/verify",
+  async (verificationData, thunkApi) => {
+    try {
+      return await AuthService.activateUser(verificationData);
+    } catch (e) {
+      const message =
+        e?.response?.data?.message || e?.error?.message || e.message || e;
 
       return thunkApi.rejectWithValue(message);
     }
@@ -64,7 +90,7 @@ export const authSlice = createSlice({
       .addCase(registerUser.fulfilled(), (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
+        state.user = action.payload?.saved;
       })
       .addCase(registerUser.rejected(), (state, action) => {
         state.isLoading = false;
@@ -84,12 +110,29 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload;
+        console.log(action.payload);
       })
       .addCase(loginUser.rejected(), (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+        console.log(action.payload);
+      })
+      // verify
+      .addCase(verifyUser.pending(), (state) => {
+        state.isLoading = true;
+      })
+      .addCase(verifyUser.fulfilled(), (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action?.payload?.message;
+      })
+      .addCase(verifyUser.rejected(), (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        console.log(action.payload);
       });
   },
 });
