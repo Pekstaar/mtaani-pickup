@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Center, HStack, Icon, Text, VStack } from "native-base";
+import {
+  Box,
+  Button,
+  Center,
+  HStack,
+  Icon,
+  ScrollView,
+  Spinner,
+  Text,
+  View,
+  VStack,
+} from "native-base";
 import { COLORS, FONTS } from "../constants";
 import { SIZES } from "../constants";
 import Line from "../components/Line";
@@ -15,11 +26,11 @@ import { MODAL_TIMEOUT } from "../globals/Utils";
 import { ErrorAlert, SuccessAlert } from "../components";
 import { LoadingButton, SubmitButton } from "./Credentials";
 import { fetchUserFromStorage } from "../Redux/reducers/authSlice";
+import { ActivityIndicator } from "react-native-web";
 
 const Login = () => {
-  const { isSuccess, isLoading, isError, message, user } = useSelector(
-    (state) => state.auth
-  );
+  const { isSuccess, isLoading, isError, message, user, isLoadingPage } =
+    useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -104,7 +115,7 @@ const Login = () => {
     dispatch(fetchUserFromStorage());
     console.log(user);
     if (user?.token) {
-      console.log("User Exists");
+      navigation.navigate("dashboard");
     }
 
     return () => {
@@ -144,6 +155,14 @@ const Login = () => {
     };
   }, [isSuccess, isLoading, isError, message, validation, user]);
 
+  // if (isLoadingPage) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <Spinner color={"primary"} size="lg" />
+  //     </View>
+  //   );
+  // }
+
   return (
     <>
       {showModal?.type === "error" ? (
@@ -167,7 +186,7 @@ const Login = () => {
           bottom={0}
           left={"0"}
           right="0"
-          height={"3/5"}
+          height={"4/6"}
           mx={5}
           space={8}
         >

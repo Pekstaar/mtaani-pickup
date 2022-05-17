@@ -7,6 +7,7 @@ const initialState = {
   user: null,
   isError: false,
   isLoading: false,
+  isLoadingPage: false,
   isSuccess: false,
   message: "",
 };
@@ -82,6 +83,7 @@ export const authSlice = createSlice({
       state.isError = false;
       state.isLoading = false;
       state.isSuccess = false;
+      state.isLoadingPage = true;
       state.message = "";
     },
   },
@@ -138,10 +140,11 @@ export const authSlice = createSlice({
         console.log(action.payload);
       })
       .addCase(fetchUserFromStorage.pending(), (state, action) => {
-        state.isLoading = true;
+        state.isLoadingPage = true;
       })
       .addCase(fetchUserFromStorage.fulfilled(), (state, action) => {
         state.user = action?.payload;
+        state.isLoadingPage = false;
       });
   },
 });
