@@ -3,14 +3,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorageService from "../../services/AsyncStorageService";
 import AuthService from "../../services/AuthService";
 
-const getUser = async () => {
-  return await AsyncStorage.getItem("user");
-};
-
-let user = getUser();
-console.log(user);
 const initialState = {
-  user: user ? user : null,
+  user: null,
   isError: false,
   isLoading: false,
   isSuccess: false,
@@ -41,6 +35,10 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (user, thunkApi) => {
     try {
+      const res = await AuthService.loginUser(user);
+
+      await AsyncStorageService.setData(JSON.stringify(res));
+
       return await AuthService.loginUser(user);
     } catch (e) {
       const message = e?.response?.data?.message || e?.message || e;
@@ -49,6 +47,12 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+
+export const fetchUserFromStorage = createAsyncThunk("auth/fetch", async () => {
+  const user = await AsyncStorageService.getData("user");
+
+  return JSON.parse(user);
+});
 
 // Verify user
 export const verifyUser = createAsyncThunk(
@@ -110,7 +114,6 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload;
-        console.log(action.payload);
       })
       .addCase(loginUser.rejected(), (state, action) => {
         state.isLoading = false;
@@ -133,9 +136,16 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         console.log(action.payload);
+      })
+      .addCase(fetchUserFromStorage.pending(), (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserFromStorage.fulfilled(), (state, action) => {
+        state.user = action?.payload;
       });
   },
 });
 
 export const { reset } = authSlice.actions;
+
 export default authSlice.reducer;

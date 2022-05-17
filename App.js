@@ -15,6 +15,8 @@ import { extendTheme, NativeBaseProvider } from "native-base";
 import { COLORS, FONTS } from "./constants";
 import { Provider } from "react-redux";
 import { Store } from "./Redux/Store";
+import { useEffect } from "react";
+import Dashboard from "./screens/Dashboard";
 
 const Stack = createStackNavigator();
 
@@ -67,6 +69,7 @@ export default function App() {
   });
 
   if (!loaded) return null;
+
   return (
     <NativeBaseProvider theme={theme}>
       <Provider store={Store}>
@@ -75,7 +78,7 @@ export default function App() {
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="Login"
+            initialRouteName="dashboard"
           >
             <Stack.Screen name="Login" component={Login} />
             {/* who you are page */}
@@ -85,6 +88,7 @@ export default function App() {
             <Stack.Screen name="about_business" component={AboutBusiness} />
             <Stack.Screen name="last" component={Last} />
             <Stack.Screen name="rider_details" component={RiderDetails} />
+            <Stack.Screen name="dashboard" component={Dashboard} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

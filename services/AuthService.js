@@ -8,8 +8,6 @@ const registerUser = async (userData) => {
   const response = await axios.post(`/register`, userData);
 
   return response.data;
-
-  //   console.log(userData);
 };
 
 // login user

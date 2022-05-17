@@ -14,9 +14,10 @@ import { loginUser, reset } from "../Redux/reducers/authSlice";
 import { MODAL_TIMEOUT } from "../globals/Utils";
 import { ErrorAlert, SuccessAlert } from "../components";
 import { LoadingButton, SubmitButton } from "./Credentials";
+import { fetchUserFromStorage } from "../Redux/reducers/authSlice";
 
 const Login = () => {
-  const { isSuccess, isLoading, isError, message } = useSelector(
+  const { isSuccess, isLoading, isError, message, user } = useSelector(
     (state) => state.auth
   );
 
@@ -87,6 +88,8 @@ const Login = () => {
         message: "please input your password!",
         isSuccess: false,
       });
+
+      setLoading(false);
     }
     dispatch(
       loginUser({ phone_number: phone.trim(), password: password.trim() })
@@ -96,6 +99,19 @@ const Login = () => {
   };
 
   // Use Effect
+
+  useEffect(() => {
+    dispatch(fetchUserFromStorage());
+    console.log(user);
+    if (user?.token) {
+      console.log("User Exists");
+    }
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [user?.token]);
+
   useEffect(() => {
     if (validation?.isError) {
       showErrorModal(validation?.message);
@@ -108,17 +124,25 @@ const Login = () => {
       console.log("Login SUccess");
     }
 
+    if (isLoading) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+
     if (isSuccess) {
       showSuccessModal("Login Successfull!");
 
       resetModalOnTimeout(MODAL_TIMEOUT);
     }
 
+    if (user?.token) {
+    }
     return () => {
       dispatch(reset());
       setLoading(false);
     };
-  }, [isSuccess, isError, message, validation]);
+  }, [isSuccess, isLoading, isError, message, validation, user]);
 
   return (
     <>
