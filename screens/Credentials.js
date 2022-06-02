@@ -41,6 +41,11 @@ const Credentials = () => {
   const dispatch = useDispatch();
 
   const handleContinue = () => {
+    // navigation.navigate('verification', {
+    //   phone: '',
+    // });
+    // return;
+
     const {firstName, lastName, phone, password, confirmPassword, email} =
       credentials;
 
@@ -114,7 +119,8 @@ const Credentials = () => {
 
     if (isSuccess) {
       navigation.navigate('verification', {
-        phone: credentials.phone,
+        phone: credentials?.phone ? credentials.phone : '',
+        id: credentials?._id,
       });
     }
     dispatch(reset());

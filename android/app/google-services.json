@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "575740080779",
+    "project_id": "pickup-mtaani",
+    "storage_bucket": "pickup-mtaani.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575740080779:android:e5095c06cbb60129f41a8e",
+        "android_client_info": {
+          "package_name": "com.pickup_mtaani_cli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575740080779-o84q25o5dcfdclch3b7pqrlc0blfnlup.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pickup_mtaani_cli",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "575740080779-3hprma3rr0iqr98rjlhtdhmtda5ta719.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeM9UsaQnV_0CeU8uXyQ1W2laTXxsPGNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575740080779-3hprma3rr0iqr98rjlhtdhmtda5ta719.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

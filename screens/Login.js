@@ -20,25 +20,21 @@ import {PasswordInput, TextInput} from '../components/Input';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
-// import KeyboardAvoidingWrapper from "../components/KeyboardAvoidingWrapper";
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  loginUser,
-  reset,
-  fetchUserFromStorage,
-} from '../Redux/reducers/authSlice';
+
 // import { MODAL_TIMEOUT } from "../globals/Utils";
 import {ErrorAlert, SuccessAlert} from '../components';
 import {LoadingButton, SubmitButton} from './Credentials';
 import {MODAL_TIMEOUT} from '../globals/Utils';
-``;
+import AuthService from '../services/AuthService';
+import AsyncStorageService from '../services/AsyncStorageService';
+import {useDispatch, useSelector} from 'react-redux';
+import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
-  const {isSuccess, isLoading, isError, message, user, isLoadingPage} =
-    useSelector(state => state.auth);
-
-  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const NEXT_SCREEN = 'about_business';
 
   // manage state
   const [phone, setPhone] = useState('');
@@ -51,10 +47,12 @@ const Login = () => {
     isSuccess: false,
   });
   const [loading, setLoading] = useState(false);
-  // const [pageLoading, setPageLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+  const {isSuccess, isLoading, isError, message} = useSelector(
+    state => state.auth,
+  );
 
   // METHODS
-
   const showSuccessModal = pMessage => {
     setShowModal({
       type: 'success',
@@ -87,18 +85,23 @@ const Login = () => {
     }, time);
   };
 
-  const handleLogin = () => {
-    setLoading(true);
-
+  const validateCredentials = () => {
     if (phone === '') {
       setValidation({
         isError: true,
-        message: 'please input your email!',
+        message: 'please input Phone number!',
         isSuccess: false,
       });
 
-      setLoading(false);
-      return;
+      return false;
+    } else if (phone.length < 9 || phone.length > 10) {
+      setValidation({
+        isError: true,
+        message: 'Invalid phone number!',
+        isSuccess: false,
+      });
+
+      return false;
     } else if (password === '') {
       setValidation({
         isError: true,
@@ -106,34 +109,103 @@ const Login = () => {
         isSuccess: false,
       });
 
-      setLoading(false);
-      return;
+      return false;
     }
 
-    try {
-      dispatch(
-        loginUser({phone_number: phone.trim(), password: password.trim()}),
-      );
-    } catch (error) {
-      console.log(error);
+    return true;
+  };
+
+  const handleLogin = async () => {
+    setLoading(true);
+
+    const isValidationSuccessful = validateCredentials();
+
+    if (isValidationSuccessful) {
+      AuthService.loginUser({
+        phone_number: phone,
+        password,
+      })
+        .then(user => {
+          showSuccessModal('Login Succesful!');
+          resetModalOnTimeout(MODAL_TIMEOUT);
+
+          if (user?.token) {
+            navigation.navigate('about_business');
+          }
+        })
+        .catch(e => {
+          showErrorModal(e?.response?.data?.message || e?.message || e);
+
+          resetModalOnTimeout(MODAL_TIMEOUT);
+
+          setLoading(false);
+          console.log(e);
+          return;
+        });
+    } else {
       setLoading(false);
       return;
     }
   };
 
-  // Use Effect
+  const handleFacebookLogin = async () => {
+    dispatch(loginWithFacebook());
+    navigation.navigate(NEXT_SCREEN);
+  };
+
+  const handleGoogleLogin = async () => {
+    dispatch(loginWithGoogle());
+    navigation.navigate(NEXT_SCREEN);
+  };
 
   useEffect(() => {
-    dispatch(fetchUserFromStorage());
-    if (user?.token) {
-      navigation.navigate('dashboard');
-      console.log(user);
+    const fetchUser = async () => {
+      setPageLoading(true);
+
+      const user = await JSON.parse(await AsyncStorageService.getData('user'));
+
+      if (user?.token) {
+        setPageLoading(false);
+        navigation.navigate(NEXT_SCREEN);
+      } else {
+        setPageLoading(false);
+      }
+    };
+
+    fetchUser();
+
+    return () => {
+      setPageLoading(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isError) {
+      setModalMessage(message);
+      setShowModal({type: 'error', show: true});
+
+      setTimeout(function () {
+        setShowModal(prev => ({...prev, show: false}));
+        setModalMessage('');
+      }, 2500);
+    }
+
+    if (isSuccess) {
+      console.log('Facebook  Successfull!');
+
+      navigation.navigate(NEXT_SCREEN);
+      //
+    }
+
+    if (isLoading) {
+      console.log('loading...');
+      setLoading(true);
     }
 
     return () => {
-      dispatch(reset());
+      setLoading(false);
     };
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (validation?.isError) {
@@ -143,37 +215,22 @@ const Login = () => {
     }
 
     if (validation?.isSuccess) {
-      // navigation.navigate("login");
-      console.log('Login SUccess');
+      navigation.navigate(NEXT_SCREEN);
     }
 
-    if (isLoading) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-
-    if (isSuccess) {
-      showSuccessModal('Login Successfull!');
-
-      resetModalOnTimeout(MODAL_TIMEOUT);
-    }
-
-    if (user?.token) {
-    }
     return () => {
-      dispatch(reset());
       setLoading(false);
     };
-  }, [isSuccess, isLoadingPage, isLoading, isError, message, validation, user]);
+  }, [validation]);
 
-  // if (pageLoading) {
-  //   return (
-  //     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-  //       <Spinner color={'primary'} size="lg" />
-  //     </View>
-  //   );
-  // }
+  // Use Effect
+
+  if (pageLoading)
+    return (
+      <Center flex={1}>
+        <Spinner size="lg" color={'primary'} />
+      </Center>
+    );
 
   return (
     <>
@@ -202,12 +259,12 @@ const Login = () => {
           mx={5}
           space={8}>
           {/* title */}
-          <Header title={'Enter login details'} />
+          <Header title={'Enter  details'} />
 
           {/* inputs */}
           <TextInput
             icon={<SimpleLineIcons name="screen-smartphone" />}
-            placeholder={'youremail@mail.com'}
+            placeholder={'phone number'}
             preInputText={'+254'}
             value={phone}
             handleChange={number => setPhone(number)}
@@ -253,7 +310,7 @@ const Login = () => {
                 bg={'secondary'}
                 borderRadius={'full'}
                 p="3"
-                onPress={() => console.log('Google Pressed!')}>
+                onPress={handleGoogleLogin}>
                 <Icon size={7} color="primary" as={<FIcon name="google" />} />
               </Button>
 
@@ -263,26 +320,12 @@ const Login = () => {
                 borderRadius={'full'}
                 height={12}
                 width={12}
-                onPress={() => console.log('Google Pressed!')}
+                onPress={handleFacebookLogin}
                 pl="5">
                 <Icon
                   size={7}
                   color="primary"
                   as={<FIcon name="facebook-f" />}
-                />
-              </Button>
-
-              {/* Facebook button */}
-              <Button
-                bg={'secondary'}
-                borderRadius={'full'}
-                height={12}
-                width={12}
-                onPress={() => console.log('Google Pressed!')}>
-                <Icon
-                  size={7}
-                  color="primary"
-                  as={<IONIcon name="phone-portrait" />}
                 />
               </Button>
             </HStack>

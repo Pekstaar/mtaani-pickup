@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
-import {Box, Button, Center, HStack, Text} from 'native-base';
+import {Box, Button, Center, HStack, Input, Pressable, Text} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
-import {TextInput, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
 import {COLORS, FONTS, SIZES} from '../constants';
@@ -9,26 +9,22 @@ import {MODAL_TIMEOUT} from '../globals/Utils';
 import {reset, verifyUser} from '../Redux/reducers/authSlice';
 import {LoadingButton, SubmitButton} from './Credentials';
 import {Header} from './Login';
+import {Keyboard} from 'react-native';
 
 const Verification = ({
   route: {
-    params: {phone},
+    params: {phone, id},
   },
 }) => {
   // input references:
-  const firstInput = useRef();
-  const secondInput = useRef();
-  const thirdInput = useRef();
-  const fourthInput = useRef();
-  const fifthInput = useRef();
+  const VerificationInputRef = useRef();
 
-  const [otp, setOtp] = useState({
-    first: '',
-    second: '',
-    third: '',
-    fourth: '',
-    fifth: '',
-  });
+  useEffect(() => {
+    VerificationInputRef.current.focus();
+  }, []);
+
+  const [otp, setOtp] = useState([]);
+  const [inputIsFocused, setInputIsFocused] = useState(false);
 
   const [validation, setValidation] = useState({
     isError: false,
@@ -44,6 +40,8 @@ const Verification = ({
   const navigation = useNavigation();
   const {isSuccess, isError, message, user} = useSelector(state => state?.auth);
   const dispatch = useDispatch();
+
+  const codeArray = new Array(5).fill(0);
 
   const showSuccessModal = pMessage => {
     setShowModal({
@@ -103,30 +101,44 @@ const Verification = ({
   }, [isSuccess, isError, message, validation]);
 
   const handleVerify = () => {
-    const {first, second, third, fourth, fifth} = otp;
     setLoading(true);
-
-    if (
-      first === '' ||
-      second === '' ||
-      third === '' ||
-      fourth === '' ||
-      fifth === ''
-    ) {
+    if (otp?.length < 5) {
       setValidation({
         isError: true,
         message: 'Invalid Code!',
         isSuccess: false,
       });
-
       setLoading(false);
       return;
     }
+    const code = otp?.join();
+    dispatch(verifyUser({id: user?._id || id, code: code}));
+    // navigation.navigate('login');
+  };
 
-    const code = first + second + third + fourth + fifth;
+  const handlePress = () => {
+    setInputIsFocused(true);
+    VerificationInputRef.current.focus();
+    Keyboard?.emit;
+  };
 
-    dispatch(verifyUser({id: user?._id, code: code}));
-    // navigation.navigate("about_business");
+  const fillCodeDigitInput = (value, index) => {
+    const emptyChar = ' ';
+    // const code = otp?.split('');
+    const digit = otp[index] || emptyChar;
+    const isCurrentDigit = index === otp?.length;
+    const isLastDigit = index === 4;
+    const isCodeFull = otp.length === 5;
+
+    const isDigitFocused = isCurrentDigit || (isLastDigit && isCodeFull);
+
+    return (
+      <CodeInput
+        current={isDigitFocused && inputIsFocused}
+        handlePress={handlePress}
+        code={digit}
+      />
+    );
   };
 
   return (
@@ -146,6 +158,7 @@ const Verification = ({
       ) : (
         <></>
       )}
+
       <Box safeArea p={3}>
         {/* Header */}
         <Header title={'Verify Phone number'} />
@@ -158,65 +171,22 @@ const Verification = ({
             fontSize={SIZES.sm + 0.5}>
             A 4 digit code has been sent via SMS to {phone}. Paste the code here
           </Text>
+          {/* <Text>{JSON.stringify(otp)}</Text> */}
 
           <Center>
             <HStack space={3} justifyContent={'center'} py={5}>
-              <TextInput
-                ref={firstInput}
-                style={styles.input}
-                keyboardType={'number-pad'}
-                maxLength={1}
-                onChangeText={num => {
-                  setOtp(prev => ({...prev, first: num}));
-                  num && secondInput.current.focus();
-                }}
-              />
-              <TextInput
-                ref={secondInput}
-                style={styles.input}
-                keyboardType={'number-pad'}
-                maxLength={1}
-                onChangeText={num => {
-                  setOtp(prev => ({...prev, second: num}));
-
-                  num ? thirdInput.current.focus() : firstInput.current.focus();
-                }}
-                //   onChangeText={handleChange}
-              />
-              <TextInput
-                ref={thirdInput}
-                style={styles.input}
-                keyboardType={'number-pad'}
-                maxLength={1}
-                onChangeText={num => {
-                  setOtp(prev => ({...prev, third: num}));
-
-                  num
-                    ? fourthInput.current.focus()
-                    : secondInput.current.focus();
-                }}
-              />
-              <TextInput
-                ref={fourthInput}
-                style={styles.input}
-                keyboardType={'number-pad'}
-                maxLength={1}
-                onChangeText={num => {
-                  setOtp(prev => ({...prev, fourth: num}));
-
-                  num ? fifthInput.current.focus() : thirdInput.current.focus();
-                }}
-              />
-              <TextInput
-                ref={fifthInput}
-                style={styles.input}
-                keyboardType={'number-pad'}
-                maxLength={1}
-                onChangeText={num => {
-                  setOtp(prev => ({...prev, fifth: num}));
-
-                  !num && fourthInput.current.focus();
-                }}
+              {codeArray?.map(fillCodeDigitInput)}
+              <Input
+                position="absolute"
+                width={1}
+                height={1}
+                keyboardType="number"
+                returnKeyType="done"
+                textContentType="oneTimeCode"
+                ref={VerificationInputRef}
+                onChangeText={text => setOtp(prev => text.split(''))}
+                maxLength={5}
+                opacity={0}
               />
             </HStack>
 
@@ -231,6 +201,22 @@ const Verification = ({
     </>
   );
 };
+
+const CodeInput = ({code, current, handlePress}) => (
+  <Pressable onPress={handlePress}>
+    <Center
+      fontSize={'md'}
+      borderColor={!current ? 'warmGray.400' : 'primary'}
+      borderWidth={2}
+      w={12}
+      h={12}
+      borderRadius={'lg'}>
+      <Text fontSize={'lg'} fontWeight={'medium'}>
+        {code}
+      </Text>
+    </Center>
+  </Pressable>
+);
 
 const styles = StyleSheet.create({
   input: {

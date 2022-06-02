@@ -38,7 +38,41 @@ export const loginUser = createAsyncThunk(
     try {
       const res = await AuthService.loginUser(user);
 
-      await AsyncStorageService.setData(JSON.stringify(res));
+      console.log(res);
+      return res;
+    } catch (e) {
+      const message = e?.response?.data?.message || e?.message || e;
+
+      thunkApi.rejectWithValue(message);
+      return;
+    }
+  },
+);
+
+// Login with facebook
+export const loginWithFacebook = createAsyncThunk(
+  'auth/login_facebook',
+  async thunkApi => {
+    try {
+      const res = await AuthService.facebookLogin();
+
+      console.log(res);
+      return res;
+    } catch (e) {
+      const message = e?.response?.data?.message || e?.message || e;
+
+      thunkApi.rejectWithValue(message);
+      return;
+    }
+  },
+);
+
+// Login with google
+export const loginWithGoogle = createAsyncThunk(
+  'auth/login_google',
+  async thunkApi => {
+    try {
+      const res = await AuthService.googleLogin();
 
       return res;
     } catch (e) {
@@ -65,6 +99,8 @@ export const verifyUser = createAsyncThunk(
     } catch (e) {
       const message =
         e?.response?.data?.message || e?.error?.message || e.message || e;
+
+      console.log(e.response);
 
       return thunkApi.rejectWithValue(message);
     }
@@ -123,6 +159,41 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+        console.log(action.payload);
+      })
+      // facebook login
+      .addCase(loginWithFacebook.pending(), state => {
+        state.isLoading = true;
+      })
+      .addCase(loginWithFacebook.fulfilled(), (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state.user = action.payload;
+        console.log('Facebook login', action?.payload);
+      })
+      .addCase(loginWithFacebook.rejected(), (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        // state.user = null;
+        console.log(action.payload);
+      })
+
+      // google login
+      .addCase(loginWithGoogle.pending(), state => {
+        state.isLoading = true;
+      })
+      .addCase(loginWithGoogle.fulfilled(), (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state.user = action.payload;
+        console.log('Facebook login', action?.payload);
+      })
+      .addCase(loginWithGoogle.rejected(), (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        // state.user = null;
         console.log(action.payload);
       })
       // verify

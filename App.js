@@ -1,21 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {extendTheme, NativeBaseProvider} from 'native-base';
-import {COLORS} from './constants';
 import {
   AboutBusiness,
   Credentials,
   Last,
   Login,
   RiderDetails,
-  Role,
   Verification,
   Dashboard,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
-import CustomLogin from './screens/CustomLogin';
+import {GoogleSignin} from '@react-native-community/google-signin';
+import {COLORS} from './constants';
 
 const Stack = createStackNavigator();
 
@@ -59,6 +58,12 @@ const App = () => {
       mono: 'Poppins',
     },
   });
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '',
+    });
+  }, []);
 
   return (
     <NativeBaseProvider theme={theme}>
