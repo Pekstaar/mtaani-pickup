@@ -72,47 +72,40 @@ const AboutBusiness = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    if (businessLogo) {
-      const formData = new FormData();
-      formData.append('name', details?.bName);
-      formData.append('what_u_sale', details?.itemSold);
-      formData.append('category', details?.category?.id);
-      // formData.append('logo', {
-      //   uri: businessLogo?.path,
-      //   type: businessLogo?.mime,
-      // });
+    console.log(businessLogo);
 
+    if (businessLogo) {
       try {
-        axios({
-          url: `http://178.62.228.130:4000/api/business`,
-          method: 'POST',
-          data: formData,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${
-              JSON.parse(await AsyncStorageService.getData('user'))?.token
-            }`,
-          },
-        })
-          .then(function (response) {
-            console.log('response :', response);
-            setLoading(false);
-          })
-          .catch(function (error) {
-            console.log('error : ', error.response.data);
-            setLoading(false);
-          });
+        const formData = new FormData();
+        formData.append('name', details?.bName);
+        formData.append('what_u_sale', details?.itemSold);
+        formData.append('category', details?.category?.id);
+
+        const imageURI = businessLogo?.path;
+        const splitImageURI = imageURI?.split('/');
+        const imageName = splitImageURI[splitImageURI?.length - 1];
+
+        formData.append('logo', {
+          uri: businessLogo?.path,
+          name: imageName,
+          type: businessLogo?.mime, // This is important for Android!!
+        });
+
+        await AboutBusinessService.setBusinessCategoryDetails(formData);
 
         setLoading(false);
+        return;
       } catch (error) {
+        const err = JSON.stringify(
+          error?.response.data.message || error?.response.data,
+        );
         toast.show({
           title: 'Error!',
           status: 'error',
-          description: err?.message,
+          description: err,
         });
-        setLoading(false);
 
+        setLoading(false);
         return;
       }
 
@@ -123,21 +116,29 @@ const AboutBusiness = () => {
       formData.append('what_u_sale', details?.itemSold);
       formData.append('category', details?.category?.id);
 
-      // try {
-      // await AboutBusinessService.setBusinessCategoryDetails(formData);
-      console.log(formData);
-      setLoading(false);
-      // } catch (error) {
-      //   toast.show({
-      //     title: 'Error!',
-      //     status: 'error',
-      //     description: err?.message,
-      //   });
-      //   setLoading(false);
+      try {
+        await AboutBusinessService.setBusinessCategoryDetails(formData);
 
-      //   return;
-      // }
+        setLoading(false);
+        return;
+      } catch (error) {
+        const err = JSON.stringify(
+          error?.response.data.message || error?.response.data,
+        );
+
+        toast.show({
+          title: 'Error!',
+          status: 'error',
+          description: err,
+        });
+
+        setLoading(false);
+
+        return;
+      }
     }
+
+    //
   };
 
   const toggleCategoryInput = () => {

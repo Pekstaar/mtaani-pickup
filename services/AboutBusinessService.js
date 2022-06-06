@@ -10,23 +10,23 @@ const fetchBusinessCategories = async () => {
 };
 
 const setBusinessCategoryDetails = async formData => {
-  // await setAuthToken(axios);
+  await setAuthToken(axios);
 
-  axios({
-    url: `http://178.62.228.130:4000/api/business`,
+  await axios({
+    url: `/business`,
     method: 'POST',
     data: formData,
-    // headers: {
-    //   Accept: 'application/json',
-    //   'Content-Type': 'multipart/form-data',
-    // },
-  })
-    .then(function (response) {
-      console.log('response :', response);
-    })
-    .catch(function (error) {
-      console.log('error : ', error);
-    });
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  // .then(function (response) {
+  //   console.log('response :', response);
+  // })
+  // .catch(function (error) {
+  //   console.log('error : ', error.response.data);
+  // });
 };
 
 const AboutBusinessService = {

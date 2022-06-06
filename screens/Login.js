@@ -32,7 +32,7 @@ import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const NEXT_SCREEN = 'about_business';
 
@@ -149,13 +149,61 @@ const Login = () => {
   };
 
   const handleFacebookLogin = async () => {
-    dispatch(loginWithFacebook());
-    navigation.navigate(NEXT_SCREEN);
+    setLoading(true);
+    try {
+      const {accessToken} = await AuthService.facebookLogin();
+
+      const userDetails = await AuthService.fetchFacebookUserDetails(
+        accessToken,
+      );
+
+      const userExistsInDb = await AuthService.isExisting(userDetails?.email);
+      if (userExistsInDb) {
+        console.log('User Exists!');
+      } else {
+        // navigate to registration screen and pass parameters
+        navigation.navigate('credentials', {
+          details: userDetails,
+        });
+
+        // register user to db:
+        // fields to collect:
+        // all
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error.response.data);
+      setLoading(false);
+
+      return;
+    }
   };
 
   const handleGoogleLogin = async () => {
-    dispatch(loginWithGoogle());
-    navigation.navigate(NEXT_SCREEN);
+    setLoading(true);
+    try {
+      const googleUserDetails = await AuthService.googleLogin();
+
+      const userExistsInDb = await AuthService.isExisting(
+        googleUserDetails?.email,
+      );
+
+      if (userExistsInDb) {
+        console.log('User exists in database!');
+      } else {
+        navigation.navigate('credentials', {
+          details: googleUserDetails,
+        });
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+
+      return;
+    }
   };
 
   useEffect(() => {
@@ -193,7 +241,7 @@ const Login = () => {
     if (isSuccess) {
       console.log('Facebook  Successfull!');
 
-      navigation.navigate(NEXT_SCREEN);
+      // navigation.navigate(NEXT_SCREEN);
       //
     }
 
@@ -215,7 +263,7 @@ const Login = () => {
     }
 
     if (validation?.isSuccess) {
-      navigation.navigate(NEXT_SCREEN);
+      // navigation.navigate(NEXT_SCREEN);
     }
 
     return () => {

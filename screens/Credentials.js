@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Spinner,
+  useToast,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,7 +17,7 @@ import {LabeledInput} from '../components/Input';
 import {registerUser, reset} from '../Redux/reducers/authSlice';
 import {Header} from './Login';
 
-const Credentials = () => {
+const Credentials = ({route}) => {
   const [credentials, setCredentials] = useState({
     firstName: '',
     lastName: '',
@@ -39,6 +40,7 @@ const Credentials = () => {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const handleContinue = () => {
     // navigation.navigate('verification', {
@@ -180,6 +182,23 @@ const Credentials = () => {
     validation.isSuccess,
     validation.message,
   ]);
+
+  useEffect(() => {
+    if (route.params) {
+      toast.show({
+        title: 'Info',
+        description: 'Please provide the details above!',
+      });
+
+      const {details} = route.params;
+      setCredentials(prev => ({
+        ...prev,
+        firstName: details?.name?.split(' ')[0] || '',
+        lastName: details?.name?.split(' ')[1] || '',
+        email: details?.email || '',
+      }));
+    }
+  }, [route.params]);
 
   return (
     <>

@@ -54,9 +54,33 @@ export const loginWithFacebook = createAsyncThunk(
   'auth/login_facebook',
   async thunkApi => {
     try {
-      const res = await AuthService.facebookLogin();
+      AuthService.facebookLogin()
+        .then(token => {
+          console.log(token);
+          // fetch(
+          //   'https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' +
+          //     accessToken,
+          // )
+          //   .then(response => response.json())
+          //   .then(json => {
+          //     // Some user object has been set up somewhere, build that user here
+          //     console.log(json);
+          //     // user.name = json.name;
+          //     // user.id = json.id;
+          //     // user.user_friends = json.friends;
+          //     // user.email = json.email;
+          //     // user.username = json.name;
+          //     // user.loading = false;
+          //     // user.loggedIn = true;
+          //     // user.avatar = setAvatar(json.id);
+          //   });
+        })
+        .catch(err => {
+          throw err;
+        });
 
       console.log(res);
+
       return res;
     } catch (e) {
       const message = e?.response?.data?.message || e?.message || e;

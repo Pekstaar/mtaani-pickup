@@ -49,35 +49,40 @@ const facebookLogin = async () => {
   // Sign-in the user with the credential
   await auth().signInWithCredential(facebookCredential);
 
-  await AsyncStorageService.setData(
-    'user',
-    JSON.stringify({
-      token: data?.accessToken,
-      signInMethod: 'facebook',
-    }),
-  );
+  return data;
+
+  // await AsyncStorageService.setData(
+  //   'user',
+  //   JSON.stringify({
+  //     token: data?.accessToken,
+  //     signInMethod: 'facebook',
+  //   }),
+  // );
 };
 
 const googleLogin = async () => {
   // Get the users ID token
+  // const response = await GoogleSignin.signIn();
   const response = await GoogleSignin.signIn();
-  const {accessToken} = await GoogleSignin.getTokens();
 
   // Create a Google credential with the token
-  const googleCredential = auth.GoogleAuthProvider.credential(accessToken);
+  // const googleCredential = auth.GoogleAuthProvider.credential(accessToken);
 
   // // Sign-in the user with the credential
-  await auth().signInWithCredential(googleCredential);
+  // await auth().signInWithCredential(googleCredential);
 
-  await AsyncStorageService.setData(
-    'user',
-    JSON.stringify({
-      token: accessToken,
-      signInMethod: 'google',
-      email: response?.user?.email,
-      name: response?.user?.name,
-    }),
-  );
+  // await AsyncStorageService.setData(
+  //   'user',
+  //   JSON.stringify({
+  //     token: accessToken,
+  //     signInMethod: 'google',
+  //     email: response?.user?.email,
+  //     name: response?.user?.name,
+  //   }),
+  // );
+
+  // console.log(accessToken);
+  return response?.user;
 };
 
 // activate user:
@@ -88,41 +93,28 @@ const activateUser = async ({id, code}) => {
 };
 
 // fetch facebook user details
-const fetchFacebookUserDetails = async () => {
-  let token;
-  const user = await JSON.parse(await AsyncStorageService.getData('user'));
+const fetchFacebookUserDetails = async token => {
+  const response = await fetch(
+    'https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' +
+      token,
+  );
 
-  if (user?.signInMethod === 'facebook') {
-    token = user?.token;
-    fetch(
-      'https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' +
-        token,
-    )
-      .then(response => response.json())
-      .then(json => {
-        // Some user object has been set up somewhere, build that user here
-        console.log(json);
-        // user.name = json.name;
-        // user.id = json.id;
-        // user.user_friends = json.friends;
-        // user.email = json.email;
-        // user.username = json.name;
-        // user.loading = false;
-        // user.loggedIn = true;
-        // user.avatar = setAvatar(json.id);
-      })
-      .catch(err => {
-        throw err;
-      });
-  } else {
-    console.log('Fetch Error');
-    return;
-  }
+  return response.json();
 };
 
 // logout user
 const logout = async () => {
   await removeData('user');
+};
+
+const isExisting = async email => {
+  const {data} = await axios.post('/get-user', {email});
+
+  if (data.Exists) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 //
@@ -135,6 +127,7 @@ const AuthService = {
   facebookLogin,
   googleLogin,
   fetchFacebookUserDetails,
+  isExisting,
 };
 
 export default AuthService;
