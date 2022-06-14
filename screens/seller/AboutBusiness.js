@@ -5,27 +5,25 @@ import {
   HStack,
   Icon,
   Image,
-  Pressable,
-  View,
   Text,
   useToast,
   VStack,
   ScrollView,
 } from 'native-base';
 import React, {useState, useEffect} from 'react';
-import {assets, COLORS, SIZES} from '../constants';
-import {Header} from './Login';
-import {LabeledInput} from '../components/Input';
+import {assets, COLORS, SIZES} from '../../constants';
+import {Header} from '../Login';
+import {LabeledInput} from '../../components/Input';
 import {useNavigation} from '@react-navigation/native';
-import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
+import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ImagePicker from 'react-native-image-crop-picker';
-import AsyncStorageService from '../services/AsyncStorageService';
-import AboutBusinessService from '../services/AboutBusinessService';
-import {LoadingButton, SubmitButton} from './Credentials';
+import AsyncStorageService from '../../services/AsyncStorageService';
+import AboutBusinessService from '../../services/AboutBusinessService';
+import {LoadingButton, SubmitButton} from '../Credentials';
 import axios from 'axios';
 import {useDispatch} from 'react-redux';
-import AuthService from '../services/AuthService';
+import AuthService from '../../services/AuthService';
 
 // const initCategories = [
 //   'cosmetics',

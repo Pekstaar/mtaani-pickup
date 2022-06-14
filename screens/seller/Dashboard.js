@@ -9,7 +9,7 @@ import {
   VStack,
 } from 'native-base';
 import React from 'react';
-import assets from '../constants/assets';
+import assets from '../../constants/assets';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Dashboard = () => {

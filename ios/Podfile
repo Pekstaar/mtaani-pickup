@@ -20,6 +20,12 @@ target 'pickup_mtaani_cli' do
   )
 
 
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'pickup_mtaani_cliTests' do
     inherit! :complete
     # Pods for testing

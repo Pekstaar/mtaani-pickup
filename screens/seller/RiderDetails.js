@@ -1,21 +1,18 @@
 import {
   Box,
-  Center,
   Checkbox,
   HStack,
   Icon,
-  Input,
   KeyboardAvoidingView,
   ScrollView,
   Text,
   VStack,
 } from "native-base";
 import React, { useState } from "react";
-import { SIZES } from "../constants";
+import { SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { Header } from "./Login";
-import { LabeledInput } from "../components/Input";
-import KeyboardAvoidingWrapper from "../components/KeyboardAvoidingWrapper";
+import { Header } from "../Login";
+import { LabeledInput } from "../../components/Input";
 
 const RiderDetails = () => {
   const [details, setDetails] = useState({

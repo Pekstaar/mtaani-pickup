@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
 import {LabeledInput} from '../components/Input';
 import {registerUser, reset} from '../Redux/reducers/authSlice';
+import AuthService from '../services/AuthService';
 import {Header} from './Login';
 
 const Credentials = ({route}) => {
@@ -25,6 +26,7 @@ const Credentials = ({route}) => {
     phone: '',
     password: '',
     confirmPassword: '',
+    socialAuth: false,
   });
   const {isSuccess, isLoading, isError, message, user} = useSelector(
     state => state.auth,
@@ -42,7 +44,7 @@ const Credentials = ({route}) => {
   const dispatch = useDispatch();
   const toast = useToast();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     // navigation.navigate('verification', {
     //   phone: '',
     // });
@@ -77,7 +79,10 @@ const Credentials = ({route}) => {
       }));
 
       return;
-    } else if (password === '' || password === null || !password) {
+    } else if (
+      !credentials?.socialAuth &&
+      (password === '' || password === null || !password)
+    ) {
       setValidation(prev => ({
         ...prev,
         message: 'password required!',
@@ -86,9 +91,8 @@ const Credentials = ({route}) => {
 
       return;
     } else if (
-      confirmPassword === '' ||
-      confirmPassword === null ||
-      !confirmPassword
+      !credentials?.socialAuth &&
+      (confirmPassword === '' || confirmPassword === null || !confirmPassword)
     ) {
       setValidation(prev => ({
         ...prev,
@@ -97,7 +101,7 @@ const Credentials = ({route}) => {
       }));
 
       return;
-    } else if (confirmPassword !== password) {
+    } else if (!credentials?.socialAuth && confirmPassword !== password) {
       setValidation(prev => ({
         ...prev,
         message: 'Passwords do not match!',
@@ -107,17 +111,43 @@ const Credentials = ({route}) => {
       return;
     }
 
-    dispatch(
-      registerUser({
-        username: firstName.trim() + lastName.trim(),
-        f_name: firstName.trim(),
-        l_name: lastName.trim(),
-        role: '626760a2ee39c723cd41e736',
-        phone_number: phone.trim(),
-        password: password.trim(),
-        email: email.trim(),
-      }),
-    );
+    if (credentials?.socialAuth) {
+      //
+      try {
+        const response = await AuthService?.updateUser({
+          f_name: credentials?.firstName,
+          l_name: credentials?.lastName,
+          email: credentials?.email,
+          phone_number: credentials?.phone,
+        });
+
+        console.log(response.data);
+
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        toast.show({
+          title: 'ERROR!',
+          description: JSON.stringify(error),
+        });
+        setLoading(false);
+        return;
+      }
+    } else {
+      dispatch(
+        registerUser({
+          username: firstName.trim() + lastName.trim(),
+          f_name: firstName.trim(),
+          l_name: lastName.trim(),
+          role: '626760a2ee39c723cd41e736',
+          phone_number: phone.trim(),
+          password: password.trim(),
+          email: email.trim(),
+        }),
+      );
+
+      setLoading(false);
+    }
 
     if (isSuccess) {
       navigation.navigate('verification', {
@@ -190,12 +220,13 @@ const Credentials = ({route}) => {
         description: 'Please provide the details above!',
       });
 
-      const {details} = route.params;
+      const {details, socialLogin} = route.params;
       setCredentials(prev => ({
         ...prev,
         firstName: details?.name?.split(' ')[0] || '',
         lastName: details?.name?.split(' ')[1] || '',
         email: details?.email || '',
+        socialAuth: socialLogin,
       }));
     }
   }, [route.params]);
@@ -258,35 +289,38 @@ const Credentials = ({route}) => {
 
               {/* passwords */}
               <VStack mt={3} space={4}>
-                <Box height={24}>
-                  <LabeledInput
-                    label={'Create Password'}
-                    placeholder={'create a 6 digit password'}
-                    exp={
-                      'choose a 6 word password, with atleast 1 numerical character.'
-                    }
-                    type={'password'}
-                    value={credentials.password}
-                    handleChange={pwd =>
-                      setCredentials(prev => ({...prev, password: pwd}))
-                    }
-                  />
-                </Box>
-
-                <Box height={20}>
-                  <LabeledInput
-                    label={'Confirm Password'}
-                    placeholder={'Re-type your password'}
-                    type={'password'}
-                    value={credentials.confirmPassword}
-                    handleChange={cpwd =>
-                      setCredentials(prev => ({
-                        ...prev,
-                        confirmPassword: cpwd,
-                      }))
-                    }
-                  />
-                </Box>
+                {!credentials?.socialAuth && (
+                  <Box height={24}>
+                    <LabeledInput
+                      label={'Create Password'}
+                      placeholder={'create a 6 digit password'}
+                      exp={
+                        'choose a 6 word password, with atleast 1 numerical character.'
+                      }
+                      type={'password'}
+                      value={credentials.password}
+                      handleChange={pwd =>
+                        setCredentials(prev => ({...prev, password: pwd}))
+                      }
+                    />
+                  </Box>
+                )}
+                {!credentials?.socialAuth && (
+                  <Box height={20}>
+                    <LabeledInput
+                      label={'Confirm Password'}
+                      placeholder={'Re-type your password'}
+                      type={'password'}
+                      value={credentials.confirmPassword}
+                      handleChange={cpwd =>
+                        setCredentials(prev => ({
+                          ...prev,
+                          confirmPassword: cpwd,
+                        }))
+                      }
+                    />
+                  </Box>
+                )}
 
                 <Box height={20}>
                   <LabeledInput
@@ -303,7 +337,10 @@ const Credentials = ({route}) => {
               {loading ? (
                 <LoadingButton />
               ) : (
-                <SubmitButton text={'CONTINUE'} handlePress={handleContinue} />
+                <SubmitButton
+                  text={credentials?.socialAuth ? 'UPDATE' : 'CONTINUE'}
+                  handlePress={handleContinue}
+                />
               )}
             </VStack>
           </ScrollView>

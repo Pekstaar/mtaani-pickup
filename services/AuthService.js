@@ -22,6 +22,24 @@ const loginUser = async loginDetails => {
   return response.data;
 };
 
+// social login
+const authenticateUserSocially = async loginDetails => {
+  const response = await axios.post(`/social-login`, loginDetails);
+
+  // await setData('user', JSON.stringify(response?.data));
+
+  return response;
+};
+
+// update user
+const updateUser = async loginDetails => {
+  const response = await axios.put(`/update-user`, loginDetails);
+
+  // await setData('user', JSON.stringify(response?.data));
+
+  return response;
+};
+
 // facebook login
 const facebookLogin = async () => {
   // Attempt login with permissions
@@ -128,6 +146,8 @@ const AuthService = {
   googleLogin,
   fetchFacebookUserDetails,
   isExisting,
+  authenticateUserSocially,
+  updateUser,
 };
 
 export default AuthService;

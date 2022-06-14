@@ -10,11 +10,13 @@ import {
   RiderDetails,
   Verification,
   Dashboard,
+  SelectRiderCategory,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
 import {GoogleSignin} from '@react-native-community/google-signin';
 import {COLORS} from './constants';
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createStackNavigator();
 
@@ -60,6 +62,8 @@ const App = () => {
   });
 
   useEffect(() => {
+    SplashScreen.hide();
+
     GoogleSignin.configure({
       webClientId: '',
     });
@@ -73,14 +77,22 @@ const App = () => {
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="Login">
+            initialRouteName="login">
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="credentials" component={Credentials} />
             <Stack.Screen name="verification" component={Verification} />
+
+            {/* seller screens */}
             <Stack.Screen name="about_business" component={AboutBusiness} />
             <Stack.Screen name="last" component={Last} />
             <Stack.Screen name="rider_details" component={RiderDetails} />
             <Stack.Screen name="dashboard" component={Dashboard} />
+
+            {/* rider */}
+            <Stack.Screen
+              name="select_rider_category"
+              component={SelectRiderCategory}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

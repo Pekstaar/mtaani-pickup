@@ -5,15 +5,17 @@ import {
   Center,
   HStack,
   Icon,
+  Image,
   // ScrollView,
   Spinner,
+  Stack,
   Text,
   View,
   VStack,
 } from 'native-base';
 import FIcon from 'react-native-vector-icons/FontAwesome';
 import IONIcon from 'react-native-vector-icons/Ionicons';
-import {COLORS, FONTS} from '../constants';
+import {assets, COLORS, FONTS} from '../constants';
 import {SIZES} from '../constants';
 import Line from '../components/Line';
 import {PasswordInput, TextInput} from '../components/Input';
@@ -34,7 +36,7 @@ const Login = () => {
   const navigation = useNavigation();
   // const dispatch = useDispatch();
 
-  const NEXT_SCREEN = 'about_business';
+  const NEXT_SCREEN = '';
 
   // manage state
   const [phone, setPhone] = useState('');
@@ -130,7 +132,7 @@ const Login = () => {
           resetModalOnTimeout(MODAL_TIMEOUT);
 
           if (user?.token) {
-            navigation.navigate('about_business');
+            navigation.navigate('last');
           }
         })
         .catch(e => {
@@ -157,23 +159,42 @@ const Login = () => {
         accessToken,
       );
 
-      const userExistsInDb = await AuthService.isExisting(userDetails?.email);
+      // console.log(userDetails);
+
+      const response = await AuthService.authenticateUserSocially({
+        f_name: userDetails?.name.split(' ')[0],
+        l_name: userDetails?.name.split(' ')[1],
+        email: userDetails?.email,
+        password: '',
+      });
+
+      console.log(response);
+
+      const userExistsInDb = response.status === 201;
+      const userDoesNotExist = response.status === 200;
+
       if (userExistsInDb) {
-        console.log('User Exists!');
-      } else {
-        // navigate to registration screen and pass parameters
+      } else if (userDoesNotExist) {
         navigation.navigate('credentials', {
-          details: userDetails,
+          name: userDetails?.name,
+          email: userDetails?.email,
+          socialLogin: true,
         });
-
-        // register user to db:
-        // fields to collect:
-        // all
       }
+      //   console.log('User Exists!');
+      // } else {
+      //   // navigate to registration screen and pass parameters
+      //   navigation.navigate('credentials', {
+      //     details: userDetails,
+      //   });
 
+      //   // register user to db:
+      //   // fields to collect:
+      //   // all
+      // }
       setLoading(false);
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error);
       setLoading(false);
 
       return;
@@ -189,11 +210,14 @@ const Login = () => {
         googleUserDetails?.email,
       );
 
+      console.log(googleUserDetails);
+
       if (userExistsInDb) {
         console.log('User exists in database!');
       } else {
         navigation.navigate('credentials', {
           details: googleUserDetails,
+          socialLogin: true,
         });
       }
 
@@ -297,7 +321,21 @@ const Login = () => {
       ) : (
         <></>
       )}
-      <Box position={'relative'} height="full">
+      <Stack position={'relative'} height="full" bg={'white'}>
+        <Box>
+          <Image
+            h={'80px'}
+            w={'80px'}
+            alt={'pickup logo'}
+            position={'absolute'}
+            resizeMode={'contain'}
+            alignSelf={'center'}
+            top={50}
+            zIndex={'3'}
+            source={assets.pickupLogoPng}
+          />
+          <Image h={'300px'} alt={'map background'} source={assets.bgImage} />
+        </Box>
         <VStack
           position={'absolute'}
           bottom={0}
@@ -307,7 +345,7 @@ const Login = () => {
           mx={5}
           space={8}>
           {/* title */}
-          <Header title={'Enter  details'} />
+          <Header title={'Enter login details'} />
 
           {/* inputs */}
           <TextInput
@@ -389,7 +427,7 @@ const Login = () => {
             </Text>
           </Center>
         </VStack>
-      </Box>
+      </Stack>
     </>
   );
 };
@@ -397,10 +435,17 @@ const Login = () => {
 export default Login;
 
 export const Header = ({title}) => (
-  <HStack px={1} alignItems={'center'}>
+  <HStack px={1} alignItems={'center'} space={1}>
     {/* <Line /> */}
+    <Box
+      width={1}
+      my={1}
+      height={'full'}
+      borderRadius={'full'}
+      bg={'primary'}
+    />
 
-    <Text fontWeight={700} fontSize={SIZES.lg}>
+    <Text fontWeight={600} fontSize={SIZES.lg}>
       {title}
     </Text>
   </HStack>

@@ -2,10 +2,13 @@ import Login from './Login';
 import Role from './Role';
 import Credentials from './Credentials';
 import Verification from './Verification';
-import AboutBusiness from './AboutBusiness';
-import Last from './Last';
-import RiderDetails from './RiderDetails';
-import Dashboard from './Dashboard';
+import AboutBusiness from './seller/AboutBusiness';
+import Last from './seller/Last';
+import RiderDetails from './seller/RiderDetails';
+import Dashboard from './seller/Dashboard';
+
+// rider
+import SelectRiderCategory from './rider/SelectRiderCategory';
 
 export {
   Login,
@@ -16,4 +19,6 @@ export {
   Last,
   RiderDetails,
   Dashboard,
+  // rider
+  SelectRiderCategory,
 };
