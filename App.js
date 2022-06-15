@@ -17,6 +17,7 @@ import {Store} from './Redux/Store';
 import {GoogleSignin} from '@react-native-community/google-signin';
 import {COLORS} from './constants';
 import SplashScreen from 'react-native-splash-screen';
+import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 
 const Stack = createStackNavigator();
 
@@ -77,7 +78,7 @@ const App = () => {
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="login">
+            initialRouteName="Login">
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="credentials" component={Credentials} />
             <Stack.Screen name="verification" component={Verification} />
@@ -92,6 +93,10 @@ const App = () => {
             <Stack.Screen
               name="select_rider_category"
               component={SelectRiderCategory}
+            />
+            <Stack.Screen
+              name="create_rider_profile"
+              component={CreateRiderProfile}
             />
           </Stack.Navigator>
         </NavigationContainer>

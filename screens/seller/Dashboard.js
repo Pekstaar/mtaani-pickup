@@ -4,6 +4,7 @@ import {
   HStack,
   Icon,
   Image,
+  Pressable,
   ScrollView,
   Text,
   VStack,
@@ -11,8 +12,11 @@ import {
 import React from 'react';
 import assets from '../../constants/assets';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useNavigation} from '@react-navigation/native';
+import {logoutUser} from '../../globals/Utils';
 
 const Dashboard = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView>
       <Box safeArea p={3}>
@@ -26,11 +30,16 @@ const Dashboard = () => {
             borderRadius={'full'}
           />
 
-          <Icon
-            color={'gray.500'}
-            size={8}
-            as={<FontAwesome name="navicon" />}
-          />
+          <Pressable
+            onPress={() => {
+              logoutUser(() => navigation.navigate('Login'));
+            }}>
+            <Icon
+              color={'gray.500'}
+              size={8}
+              as={<FontAwesome name="navicon" />}
+            />
+          </Pressable>
         </HStack>
 
         <ScrollView

@@ -116,7 +116,7 @@ export const LabeledInput = ({
       </Text>
       {exp && (
         <Text
-          fontWeight={600}
+          fontWeight={'medium'}
           fontSize={SIZES.sm - 1.5}
           color={'gray.500'}
           my={1}>

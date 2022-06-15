@@ -21,23 +21,10 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorageService from '../../services/AsyncStorageService';
 import AboutBusinessService from '../../services/AboutBusinessService';
 import {LoadingButton, SubmitButton} from '../Credentials';
-import axios from 'axios';
-import {useDispatch} from 'react-redux';
 import AuthService from '../../services/AuthService';
-
-// const initCategories = [
-//   'cosmetics',
-//   'clothes',
-//   'Jewellery',
-//   'Accessories',
-//   'Electronics',
-//   'Shoes',
-//   'Perfume',
-// ];
 
 const AboutBusiness = () => {
   const toast = useToast();
-  // const dispatch = useDispatch();
 
   const [details, setDetails] = useState({
     bName: '',

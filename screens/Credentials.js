@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
 import {LabeledInput} from '../components/Input';
 import {registerUser, reset} from '../Redux/reducers/authSlice';
+import AsyncStorageService from '../services/AsyncStorageService';
 import AuthService from '../services/AuthService';
 import {Header} from './Login';
 
@@ -114,21 +115,29 @@ const Credentials = ({route}) => {
     if (credentials?.socialAuth) {
       //
       try {
-        const response = await AuthService?.updateUser({
+        await AuthService?.updateUser({
           f_name: credentials?.firstName,
           l_name: credentials?.lastName,
           email: credentials?.email,
           phone_number: credentials?.phone,
         });
 
-        console.log(response.data);
+        if (
+          await JSON.parse(await AsyncStorageService.getData('user'))?.token
+        ) {
+          navigation.navigate('dashboard');
+        } else {
+          navigation.navigate('login');
+        }
 
         setLoading(false);
       } catch (error) {
         console.log(error);
         toast.show({
           title: 'ERROR!',
-          description: JSON.stringify(error),
+          description: JSON.stringify(
+            error || error?.message || error?.response.data,
+          ),
         });
         setLoading(false);
         return;

@@ -14,10 +14,8 @@ import {
   VStack,
 } from 'native-base';
 import FIcon from 'react-native-vector-icons/FontAwesome';
-import IONIcon from 'react-native-vector-icons/Ionicons';
-import {assets, COLORS, FONTS} from '../constants';
+import {assets} from '../constants';
 import {SIZES} from '../constants';
-import Line from '../components/Line';
 import {PasswordInput, TextInput} from '../components/Input';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -29,14 +27,14 @@ import {LoadingButton, SubmitButton} from './Credentials';
 import {MODAL_TIMEOUT} from '../globals/Utils';
 import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';
-import {useDispatch, useSelector} from 'react-redux';
-import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
+import {useSelector} from 'react-redux';
+// import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
   const navigation = useNavigation();
   // const dispatch = useDispatch();
 
-  const NEXT_SCREEN = '';
+  const NEXT_SCREEN = 'dashboard';
 
   // manage state
   const [phone, setPhone] = useState('');
@@ -150,6 +148,36 @@ const Login = () => {
     }
   };
 
+  const handleSocialUser = async userDetails => {
+    const response = await AuthService.authenticateUserSocially({
+      f_name: userDetails?.name.split(' ')[0],
+      l_name: userDetails?.name.split(' ')[1],
+      email: userDetails?.email,
+      password: '',
+    });
+
+    // console.log(response);
+
+    const userExistsInDb = response.status === 201;
+    const userDoesNotExist = response.status === 200;
+
+    console.log(response.data);
+
+    await AsyncStorageService?.setData('user', JSON.stringify(response?.data));
+
+    if (userExistsInDb) {
+      navigation.navigate(NEXT_SCREEN);
+    } else if (userDoesNotExist) {
+      navigation.navigate('credentials', {
+        details: {
+          name: userDetails?.name,
+          email: userDetails?.email,
+        },
+        socialLogin: true,
+      });
+    }
+  };
+
   const handleFacebookLogin = async () => {
     setLoading(true);
     try {
@@ -159,39 +187,8 @@ const Login = () => {
         accessToken,
       );
 
-      // console.log(userDetails);
+      handleSocialUser(userDetails);
 
-      const response = await AuthService.authenticateUserSocially({
-        f_name: userDetails?.name.split(' ')[0],
-        l_name: userDetails?.name.split(' ')[1],
-        email: userDetails?.email,
-        password: '',
-      });
-
-      console.log(response);
-
-      const userExistsInDb = response.status === 201;
-      const userDoesNotExist = response.status === 200;
-
-      if (userExistsInDb) {
-      } else if (userDoesNotExist) {
-        navigation.navigate('credentials', {
-          name: userDetails?.name,
-          email: userDetails?.email,
-          socialLogin: true,
-        });
-      }
-      //   console.log('User Exists!');
-      // } else {
-      //   // navigate to registration screen and pass parameters
-      //   navigation.navigate('credentials', {
-      //     details: userDetails,
-      //   });
-
-      //   // register user to db:
-      //   // fields to collect:
-      //   // all
-      // }
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -206,20 +203,7 @@ const Login = () => {
     try {
       const googleUserDetails = await AuthService.googleLogin();
 
-      const userExistsInDb = await AuthService.isExisting(
-        googleUserDetails?.email,
-      );
-
-      console.log(googleUserDetails);
-
-      if (userExistsInDb) {
-        console.log('User exists in database!');
-      } else {
-        navigation.navigate('credentials', {
-          details: googleUserDetails,
-          socialLogin: true,
-        });
-      }
+      handleSocialUser(googleUserDetails);
 
       setLoading(false);
     } catch (error) {
@@ -435,7 +419,7 @@ const Login = () => {
 export default Login;
 
 export const Header = ({title}) => (
-  <HStack px={1} alignItems={'center'} space={1}>
+  <HStack px={1} py={2.5} alignItems={'center'} space={1}>
     {/* <Line /> */}
     <Box
       width={1}
