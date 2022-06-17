@@ -1,6 +1,16 @@
-import {View, Text} from 'react-native';
-import React, {useState} from 'react';
-import {Box, Button, Center, Icon, Image, useToast, VStack} from 'native-base';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  Box,
+  Button,
+  Center,
+  Icon,
+  Image,
+  Pressable,
+  useToast,
+  VStack,
+  HStack,
+  Input,
+} from 'native-base';
 import {Header} from '../Login';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
 import {assets} from '../../constants';
@@ -8,6 +18,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import ImagePicker from 'react-native-image-crop-picker';
 import {LoadingButton, SubmitButton} from '../Credentials';
 import {LabeledInput} from '../../components/Input';
+import IonIcons from 'react-native-vector-icons/Ionicons';
 
 const CreateRiderProfile = () => {
   const toast = useToast();
@@ -17,10 +28,33 @@ const CreateRiderProfile = () => {
     numberPlate: '',
   });
   const [businessLogo, setBusinessLogo] = useState(null);
+  const [id, setId] = useState(null);
+  const [drivingLicense, setDrivingLicense] = useState(null);
   const [loading, setLoading] = useState(null);
 
+  const handleLogo = useCallback(
+    logo => {
+      setBusinessLogo(logo);
+    },
+    [setBusinessLogo],
+  );
+
+  const handleId = useCallback(
+    id => {
+      setId(id);
+    },
+    [setId],
+  );
+
+  const handleLicense = useCallback(
+    l => {
+      setDrivingLicense(l);
+    },
+    [setId],
+  );
+
   // functions
-  const uploadImage = () => {
+  const uploadImage = setStateCallback => {
     ImagePicker.openPicker({
       mediaType: 'photo',
       width: 300,
@@ -28,7 +62,8 @@ const CreateRiderProfile = () => {
       cropping: true,
     })
       .then(image => {
-        setBusinessLogo(image);
+        // setBusinessLogo(image);
+        setStateCallback(image);
         console.log(image);
       })
       .catch(err => {
@@ -45,6 +80,10 @@ const CreateRiderProfile = () => {
   const handleSubmit = () => {
     // /
   };
+
+  useEffect(() => {
+    console.log(businessLogo);
+  }, [businessLogo]);
 
   return (
     <KeyboardAvoidingWrapper>
@@ -84,7 +123,7 @@ const CreateRiderProfile = () => {
                 borderRadius={'full'}
                 borderColor={'white'}
                 borderWidth={2}
-                onPress={uploadImage}>
+                onPress={() => uploadImage(handleLogo)}>
                 <Icon
                   size={6}
                   color={'white'}
@@ -102,7 +141,7 @@ const CreateRiderProfile = () => {
           {/* <Button bg={'black'} onPress={logoutUser}>
             Logout
           </Button> */}
-          <Box height={20}>
+          <Box>
             <LabeledInput
               label={'National identity number'}
               placeholder={'Type your id number '}
@@ -113,20 +152,33 @@ const CreateRiderProfile = () => {
             />
           </Box>
 
-          {/* <Button
-            bg={'primary'}
-            borderRadius={'full'}
-            mt={4}
-            width={'full'}
-            onPress={handleSubmit}>
-            <Text color={'secondary'} fontWeight={800} fontSize={'md'}>
-              NEXT
-            </Text> */}
+          <FileInput
+            placeholder={'upload your ID photo'}
+            handlePress={() => uploadImage(handleId)}
+            file={id}
+          />
+
+          <Box>
+            <LabeledInput
+              label={'Motorbike number plate'}
+              placeholder={'Type your number plate '}
+              value={details?.nationalID}
+              handleChange={name =>
+                setDetails(prev => ({...prev, nationalID: name}))
+              }
+            />
+          </Box>
+
+          <FileInput
+            placeholder={'upload your license'}
+            handlePress={() => uploadImage(handleLicense)}
+            file={drivingLicense}
+          />
 
           {loading ? (
             <LoadingButton />
           ) : (
-            <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
+            <SubmitButton text={'CONTINUE'} handlePress={handleSubmit} />
           )}
           {/* </Button> */}
         </VStack>
@@ -136,3 +188,33 @@ const CreateRiderProfile = () => {
 };
 
 export default CreateRiderProfile;
+
+const FileInput = ({handlePress, placeholder, file}) => {
+  const fileName = file?.path?.split('/') || [];
+  return (
+    <Pressable onPress={handlePress}>
+      <HStack
+        h={'12'}
+        borderColor="primary"
+        borderWidth={'1.5'}
+        borderRadius="xl">
+        <Center borderLeftRadius={'lg'} w={'12'} bg="primary" color={'black'}>
+          <Icon
+            color={'black'}
+            size="6"
+            as={<IonIcons name="cloud-upload" />}
+          />
+        </Center>
+
+        <Input
+          flex={1}
+          placeholder={placeholder}
+          size={'md'}
+          value={fileName[fileName?.length - 1] || null}
+          borderWidth="0"
+          isDisabled={true}
+        />
+      </HStack>
+    </Pressable>
+  );
+};

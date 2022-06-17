@@ -161,8 +161,6 @@ const Login = () => {
     const userExistsInDb = response.status === 201;
     const userDoesNotExist = response.status === 200;
 
-    console.log(response.data);
-
     await AsyncStorageService?.setData('user', JSON.stringify(response?.data));
 
     if (userExistsInDb) {

@@ -18,6 +18,11 @@ import {GoogleSignin} from '@react-native-community/google-signin';
 import {COLORS} from './constants';
 import SplashScreen from 'react-native-splash-screen';
 import CreateRiderProfile from './screens/rider/CreateRiderProfile';
+import {
+  NotificationListener,
+  requestUserPermission,
+} from './globals/pushnotifications_helper';
+import LocationPickerDemo from './screens/seller/AddAddress';
 
 const Stack = createStackNavigator();
 
@@ -70,6 +75,12 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    requestUserPermission();
+
+    NotificationListener();
+  }, []);
+
   return (
     <NativeBaseProvider theme={theme}>
       <Provider store={Store}>
@@ -78,7 +89,7 @@ const App = () => {
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="Login">
+            initialRouteName="address">
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="credentials" component={Credentials} />
             <Stack.Screen name="verification" component={Verification} />
@@ -88,6 +99,7 @@ const App = () => {
             <Stack.Screen name="last" component={Last} />
             <Stack.Screen name="rider_details" component={RiderDetails} />
             <Stack.Screen name="dashboard" component={Dashboard} />
+            <Stack.Screen name="address" component={LocationPickerDemo} />
 
             {/* rider */}
             <Stack.Screen
