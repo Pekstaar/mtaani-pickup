@@ -6,6 +6,9 @@ import AboutBusiness from './seller/AboutBusiness';
 import Last from './seller/Last';
 import RiderDetails from './seller/RiderDetails';
 import Dashboard from './seller/Dashboard';
+import Tracker from './Tracker';
+import AddProduct from './seller/AddProduct';
+import Delivery from './seller/Delivery';
 
 // rider
 import SelectRiderCategory from './rider/SelectRiderCategory';
@@ -19,6 +22,9 @@ export {
   Last,
   RiderDetails,
   Dashboard,
+  Tracker,
+  AddProduct,
+  Delivery,
   // rider
   SelectRiderCategory,
 };

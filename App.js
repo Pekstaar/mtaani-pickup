@@ -1,7 +1,11 @@
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {extendTheme, NativeBaseProvider} from 'native-base';
+import {
+  extendTheme,
+  KeyboardAvoidingView,
+  NativeBaseProvider,
+} from 'native-base';
 import {
   AboutBusiness,
   Credentials,
@@ -11,6 +15,9 @@ import {
   Verification,
   Dashboard,
   SelectRiderCategory,
+  Tracker,
+  AddProduct,
+  Delivery,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
@@ -23,6 +30,7 @@ import {
   requestUserPermission,
 } from './globals/pushnotifications_helper';
 import LocationPickerDemo from './screens/seller/AddAddress';
+import {Platform} from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -84,34 +92,41 @@ const App = () => {
   return (
     <NativeBaseProvider theme={theme}>
       <Provider store={Store}>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-            initialRouteName="address">
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="credentials" component={Credentials} />
-            <Stack.Screen name="verification" component={Verification} />
+        <KeyboardAvoidingView
+          flex={1}
+          behavior={Platform === 'ios' ? 'padding' : 'height'}>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
+              initialRouteName="deliver_product">
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="credentials" component={Credentials} />
+              <Stack.Screen name="verification" component={Verification} />
+              <Stack.Screen name="tracker" component={Tracker} />
 
-            {/* seller screens */}
-            <Stack.Screen name="about_business" component={AboutBusiness} />
-            <Stack.Screen name="last" component={Last} />
-            <Stack.Screen name="rider_details" component={RiderDetails} />
-            <Stack.Screen name="dashboard" component={Dashboard} />
-            <Stack.Screen name="address" component={LocationPickerDemo} />
+              {/* seller screens */}
+              <Stack.Screen name="about_business" component={AboutBusiness} />
+              <Stack.Screen name="last" component={Last} />
+              <Stack.Screen name="rider_details" component={RiderDetails} />
+              <Stack.Screen name="dashboard" component={Dashboard} />
+              <Stack.Screen name="address" component={LocationPickerDemo} />
+              <Stack.Screen name="add_product" component={AddProduct} />
+              <Stack.Screen name="deliver_product" component={Delivery} />
 
-            {/* rider */}
-            <Stack.Screen
-              name="select_rider_category"
-              component={SelectRiderCategory}
-            />
-            <Stack.Screen
-              name="create_rider_profile"
-              component={CreateRiderProfile}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+              {/* rider */}
+              <Stack.Screen
+                name="select_rider_category"
+                component={SelectRiderCategory}
+              />
+              <Stack.Screen
+                name="create_rider_profile"
+                component={CreateRiderProfile}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </KeyboardAvoidingView>
       </Provider>
     </NativeBaseProvider>
   );

@@ -45,9 +45,9 @@ export default class LocationPickerDemo extends React.Component {
       this.getCurrentAddress, //callback
     );
   };
-  componentWillMount() {
-    this.getAddress();
-  }
+  // componentWillMount() {
+  //   this.getAddress();
+  // }
 
   getAddress() {
     //function to get address using current lat and lng
@@ -90,7 +90,7 @@ export default class LocationPickerDemo extends React.Component {
           />
         </View>
 
-        <KeyboardAvoidingView style={styles.footer}>
+        {/* <KeyboardAvoidingView style={styles.footer}>
           <View style={{flexDirection: 'row', margin: 10}}>
             <Text style={styles.addressText}>Address</Text>
           </View>
@@ -138,7 +138,7 @@ export default class LocationPickerDemo extends React.Component {
               SAVE
             </Text>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView> */}
       </View>
     );
   }

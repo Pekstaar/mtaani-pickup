@@ -106,12 +106,13 @@ export const LabeledInput = ({
   handleChange,
   exp,
   type = 'text',
+  ...rest
 }) => {
   const [show, setShow] = React.useState(false);
 
   return (
-    <Box flex={1}>
-      <Text fontWeight={700} fontSize={SIZES.base}>
+    <Box flex={1} {...rest}>
+      <Text fontWeight={'medium'} fontSize={SIZES.base + 1}>
         {label}
       </Text>
       {exp && (

@@ -385,7 +385,7 @@ export const SubmitButton = ({text, handlePress}) => (
     mt={4}
     width={'full'}
     onPress={handlePress}>
-    <Text color={'secondary'} fontWeight={800} fontSize={'md'}>
+    <Text color={'secondary'} fontWeight={700} fontSize={'md'}>
       {text}
     </Text>
   </Button>
