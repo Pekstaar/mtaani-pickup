@@ -9,6 +9,7 @@ import Dashboard from './seller/Dashboard';
 import Tracker from './Tracker';
 import AddProduct from './seller/AddProduct';
 import Delivery from './seller/Delivery';
+import ViewShelfProducts from './seller/ViewShelfProducts';
 
 // rider
 import SelectRiderCategory from './rider/SelectRiderCategory';
@@ -25,6 +26,7 @@ export {
   Tracker,
   AddProduct,
   Delivery,
+  ViewShelfProducts,
   // rider
   SelectRiderCategory,
 };

@@ -323,16 +323,6 @@ const AboutBusiness = () => {
             Logout
           </Button>
 
-          {/* <Button
-            bg={'primary'}
-            borderRadius={'full'}
-            mt={4}
-            width={'full'}
-            onPress={handleSubmit}>
-            <Text color={'secondary'} fontWeight={800} fontSize={'md'}>
-              NEXT
-            </Text> */}
-
           {loading ? (
             <LoadingButton />
           ) : (

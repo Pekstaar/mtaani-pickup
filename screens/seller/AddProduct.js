@@ -13,7 +13,7 @@ import {
   FormControl,
   Input,
 } from 'native-base';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {assets, COLORS, SIZES} from '../../constants';
 import {Header} from '../Login';
 import {LabeledInput} from '../../components/Input';
@@ -28,30 +28,52 @@ import ProductUploader from '../../components/Seller/add_product/ProductUploader
 import {SelectCategory} from '../../components/general/SelectCategory';
 import {SelectColor} from '../../components/Seller/add_product/SelectColor';
 
+import {useSelector} from 'react-redux';
+
 const AboutBusiness = () => {
   const toast = useToast();
+  const {selectedProduct: selectedProductId, products} = useSelector(
+    state => state.shelf,
+  );
+  const navigation = useNavigation();
+
+  const selectedProduct = useMemo(
+    () => products.find(item => item._id === selectedProductId),
+    [selectedProductId, products],
+  );
 
   const [details, setDetails] = useState({
-    bName: '',
-    itemSold: '',
-    category: '',
+    name: selectedProduct?.product_name || '',
+    colors: [selectedProduct?.color],
+    category: selectedProduct?.category._id || '',
+    price: selectedProduct?.price?.toString() || '',
   });
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [service, setService] = React.useState('');
 
-  const navigation = useNavigation();
+  const [images, setImages] = useState([]);
 
-  const [businessLogo, setBusinessLogo] = useState(null);
+  useEffect(() => {
+    if (selectedProduct?.images.length > 0) {
+      const arr = [];
+      selectedProduct.images.map(item => arr.push({uri: item}));
+
+      setImages(arr);
+    } else {
+      setImages(new Array(5).fill(''));
+    }
+  }, [selectedProduct]);
+  // product images;
+  // let images = new Array(5).fill(null);
 
   const manageCategory = c => {
-    const isContained = details?.categories?.includes(c?.id);
+    const isContained = details?.category.id === c?.id;
 
     if (!isContained) {
       setDetails(prev => ({
         ...prev,
-        category: c,
+        category: c.id,
       }));
     } else {
       setDetails(prev => ({
@@ -61,75 +83,71 @@ const AboutBusiness = () => {
     }
   };
 
+  const manageColor = color => {
+    const isContained = details?.colors?.includes(color);
+
+    if (!isContained) {
+      setDetails(prev => ({
+        ...prev,
+        colors: [...prev.colors, color.name],
+      }));
+    } else {
+      const prevArrExcludeColor = details?.colors.filter(c => c !== color);
+      setDetails(prev => ({
+        ...prev,
+        colors: prevArrExcludeColor,
+      }));
+    }
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
-    console.log(businessLogo);
+    // console.log(details);
+    // if (businessLogo) {
+    try {
+      // const formData = new FormData();
+      let formData = new FormData();
+      formData.append('product_name', details.name);
+      formData.append('color', details.colors[0].name);
+      formData.append('price', details.price);
+      formData.append('category', details.category.id);
 
-    if (businessLogo) {
-      try {
-        const formData = new FormData();
-        formData.append('name', details?.bName);
-        formData.append('what_u_sale', details?.itemSold);
-        formData.append('category', details?.category?.id);
+      // formData.append('images', images);
 
-        const imageURI = businessLogo?.path;
-        const splitImageURI = imageURI?.split('/');
-        const imageName = splitImageURI[splitImageURI?.length - 1];
-
-        formData.append('logo', {
-          uri: businessLogo?.path,
-          name: imageName,
-          type: businessLogo?.mime, // This is important for Android!!
-        });
-
-        await AboutBusinessService.setBusinessCategoryDetails(formData);
-
-        setLoading(false);
-        return;
-      } catch (error) {
-        const err = JSON.stringify(
-          error?.response.data.message || error?.response.data,
+      if (selectedProductId) {
+        await AboutBusinessService.updateBusinessProduct(
+          formData,
+          selectedProductId,
         );
-        toast.show({
-          title: 'Error!',
-          status: 'error',
-          description: err,
+      } else {
+        images.forEach(img => {
+          formData.append('images', {
+            uri: img?.uri,
+            name: img?.name,
+            type: img?.type,
+          });
         });
-
-        setLoading(false);
-        return;
+        await AboutBusinessService.createBusinessProduct(formData);
       }
 
-      // navigation.navigate('last');
-    } else {
-      const formData = new FormData();
-      formData.append('name', details?.bName);
-      formData.append('what_u_sale', details?.itemSold);
-      formData.append('category', details?.category?.id);
+      navigation.navigate('view_products');
+      setLoading(false);
+      return;
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
 
-      try {
-        await AboutBusinessService.setBusinessCategoryDetails(formData);
-
-        setLoading(false);
-        return;
-      } catch (error) {
-        const err = JSON.stringify(
-          error?.response.data.message || error?.response.data,
-        );
-
-        toast.show({
-          title: 'Error!',
-          status: 'error',
-          description: err,
-        });
-
-        setLoading(false);
-
-        return;
-      }
+      const err = JSON.stringify(
+        error?.response.data || error?.message || error,
+      );
+      toast.show({
+        title: 'Error!',
+        status: 'error',
+        description: err,
+      });
+      // setLoading(false);
+      return;
     }
-
-    //
   };
 
   const toggleCategoryInput = () => {
@@ -142,10 +160,26 @@ const AboutBusiness = () => {
       width: 300,
       height: 400,
       cropping: true,
+      multiple: true,
     })
-      .then(image => {
-        setBusinessLogo(image);
-        console.log(image);
+      .then(imgs => {
+        setImages(() => [...imgs]);
+
+        const uploadedImages = [];
+
+        imgs.forEach(img => {
+          const splitImageURI = img?.path?.split('/');
+          const imageName = splitImageURI[splitImageURI?.length - 1];
+
+          uploadedImages.push({
+            uri: img?.path,
+            name: imageName,
+            type: img?.mime,
+          });
+        });
+        setImages(() => [...uploadedImages]);
+
+        // console.log(uploadedImages);
       })
       .catch(err => {
         toast.show({
@@ -194,8 +228,6 @@ const AboutBusiness = () => {
     initFetch();
   }, []);
 
-  // useFocusEffect
-
   return (
     <Box safeArea mb={10} p={3}>
       {/* header */}
@@ -206,7 +238,8 @@ const AboutBusiness = () => {
         <VStack py={3} space={3}>
           {/* profile image */}
           <ProductUploader
-            businessLogo={businessLogo}
+            images={images}
+            // businessLogo={businessLogo}
             uploadImage={uploadImage}
           />
 
@@ -215,10 +248,8 @@ const AboutBusiness = () => {
             <LabeledInput
               label={'Product name?'}
               placeholder={'e.g. shoes'}
-              value={details?.itemSold}
-              handleChange={name =>
-                setDetails(prev => ({...prev, itemSold: name}))
-              }
+              value={details?.name}
+              handleChange={name => setDetails(prev => ({...prev, name}))}
             />
           </Box>
 
@@ -227,18 +258,24 @@ const AboutBusiness = () => {
             <LabeledInput
               label={'Selling Price'}
               placeholder={'e.g. shoes'}
-              value={details?.itemSold}
+              value={details?.price}
               handleChange={name =>
-                setDetails(prev => ({...prev, itemSold: name}))
+                setDetails(prev => ({...prev, price: name}))
               }
             />
           </Box>
 
           {/* Select product category */}
-          <SelectCategory />
+          <SelectCategory
+            categories={categories}
+            manageCategory={manageCategory}
+            details={details}
+            toggleCategoryInput={toggleCategoryInput}
+            showCategoryInput={showCategoryInput}
+          />
 
           {/* select color */}
-          <SelectColor />
+          <SelectColor manageColor={manageColor} details={details} />
 
           {/* <FormControl display={'flex'} p={0}>
             <FormControl.Label _text={{color: 'black'}}>
@@ -275,7 +312,10 @@ const AboutBusiness = () => {
           {loading ? (
             <LoadingButton />
           ) : (
-            <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
+            <SubmitButton
+              text={selectedProductId ? 'Update ' : 'Add Product'}
+              handlePress={handleSubmit}
+            />
           )}
           {/* </Button> */}
         </VStack>

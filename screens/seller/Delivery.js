@@ -80,7 +80,11 @@ const Delivery = () => {
             w={'150px'}
             borderRadius={'xl'}>
             <Center h="12" w={'12'} bg={'#FDF7D3'} p={3} borderRadius={'full'}>
-              <Image source={assets.track} resizeMode="contain" />
+              <Image
+                alt="avatar icon"
+                source={assets.track}
+                resizeMode="contain"
+              />
             </Center>
 
             <Text fontWeight={'semibold'} fontSize={'sm'}>
@@ -96,7 +100,11 @@ const Delivery = () => {
             w={'150px'}
             borderRadius={'xl'}>
             <Center h="12" w={'12'} bg={'#FDF7D3'} p={3} borderRadius={'full'}>
-              <Image source={assets.track} resizeMode="contain" />
+              <Image
+                alt="avatar icon"
+                source={assets.track}
+                resizeMode="contain"
+              />
             </Center>
 
             <Text fontWeight={'semibold'} fontSize={'sm'}>

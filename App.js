@@ -18,6 +18,8 @@ import {
   Tracker,
   AddProduct,
   Delivery,
+  Role,
+  ViewShelfProducts,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
@@ -100,11 +102,12 @@ const App = () => {
               screenOptions={{
                 headerShown: false,
               }}
-              initialRouteName="deliver_product">
+              initialRouteName="Login">
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="credentials" component={Credentials} />
               <Stack.Screen name="verification" component={Verification} />
               <Stack.Screen name="tracker" component={Tracker} />
+              <Stack.Screen name="roles" component={Role} />
 
               {/* seller screens */}
               <Stack.Screen name="about_business" component={AboutBusiness} />
@@ -113,6 +116,10 @@ const App = () => {
               <Stack.Screen name="dashboard" component={Dashboard} />
               <Stack.Screen name="address" component={LocationPickerDemo} />
               <Stack.Screen name="add_product" component={AddProduct} />
+              <Stack.Screen
+                name="view_products"
+                component={ViewShelfProducts}
+              />
               <Stack.Screen name="deliver_product" component={Delivery} />
 
               {/* rider */}

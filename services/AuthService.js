@@ -135,7 +135,12 @@ const isExisting = async email => {
   }
 };
 
-//
+//fetch user roles:
+const fetchUserRoles = async () => {
+  const {data} = await axios.get('/roles');
+
+  return data?.roles;
+};
 
 const AuthService = {
   loginUser,
@@ -148,6 +153,7 @@ const AuthService = {
   isExisting,
   authenticateUserSocially,
   updateUser,
+  fetchUserRoles,
 };
 
 export default AuthService;

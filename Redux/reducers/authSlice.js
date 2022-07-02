@@ -5,6 +5,8 @@ import AuthService from '../../services/AuthService';
 let user;
 const initialState = {
   user: user,
+  roles: [],
+  selectedRole: null,
   isError: false,
   isLoading: false,
   isLoadingPage: false,
@@ -48,7 +50,6 @@ export const loginUser = createAsyncThunk(
     }
   },
 );
-
 // Login with facebook
 export const loginWithFacebook = createAsyncThunk(
   'auth/login_facebook',
@@ -90,7 +91,6 @@ export const loginWithFacebook = createAsyncThunk(
     }
   },
 );
-
 // Login with google
 export const loginWithGoogle = createAsyncThunk(
   'auth/login_google',
@@ -113,7 +113,6 @@ export const fetchUserFromStorage = createAsyncThunk('auth/fetch', async () => {
 
   return JSON.parse(user);
 });
-
 // Verify user
 export const verifyUser = createAsyncThunk(
   'auth/verify',
@@ -130,16 +129,30 @@ export const verifyUser = createAsyncThunk(
     }
   },
 );
-
 // logout
 export const logout = createAsyncThunk('auth/logout', async () => {
   await AuthService.logout();
+});
+// fetch roles
+export const fetchRoles = createAsyncThunk('auth/roles', async () => {
+  try {
+    return await AuthService.fetchUserRoles();
+  } catch (e) {
+    const message =
+      e?.response?.data?.message || e?.error?.message || e.message || e;
+
+    return thunkApi.rejectWithValue(message);
+  }
 });
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setSelectedRole: (state, action) => {
+      state.selectedRole = action.payload;
+    },
+
     reset: state => {
       state.isError = false;
       state.isLoading = false;
@@ -243,10 +256,25 @@ export const authSlice = createSlice({
         state.isLoadingPage = false;
 
         console.log('payload User', action.payload);
+      })
+      // fetch roles
+      .addCase(fetchRoles.pending(), state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchRoles.fulfilled(), (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.roles = action.payload;
+      })
+      .addCase(fetchRoles.rejected(), (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        console.log(action.payload);
       });
   },
 });
 
-export const {reset} = authSlice.actions;
+export const {reset, setSelectedRole} = authSlice.actions;
 
 export default authSlice.reducer;

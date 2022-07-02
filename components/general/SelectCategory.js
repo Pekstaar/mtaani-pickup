@@ -5,53 +5,41 @@ import AboutBusinessService from '../../services/AboutBusinessService';
 import AsyncStorageService from '../../services/AsyncStorageService';
 import {SIZES} from '../../constants';
 
-export const SelectCategory = () => {
-  const [categories, setCategories] = useState([
-    {
-      name: 'cosmetics',
-      _id: 1,
-    },
-    {
-      name: 'clothes',
-      _id: 2,
-    },
-    {
-      name: 'jewelly',
-      _id: 3,
-    },
-    {
-      name: 'Accessories',
-      _id: 4,
-    },
-  ]);
+export const SelectCategory = ({
+  categories,
+  manageCategory,
+  details,
+  toggleCategoryInput,
+}) => {
+  // const [categories, setCategories] = useState(categories);
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const user = await JSON.parse(
-          await AsyncStorageService.getData('user'),
-        );
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     try {
+  //       const user = await JSON.parse(
+  //         await AsyncStorageService.getData('user'),
+  //       );
 
-        if (user?.token) {
-          const businessCategories =
-            await AboutBusinessService.fetchBusinessCategories();
+  //       if (user?.token) {
+  //         const businessCategories =
+  //           await AboutBusinessService.fetchBusinessCategories();
 
-          const cats = [];
-          businessCategories.Categories.map(({name, _id}) =>
-            cats.push({name, id: _id}),
-          );
+  //         const cats = [];
+  //         businessCategories.Categories.map(({name, _id}) =>
+  //           cats.push({name, id: _id}),
+  //         );
 
-          setCategories(cats);
-        } else {
-        }
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-    };
+  //         setCategories(cats);
+  //       } else {
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       return;
+  //     }
+  //   };
 
-    fetch();
-  }, []);
+  //   fetch();
+  // }, []);
 
   return (
     <>
@@ -69,13 +57,13 @@ export const SelectCategory = () => {
           <CategoryButton
             key={i}
             name={cat?.name || ''}
-            // handlePress={() => manageCategory(cat)}
-            // isSelected={details?.category === cat}
+            handlePress={() => manageCategory(cat)}
+            isSelected={details?.category === cat.id}
           />
         ))}
         <CategoryButton
           name={'Other'}
-          // handlePress={toggleCategoryInput}
+          handlePress={toggleCategoryInput}
           // isSelected={showCategoryInput}
         />
       </HStack>

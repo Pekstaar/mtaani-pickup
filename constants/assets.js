@@ -9,6 +9,10 @@ import pickupLogoPng from '../assets/images/pickup-logo.png';
 import bg_map from '../assets/images/bg_map.png';
 import track from '../assets/icons/track.png';
 import budget from '../assets/icons/budget.png';
+import agent from '../assets/icons/agent.png';
+import rider from '../assets/icons/rider.png';
+import staff from '../assets/icons/staff.png';
+import store from '../assets/icons/store.png';
 
 export default {
   empty,
@@ -22,4 +26,8 @@ export default {
   bg_map,
   budget,
   track,
+  agent,
+  rider,
+  staff,
+  store,
 };

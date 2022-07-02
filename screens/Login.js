@@ -34,7 +34,7 @@ const Login = () => {
   const navigation = useNavigation();
   // const dispatch = useDispatch();
 
-  const NEXT_SCREEN = 'dashboard';
+  const NEXT_SCREEN = 'view_products';
 
   // manage state
   const [phone, setPhone] = useState('');
@@ -403,7 +403,7 @@ const Login = () => {
               <Text
                 color={'secondary'}
                 textDecorationLine={'underline'}
-                onPress={() => navigation.navigate('credentials')}>
+                onPress={() => navigation.navigate('roles')}>
                 Register here
               </Text>
             </Text>

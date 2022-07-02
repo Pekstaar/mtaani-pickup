@@ -37,6 +37,7 @@ export const TextInput = ({
           {preInputText}
         </Text>
         <Input
+          variant={'unstyled'}
           size={'md'}
           placeholder={placeholder}
           borderColor={'transparent'}
@@ -75,6 +76,7 @@ export const PasswordInput = ({
           {preInputText}
         </Text>
         <Input
+          variant={'unstyled'}
           size={'md'}
           placeholder={placeholder}
           borderColor={'transparent'}
@@ -125,6 +127,7 @@ export const LabeledInput = ({
         </Text>
       )}
       <Input
+        variant={'unstyled'}
         borderColor="primary"
         borderWidth={'1.5px'}
         placeholder={placeholder}

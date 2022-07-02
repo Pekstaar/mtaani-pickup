@@ -9,8 +9,10 @@ import {
   ScrollView,
   Spinner,
   useToast,
+  Center,
 } from 'native-base';
 import React, {useEffect, useState} from 'react';
+import {TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
 import {LabeledInput} from '../components/Input';
@@ -20,6 +22,8 @@ import AuthService from '../services/AuthService';
 import {Header} from './Login';
 
 const Credentials = ({route}) => {
+  const {isSuccess, isLoading, isError, message, selectedRole, user} =
+    useSelector(state => state.auth);
   const [credentials, setCredentials] = useState({
     firstName: '',
     lastName: '',
@@ -28,10 +32,9 @@ const Credentials = ({route}) => {
     password: '',
     confirmPassword: '',
     socialAuth: false,
+    role: selectedRole?._id,
   });
-  const {isSuccess, isLoading, isError, message, user} = useSelector(
-    state => state.auth,
-  );
+
   const [showModal, setShowModal] = useState({type: '', show: false});
   const [modalMessage, setModalMessage] = useState('');
   const [validation, setValidation] = useState({
@@ -50,6 +53,10 @@ const Credentials = ({route}) => {
     //   phone: '',
     // });
     // return;
+
+    useEffect(() => {
+      console.log(selectedRole);
+    }, [selectedRole]);
 
     const {firstName, lastName, phone, password, confirmPassword, email} =
       credentials;
@@ -378,17 +385,18 @@ export const LoadingButton = ({text}) => (
   </Button>
 );
 
-export const SubmitButton = ({text, handlePress}) => (
-  <Button
-    bg={'primary'}
-    borderRadius={'full'}
-    mt={4}
-    width={'full'}
-    onPress={handlePress}>
-    <Text color={'secondary'} fontWeight={700} fontSize={'md'}>
-      {text}
-    </Text>
-  </Button>
+export const SubmitButton = ({text, handlePress, ...rest}) => (
+  <TouchableOpacity onPress={handlePress}>
+    <Center bg={'primary'} borderRadius={'full'} mt={4} width={'full'} py={2}>
+      <Text
+        color={'secondary'}
+        textTransform={'uppercase'}
+        fontWeight={700}
+        fontSize={'md'}>
+        {text}
+      </Text>
+    </Center>
+  </TouchableOpacity>
 );
 
 export default Credentials;

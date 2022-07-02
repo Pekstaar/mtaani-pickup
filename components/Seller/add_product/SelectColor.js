@@ -5,8 +5,8 @@ import AboutBusinessService from '../../../services/AboutBusinessService';
 import AsyncStorageService from '../../../services/AsyncStorageService';
 import {SIZES} from '../../../constants';
 
-export const SelectColor = () => {
-  const [categories, setCategories] = useState([
+export const SelectColor = ({manageColor, details}) => {
+  const [colors] = useState([
     {
       name: 'Black',
       _id: 1,
@@ -23,35 +23,15 @@ export const SelectColor = () => {
       name: 'White',
       _id: 4,
     },
+    {
+      name: 'pink',
+      _id: 5,
+    },
+    {
+      name: 'green',
+      _id: 6,
+    },
   ]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const user = await JSON.parse(
-          await AsyncStorageService.getData('user'),
-        );
-
-        if (user?.token) {
-          const businessCategories =
-            await AboutBusinessService.fetchBusinessCategories();
-
-          const cats = [];
-          businessCategories.Categories.map(({name, _id}) =>
-            cats.push({name, id: _id}),
-          );
-
-          setCategories(cats);
-        } else {
-        }
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-    };
-
-    fetch();
-  }, []);
 
   return (
     <>
@@ -64,12 +44,12 @@ export const SelectColor = () => {
         flexWrap="wrap"
         space={2}
         py={'1'}>
-        {categories.map((cat, i) => (
+        {colors.map((color, i) => (
           <CategoryButton
             key={i}
-            name={cat?.name || ''}
-            // handlePress={() => manageCategory(cat)}
-            // isSelected={details?.category === cat}
+            name={color?.name || ''}
+            handlePress={() => manageColor(color)}
+            isSelected={details?.colors.includes(color.name)}
           />
         ))}
         <CategoryButton

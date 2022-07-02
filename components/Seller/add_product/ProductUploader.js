@@ -8,12 +8,13 @@ import {
   Stack,
   Text,
 } from 'native-base';
-import React from 'react';
+import React, {useState} from 'react';
 import {assets} from '../../../constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ImageBox from './ImageBox';
 
 const ProductUploader = ({images, uploadImage}) => {
+  const [currentImage, setCurrentImage] = useState(0);
   return (
     // <Center bg={'info.200'}>
     <Box>
@@ -26,16 +27,12 @@ const ProductUploader = ({images, uploadImage}) => {
         rounded="md"
         position={'relative'}>
         <Image
-          source={
-            images
-              ? {
-                  uri: images[0]?.path,
-                }
-              : assets.empty_2
-          }
-          width={'80px'}
-          height={'80px'}
-          alt="business_logo"
+          source={images[0]?.uri ? {uri: images[0].uri} : assets?.empty_2}
+          width={images[0]?.uri ? 'full' : 12}
+          height={images[0]?.uri ? 'full' : 10}
+          resizeMode={'cover'}
+          // flex={1}
+          alt="upload image"
           alignSelf={'center'}
         />
 
@@ -66,11 +63,19 @@ const ProductUploader = ({images, uploadImage}) => {
       </Stack>
 
       <HStack py={1} space={2} px={2} justifyContent={'flex-end'}>
-        <ImageBox />
-        <ImageBox />
-        <ImageBox />
-        <ImageBox />
-        <ImageBox />
+        {images.map((image, i) =>
+          image?.uri ? (
+            <ImageBox key={i} image={image} />
+          ) : (
+            <Box
+              key={i}
+              borderRadius={'sm'}
+              bg={'muted.300'}
+              height={10}
+              width={10}
+            />
+          ),
+        )}
       </HStack>
     </Box>
     // </Center>

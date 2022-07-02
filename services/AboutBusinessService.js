@@ -21,17 +21,50 @@ const setBusinessCategoryDetails = async formData => {
       'Content-Type': 'multipart/form-data',
     },
   });
-  // .then(function (response) {
-  //   console.log('response :', response);
-  // })
-  // .catch(function (error) {
-  //   console.log('error : ', error.response.data);
-  // });
+};
+
+const createBusinessProduct = async formData => {
+  await setAuthToken(axios);
+
+  await axios({
+    url: `/product`,
+    method: 'POST',
+    data: formData,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+const updateBusinessProduct = async (formData, id) => {
+  await setAuthToken(axios);
+
+  await axios({
+    url: `/product/${id}`,
+    method: 'PUT',
+    data: formData,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+const fetchProducts = async () => {
+  await setAuthToken(axios);
+
+  const res = await axios.get('/products');
+
+  return res.data.products;
 };
 
 const AboutBusinessService = {
   fetchBusinessCategories,
   setBusinessCategoryDetails,
+  createBusinessProduct,
+  fetchProducts,
+  updateBusinessProduct,
 };
 
 export default AboutBusinessService;
