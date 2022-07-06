@@ -22,6 +22,7 @@ const Product = ({details, handlePress}) => {
             alt={'product image'}
             h={'full'}
             w={'full'}
+            borderRadius={'sm'}
             resizeMode={'cover'}
           />
         ) : (

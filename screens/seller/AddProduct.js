@@ -28,25 +28,35 @@ import ProductUploader from '../../components/Seller/add_product/ProductUploader
 import {SelectCategory} from '../../components/general/SelectCategory';
 import {SelectColor} from '../../components/Seller/add_product/SelectColor';
 
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
 
-const AboutBusiness = () => {
+const AboutBusiness = ({route: {params}}) => {
   const toast = useToast();
   const {selectedProduct: selectedProductId, products} = useSelector(
     state => state.shelf,
   );
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const selectedProduct = useMemo(
     () => products.find(item => item._id === selectedProductId),
     [selectedProductId, products],
   );
 
+  const mode = useMemo(() => {
+    if (params?.mode === 'update') {
+      return 'update';
+    } else {
+      return 'create';
+    }
+  }, [params]);
+
   const [details, setDetails] = useState({
-    name: selectedProduct?.product_name || '',
-    colors: [selectedProduct?.color],
-    category: selectedProduct?.category._id || '',
-    price: selectedProduct?.price?.toString() || '',
+    name: '',
+    colors: [],
+    category: '',
+    price: '',
   });
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -55,7 +65,18 @@ const AboutBusiness = () => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    if (selectedProduct?.images.length > 0) {
+    if (params?.mode === 'update') {
+      setDetails({
+        name: selectedProduct?.product_name,
+        colors: [selectedProduct?.color],
+        category: selectedProduct?.category._id,
+        price: selectedProduct?.price?.toString(),
+      });
+    }
+  }, [params]);
+
+  useEffect(() => {
+    if (mode === 'update' && selectedProduct?.images.length > 0) {
       const arr = [];
       selectedProduct.images.map(item => arr.push({uri: item}));
 
@@ -89,10 +110,10 @@ const AboutBusiness = () => {
     if (!isContained) {
       setDetails(prev => ({
         ...prev,
-        colors: [...prev.colors, color.name],
+        colors: [color.name, ...prev.colors],
       }));
     } else {
-      const prevArrExcludeColor = details?.colors.filter(c => c !== color);
+      const prevArrExcludeColor = details?.colors.filter(c => c.name !== color);
       setDetails(prev => ({
         ...prev,
         colors: prevArrExcludeColor,
@@ -105,21 +126,31 @@ const AboutBusiness = () => {
     // console.log(details);
     // if (businessLogo) {
     try {
-      // const formData = new FormData();
-      let formData = new FormData();
-      formData.append('product_name', details.name);
-      formData.append('color', details.colors[0].name);
-      formData.append('price', details.price);
-      formData.append('category', details.category.id);
-
       // formData.append('images', images);
 
-      if (selectedProductId) {
+      if (selectedProductId && mode === 'update') {
+        const data = {
+          product_name: details?.name,
+          color: details?.colors[0],
+          price: details?.price,
+          category: details?.category,
+        };
+
         await AboutBusinessService.updateBusinessProduct(
-          formData,
+          data,
           selectedProductId,
         );
+
+        dispatch(fetchProductsOnShelf());
+        setLoading(false);
+        navigation.navigate('view_products');
       } else {
+        // const formData = new FormData();
+        let formData = new FormData();
+        formData.append('product_name', details.name);
+        formData.append('color', details.colors[0]);
+        formData.append('price', details.price);
+        formData.append('category', details.category);
         images.forEach(img => {
           formData.append('images', {
             uri: img?.uri,
@@ -128,10 +159,13 @@ const AboutBusiness = () => {
           });
         });
         await AboutBusinessService.createBusinessProduct(formData);
+
+        dispatch(fetchProductsOnShelf());
+        setLoading(false);
+        navigation.navigate('view_products');
       }
 
-      navigation.navigate('view_products');
-      setLoading(false);
+      // navigation.navigate('view_products');
       return;
     } catch (error) {
       console.log(error);
@@ -231,7 +265,7 @@ const AboutBusiness = () => {
   return (
     <Box safeArea mb={10} p={3}>
       {/* header */}
-      <Header title={'Upload Product'} />
+      <Header title={'New Product'} />
 
       {/* body */}
       <ScrollView>
@@ -257,7 +291,7 @@ const AboutBusiness = () => {
           <Box>
             <LabeledInput
               label={'Selling Price'}
-              placeholder={'e.g. shoes'}
+              placeholder={'e.g. 500'}
               value={details?.price}
               handleChange={name =>
                 setDetails(prev => ({...prev, price: name}))

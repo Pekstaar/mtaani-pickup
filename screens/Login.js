@@ -34,7 +34,7 @@ const Login = () => {
   const navigation = useNavigation();
   // const dispatch = useDispatch();
 
-  const NEXT_SCREEN = 'view_products';
+  const NEXT_SCREEN = 'main';
 
   // manage state
   const [phone, setPhone] = useState('');
@@ -129,8 +129,10 @@ const Login = () => {
           showSuccessModal('Login Succesful!');
           resetModalOnTimeout(MODAL_TIMEOUT);
 
+          console.log(user);
+
           if (user?.token) {
-            navigation.navigate('last');
+            navigation.navigate(NEXT_SCREEN);
           }
         })
         .catch(e => {

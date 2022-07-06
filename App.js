@@ -33,6 +33,7 @@ import {
 } from './globals/pushnotifications_helper';
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
+import {Navigator} from './components/navigation/BottomNav';
 
 const Stack = createStackNavigator();
 
@@ -113,14 +114,15 @@ const App = () => {
               <Stack.Screen name="about_business" component={AboutBusiness} />
               <Stack.Screen name="last" component={Last} />
               <Stack.Screen name="rider_details" component={RiderDetails} />
-              <Stack.Screen name="dashboard" component={Dashboard} />
+              {/* <Stack.Screen name="dashboard" component={Dashboard} /> */}
               <Stack.Screen name="address" component={LocationPickerDemo} />
               <Stack.Screen name="add_product" component={AddProduct} />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="view_products"
                 component={ViewShelfProducts}
-              />
+              /> */}
               <Stack.Screen name="deliver_product" component={Delivery} />
+              <Stack.Screen name="main" component={Navigator} />
 
               {/* rider */}
               <Stack.Screen

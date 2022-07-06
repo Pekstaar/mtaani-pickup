@@ -37,18 +37,12 @@ const createBusinessProduct = async formData => {
   });
 };
 
-const updateBusinessProduct = async (formData, id) => {
+const updateBusinessProduct = async (pData, id) => {
   await setAuthToken(axios);
 
-  await axios({
-    url: `/product/${id}`,
-    method: 'PUT',
-    data: formData,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const r = await axios.put(`/product/${id}`, pData);
+
+  console.log(r);
 };
 
 const fetchProducts = async () => {

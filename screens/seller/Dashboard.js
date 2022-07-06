@@ -11,6 +11,7 @@ import {
 } from 'native-base';
 import React from 'react';
 import assets from '../../constants/assets';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 import {logoutUser} from '../../globals/Utils';
@@ -31,13 +32,16 @@ const Dashboard = () => {
           />
 
           <Pressable
+            bg={'white'}
+            p={2}
+            borderRadius={'full'}
             onPress={() => {
               logoutUser(() => navigation.navigate('Login'));
             }}>
             <Icon
               color={'gray.500'}
-              size={8}
-              as={<FontAwesome name="navicon" />}
+              size={6}
+              as={<AntDesign name="logout" />}
             />
           </Pressable>
         </HStack>

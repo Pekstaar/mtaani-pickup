@@ -23,11 +23,12 @@ import {
   fetchProductsOnShelf,
   setSelectedProduct,
 } from '../../Redux/reducers/productsOnShelfSlice';
+import Loader from '../../components/general/Loader';
 
 const ViewShelfProducts = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {products} = useSelector(state => state.shelf);
+  const {products, isLoading} = useSelector(state => state.shelf);
 
   const [currentProduct, setCurrentProduct] = useState({});
   const [viewModal, setViewModal] = useState(false);
@@ -49,7 +50,7 @@ const ViewShelfProducts = () => {
   const handleSelectProduct = id => {
     dispatch(setSelectedProduct(id));
     setViewModal(false);
-    navigation.navigate('add_product');
+    navigation.navigate('add_product', {mode: 'update'});
   };
 
   useEffect(() => {
@@ -58,6 +59,8 @@ const ViewShelfProducts = () => {
 
   return (
     <>
+      {isLoading && <Loader bg={'gray.100'} shadow={'0'} showText={true} />}
+
       <SheetModal
         onEdit={handleSelectProduct}
         product={currentProduct}
@@ -79,7 +82,7 @@ const ViewShelfProducts = () => {
               flexDirection={'row'}
               flexWrap={'wrap'}
               //   px={'3'}
-              justifyContent={'center'}>
+              justifyContent={'flex-start'}>
               {products?.map((item, index) => (
                 <Product
                   handlePress={() => {
@@ -114,6 +117,7 @@ const ViewShelfProducts = () => {
         borderRadius={'full'}
         position={'absolute'}
         right={'3'}
+        shadow={'2'}
         bottom={'3'}
         _text={{
           textTransform: 'uppercase',

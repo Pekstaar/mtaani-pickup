@@ -31,6 +31,10 @@ export const SelectColor = ({manageColor, details}) => {
       name: 'green',
       _id: 6,
     },
+    {
+      name: 'brown',
+      _id: 7,
+    },
   ]);
 
   return (

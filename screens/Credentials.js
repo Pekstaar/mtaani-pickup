@@ -15,15 +15,16 @@ import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
+import Toast from '../components/general/toasts';
 import {LabeledInput} from '../components/Input';
-import {registerUser, reset} from '../Redux/reducers/authSlice';
-import AsyncStorageService from '../services/AsyncStorageService';
+import {registerUser} from '../Redux/reducers/registrationSlice';
 import AuthService from '../services/AuthService';
 import {Header} from './Login';
+// import Success from '../components/general/toasts'
 
 const Credentials = ({route}) => {
-  const {isSuccess, isLoading, isError, message, selectedRole, user} =
-    useSelector(state => state.auth);
+  const {selectedRole} = useSelector(state => state.auth);
+
   const [credentials, setCredentials] = useState({
     firstName: '',
     lastName: '',
@@ -35,8 +36,6 @@ const Credentials = ({route}) => {
     role: selectedRole?._id,
   });
 
-  const [showModal, setShowModal] = useState({type: '', show: false});
-  const [modalMessage, setModalMessage] = useState('');
   const [validation, setValidation] = useState({
     message: '',
     isError: false,
@@ -48,20 +47,9 @@ const Credentials = ({route}) => {
   const dispatch = useDispatch();
   const toast = useToast();
 
-  const handleContinue = async () => {
-    // navigation.navigate('verification', {
-    //   phone: '',
-    // });
-    // return;
-
-    useEffect(() => {
-      console.log(selectedRole);
-    }, [selectedRole]);
-
-    const {firstName, lastName, phone, password, confirmPassword, email} =
+  const validateFields = () => {
+    const {firstName, lastName, phone, password, confirmPassword, role, email} =
       credentials;
-
-    setLoading(true);
 
     if (firstName === '' || firstName === null || !firstName) {
       setValidation(prev => ({
@@ -70,7 +58,7 @@ const Credentials = ({route}) => {
         isError: true,
       }));
 
-      return;
+      return false;
     } else if (phone === '' || phone === null || !phone) {
       setValidation(prev => ({
         ...prev,
@@ -78,7 +66,7 @@ const Credentials = ({route}) => {
         isError: true,
       }));
 
-      return;
+      return false;
     } else if (email === '' || email === null || !email) {
       setValidation(prev => ({
         ...prev,
@@ -86,7 +74,7 @@ const Credentials = ({route}) => {
         isError: true,
       }));
 
-      return;
+      return false;
     } else if (
       !credentials?.socialAuth &&
       (password === '' || password === null || !password)
@@ -97,7 +85,7 @@ const Credentials = ({route}) => {
         isError: true,
       }));
 
-      return;
+      return false;
     } else if (
       !credentials?.socialAuth &&
       (confirmPassword === '' || confirmPassword === null || !confirmPassword)
@@ -108,7 +96,7 @@ const Credentials = ({route}) => {
         isError: true,
       }));
 
-      return;
+      return false;
     } else if (!credentials?.socialAuth && confirmPassword !== password) {
       setValidation(prev => ({
         ...prev,
@@ -116,8 +104,62 @@ const Credentials = ({route}) => {
         isError: true,
       }));
 
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  useEffect(() => {
+    if (validation?.isError) {
+      toast.show({
+        render: () => {
+          return <Toast.error message={validation?.message} />;
+        },
+        placement: 'top',
+        duration: 5000,
+      });
+    }
+
+    return () => {
+      setValidation({
+        message: '',
+        isError: false,
+        isSuccess: false,
+      });
+    };
+  }, [validation.isError, validation.message]);
+
+  useEffect(() => {
+    if (route.params) {
+      toast.show({
+        title: 'Info',
+        description: 'Please provide the details above!',
+      });
+
+      const {details, socialLogin} = route.params;
+      setCredentials(prev => ({
+        ...prev,
+        firstName: details?.name?.split(' ')[0] || '',
+        lastName: details?.name?.split(' ')[1] || '',
+        email: details?.email || '',
+        socialAuth: socialLogin,
+      }));
+    }
+  }, [route.params]);
+
+  const handleContinue = async () => {
+    // navigation.navigate('verification', {
+    //   phone: '',
+    // });
+    // return;
+
+    const isValid = validateFields();
+    if (!isValid) return;
+
+    setLoading(true);
+    const {firstName, lastName, phone, password, confirmPassword, role, email} =
+      credentials;
 
     if (credentials?.socialAuth) {
       //
@@ -150,122 +192,51 @@ const Credentials = ({route}) => {
         return;
       }
     } else {
-      dispatch(
-        registerUser({
-          username: firstName.trim() + lastName.trim(),
-          f_name: firstName.trim(),
-          l_name: lastName.trim(),
-          role: '626760a2ee39c723cd41e736',
-          phone_number: phone.trim(),
-          password: password.trim(),
-          email: email.trim(),
-        }),
-      );
+      AuthService.registerUser({
+        username: firstName.trim() + lastName.trim(),
+        f_name: firstName.trim(),
+        l_name: lastName.trim(),
+        role: role,
+        phone_number: phone.trim(),
+        password: password.trim(),
+        email: email.trim(),
+      })
+        .then(({saved}) => {
+          if (saved._id) {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast.success message={'Account created successfully'} />
+                );
+              },
+              placement: 'top',
+              duration: 3000,
+            });
 
-      setLoading(false);
-    }
+            navigation.navigate('verification', {user: saved});
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          toast.show({
+            render: () => {
+              return (
+                <Toast.error message={JSON.stringify(err?.response?.data)} />
+              );
+            },
+            placement: 'top',
+            duration: 3000,
+          });
 
-    if (isSuccess) {
-      navigation.navigate('verification', {
-        phone: credentials?.phone ? credentials.phone : '',
-        id: credentials?._id,
-      });
+          setLoading(false);
+        });
     }
-    dispatch(reset());
   };
-
-  useEffect(() => {
-    if (isError) {
-      setModalMessage(message);
-      setShowModal({type: 'error', show: true});
-
-      setTimeout(function () {
-        setShowModal(prev => ({...prev, show: false}));
-        setModalMessage('');
-      }, 2500);
-    }
-
-    if (validation?.isError) {
-      setModalMessage(validation?.message);
-      setShowModal({type: 'error', show: true});
-
-      setTimeout(function () {
-        setShowModal(prev => ({...prev, show: false}));
-        setModalMessage('');
-      }, 2500);
-    }
-
-    if (isSuccess) {
-      dispatch(reset());
-
-      console.log(user);
-
-      navigation.navigate('verification', {
-        phone: credentials.phone,
-      });
-    }
-
-    if (isLoading) {
-      console.log('loading...');
-      setLoading(true);
-    }
-
-    return () => {
-      dispatch(reset());
-      setValidation({
-        message: '',
-        isError: false,
-      });
-      setLoading(false);
-    };
-  }, [
-    isError,
-    message,
-    dispatch,
-    isLoading,
-    isSuccess,
-    validation.isError,
-    validation.isSuccess,
-    validation.message,
-  ]);
-
-  useEffect(() => {
-    if (route.params) {
-      toast.show({
-        title: 'Info',
-        description: 'Please provide the details above!',
-      });
-
-      const {details, socialLogin} = route.params;
-      setCredentials(prev => ({
-        ...prev,
-        firstName: details?.name?.split(' ')[0] || '',
-        lastName: details?.name?.split(' ')[1] || '',
-        email: details?.email || '',
-        socialAuth: socialLogin,
-      }));
-    }
-  }, [route.params]);
 
   return (
     <>
       {/* // if (showModal) { */}
 
-      {showModal?.type === 'error' ? (
-        <ErrorAlert
-          showModal={showModal?.show}
-          handleClose={() => setShowModal(false)}
-          message={modalMessage}
-        />
-      ) : showModal?.type === 'success' ? (
-        <SuccessAlert
-          showModal={showModal?.show}
-          handleClose={() => setShowModal(false)}
-          message={modalMessage}
-        />
-      ) : (
-        <></>
-      )}
       <Box p={3} safeArea style={{flex: 1}}>
         <KeyboardAvoidingView style={{flex: 1}}>
           <ScrollView style={{flex: 1}}>
@@ -387,7 +358,13 @@ export const LoadingButton = ({text}) => (
 
 export const SubmitButton = ({text, handlePress, ...rest}) => (
   <TouchableOpacity onPress={handlePress}>
-    <Center bg={'primary'} borderRadius={'full'} mt={4} width={'full'} py={2}>
+    <Center
+      bg={'primary'}
+      borderRadius={'full'}
+      mt={4}
+      width={'full'}
+      py={2}
+      {...rest}>
       <Text
         color={'secondary'}
         textTransform={'uppercase'}

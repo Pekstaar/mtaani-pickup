@@ -47,15 +47,7 @@ const Role = () => {
   //   console.log(selectedRole);
   // }, [selectedRole]);
 
-  useEffect(() => {
-    if (isSuccess) {
-      // console.log('Role fetch successful!');
-    }
-
-    if (isError) {
-      console.log('Role fetch Error!', error);
-    }
-  }, [roles, isLoading, error, isError, isSuccess]);
+  // }, [roles, isLoading, error, isError, isSuccess]);
 
   return (
     <Box safeArea p={4}>
