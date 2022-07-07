@@ -2,9 +2,9 @@ import {TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Center, Text} from 'native-base';
 
-const DeliverButton = ({...rest}) => {
+const DeliverButton = ({onPress, ...rest}) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <Center
         minWidth={'126px'}
         bg={'muted.500'}

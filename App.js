@@ -13,13 +13,11 @@ import {
   Login,
   RiderDetails,
   Verification,
-  Dashboard,
   SelectRiderCategory,
   Tracker,
   AddProduct,
   Delivery,
   Role,
-  ViewShelfProducts,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
@@ -98,6 +96,7 @@ const App = () => {
         <KeyboardAvoidingView
           flex={1}
           behavior={Platform === 'ios' ? 'padding' : 'height'}>
+          {/* <ScrollView h={'full'} w={'full'}> */}
           <NavigationContainer>
             <Stack.Navigator
               screenOptions={{
@@ -135,6 +134,7 @@ const App = () => {
               />
             </Stack.Navigator>
           </NavigationContainer>
+          {/* </ScrollView> */}
         </KeyboardAvoidingView>
       </Provider>
     </NativeBaseProvider>

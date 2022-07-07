@@ -37,7 +37,7 @@ const RoleButton = ({pressed, handleRoleButtonPress, currentRole}) => {
         /> */}
           <Image
             source={
-              currentRole?.toLowerCase() === 'mtaani agent'
+              currentRole?.toLowerCase() === 'agent'
                 ? assets.agent
                 : currentRole?.toLowerCase() === 'client'
                 ? assets.store

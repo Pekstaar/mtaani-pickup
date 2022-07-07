@@ -66,6 +66,7 @@ const ViewShelfProducts = () => {
         product={currentProduct}
         isOpen={viewModal}
         onClose={handleClose}
+        handleDeliver={() => navigation.navigate('deliver_product')}
       />
 
       <Box safeArea>
@@ -104,6 +105,7 @@ const ViewShelfProducts = () => {
                   }}
                   key={item?._id}
                   product={item}
+                  handleDeliver={() => navigation.navigate('deliver_product')}
                 />
               ))}
             </VStack>

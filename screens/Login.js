@@ -6,6 +6,7 @@ import {
   HStack,
   Icon,
   Image,
+  ScrollView,
   // ScrollView,
   Spinner,
   Stack,
@@ -289,7 +290,7 @@ const Login = () => {
     );
 
   return (
-    <>
+    <Box flex={'1'}>
       {showModal?.type === 'error' ? (
         <ErrorAlert
           showModal={showModal?.show}
@@ -327,7 +328,7 @@ const Login = () => {
           right="0"
           height={'4/6'}
           mx={5}
-          space={8}>
+          space={4}>
           {/* title */}
           <Header title={'Enter login details'} />
 
@@ -371,10 +372,10 @@ const Login = () => {
           {/* social icons */}
           <Center>
             <Text fontWeight={700} fontSize={SIZES.md - 1}>
-              --------&nbsp; Or continue with &nbsp; ---------
+              ------&nbsp; Or continue with &nbsp; -------
             </Text>
 
-            <HStack space={6} py={3}>
+            <HStack space={5} py={3}>
               {/* Google connect button */}
               <Button
                 bg={'secondary'}
@@ -399,20 +400,27 @@ const Login = () => {
                 />
               </Button>
             </HStack>
-
-            <Text color="gray.500" mt={3} fontWeight={600}>
-              Don't have an account?&nbsp;
-              <Text
-                color={'secondary'}
-                textDecorationLine={'underline'}
-                onPress={() => navigation.navigate('roles')}>
-                Register here
-              </Text>
-            </Text>
           </Center>
         </VStack>
+        <Box
+          pl={'4'}
+          position={'absolute'}
+          w={'full'}
+          bottom={'4'}
+          justifyContent={'center'}
+          mx={'auto'}>
+          <Text color="gray.500" mt={1} fontWeight={600}>
+            Don't have an account?&nbsp;
+            <Text
+              color={'secondary'}
+              textDecorationLine={'underline'}
+              onPress={() => navigation.navigate('roles')}>
+              Register here
+            </Text>
+          </Text>
+        </Box>
       </Stack>
-    </>
+    </Box>
   );
 };
 

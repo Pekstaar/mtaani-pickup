@@ -1,24 +1,16 @@
 import {
   Box,
-  Button,
-  Center,
   HStack,
-  Icon,
-  Image,
-  Text,
   useToast,
   VStack,
   ScrollView,
   Select,
   FormControl,
-  Input,
 } from 'native-base';
 import React, {useState, useEffect, useMemo} from 'react';
-import {assets, COLORS, SIZES} from '../../constants';
 import {Header} from '../Login';
 import {LabeledInput} from '../../components/Input';
 import {useNavigation} from '@react-navigation/native';
-import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorageService from '../../services/AsyncStorageService';
 import AboutBusinessService from '../../services/AboutBusinessService';
@@ -30,6 +22,7 @@ import {SelectColor} from '../../components/Seller/add_product/SelectColor';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
+import {SelectSize} from '../../components/Seller/add_product/Sizes';
 
 const AboutBusiness = ({route: {params}}) => {
   const toast = useToast();
@@ -57,6 +50,9 @@ const AboutBusiness = ({route: {params}}) => {
     colors: [],
     category: '',
     price: '',
+    sizes: '',
+    quantity: '',
+    quantity_unit: 'pieces',
   });
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -105,7 +101,7 @@ const AboutBusiness = ({route: {params}}) => {
   };
 
   const manageColor = color => {
-    const isContained = details?.colors?.includes(color);
+    const isContained = details?.colors?.includes(color.name);
 
     if (!isContained) {
       setDetails(prev => ({
@@ -113,10 +109,27 @@ const AboutBusiness = ({route: {params}}) => {
         colors: [color.name, ...prev.colors],
       }));
     } else {
-      const prevArrExcludeColor = details?.colors.filter(c => c.name !== color);
+      const prevArrExcludeColor = details?.colors.filter(c => c !== color.name);
       setDetails(prev => ({
         ...prev,
         colors: prevArrExcludeColor,
+      }));
+    }
+  };
+
+  const manageSizes = size => {
+    const isContained = details?.sizes?.includes(size.name);
+
+    if (!isContained) {
+      setDetails(prev => ({
+        ...prev,
+        sizes: [size.name, ...prev.sizes],
+      }));
+    } else {
+      const prevArrExcludeColor = details?.sizes.filter(c => c !== size.name);
+      setDetails(prev => ({
+        ...prev,
+        sizes: prevArrExcludeColor,
       }));
     }
   };
@@ -148,9 +161,15 @@ const AboutBusiness = ({route: {params}}) => {
         // const formData = new FormData();
         let formData = new FormData();
         formData.append('product_name', details.name);
-        formData.append('color', details.colors[0]);
         formData.append('price', details.price);
         formData.append('category', details.category);
+        formData.append('size', details.sizes[0]);
+        formData.append('qty', details.quantity);
+        formData.append('min_order', 2);
+
+        // details?.colors.forEach(color => {
+        //   formData.append('colors', color);
+        // });
         images.forEach(img => {
           formData.append('images', {
             uri: img?.uri,
@@ -311,37 +330,45 @@ const AboutBusiness = ({route: {params}}) => {
           {/* select color */}
           <SelectColor manageColor={manageColor} details={details} />
 
-          {/* <FormControl display={'flex'} p={0}>
+          <FormControl display={'flex'} p={0}>
             <FormControl.Label _text={{color: 'black'}}>
               Quantity
-            </FormControl.Label> */}
-          {/* <HStack alignItems={'center'} bg={'blue.300'} p={0}>
-            <Select
-              selectedValue={service}
-              minWidth="200"
-              accessibilityLabel="Choose Service"
-              placeholder="--kg/ltr/pieces--"
-              bg={'secondary'}
-              color="primary"
-              // style={{color: 'white'}}
-              onValueChange={itemValue => setService(itemValue)}>
-              <Select.Item label="Kg" value="kg" />
-              <Select.Item label="ltr" value="litre" />
-              <Select.Item label="Pieces" value="pieces" />
-              <Select.Item label="UI Designing" value="ui" />
-              <Select.Item label="Backend Development" value="backend" />
-            </Select>
+            </FormControl.Label>
+            <HStack alignItems={'center'} h={12} p={0} space={'1'}>
+              <Select
+                selectedValue={details.quantity_unit}
+                // minWidth="200"
+                accessibilityLabel="Choose Service"
+                placeholder="--kg/ltr/pieces--"
+                bg={'secondary'}
+                color="primary"
+                width={'160px'}
+                borderRadius={'xl'}
+                // style={{color: 'white'}}
+                onValueChange={itemValue =>
+                  setDetails(prev => ({...prev, quantity_unit: itemValue}))
+                }>
+                <Select.Item label="Kg" value="kg" />
+                <Select.Item label="Litre" value="ltr" />
+                <Select.Item label="Gram" value="gram" />
+                <Select.Item label="Millilitre" value="ml" />
+                <Select.Item label="Pieces" value="pieces" />
+              </Select>
 
-            <LabeledInput
-              // label={'Selling Price'}
-              placeholder={'e.g. shoes'}
-              value={details?.itemSold}
-              handleChange={name =>
-                setDetails(prev => ({...prev, itemSold: name}))
-              }
-            />
-          </HStack> */}
-          {/* </FormControl> */}
+              <LabeledInput
+                // label={'Selling Price'}
+                mt={-5}
+                placeholder={'eg. 20'}
+                value={details?.quantity}
+                handleChange={name =>
+                  setDetails(prev => ({...prev, quantity: name}))
+                }
+              />
+            </HStack>
+          </FormControl>
+
+          {/* sizes */}
+          <SelectSize manageSizes={manageSizes} details={details} />
 
           {loading ? (
             <LoadingButton />

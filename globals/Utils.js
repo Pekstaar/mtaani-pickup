@@ -6,3 +6,5 @@ export const logoutUser = callback => {
   AsyncStorageService.removeData('user');
   callback();
 };
+
+export const getNextScreen = screen => {};

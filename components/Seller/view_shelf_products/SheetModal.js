@@ -4,7 +4,7 @@ import {TouchableOpacity} from 'react-native';
 import {assets} from '../../../constants';
 import DeliverButton from './DeliverButton';
 
-const SheetModal = ({product, isOpen, onClose, onEdit}) => {
+const SheetModal = ({product, isOpen, onClose, onEdit, handleDeliver}) => {
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
       <Actionsheet.Content py={2} px={6}>
@@ -66,7 +66,7 @@ const SheetModal = ({product, isOpen, onClose, onEdit}) => {
               </Center>
             </TouchableOpacity>
 
-            <DeliverButton />
+            <DeliverButton onPress={handleDeliver} />
           </HStack>
         </Box>
       </Actionsheet.Content>

@@ -4,7 +4,7 @@ import {TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DeliverButton from './DeliverButton';
 
-const ProductListView = ({product, handleViewDetails}) => {
+const ProductListView = ({product, handleViewDetails, handleDeliver}) => {
   return (
     <Box flexDirection={'row'} bg={'white'} shadow={'1'} borderRadius={'xl'}>
       <TouchableOpacity onPress={handleViewDetails}>
@@ -44,6 +44,7 @@ const ProductListView = ({product, handleViewDetails}) => {
         </Text>
 
         <DeliverButton
+          onPress={handleDeliver}
           minWidth={'90px'}
           py={'1.5'}
           position={'absolute'}

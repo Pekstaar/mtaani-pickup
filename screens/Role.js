@@ -1,13 +1,5 @@
-import {
-  Text,
-  Box,
-  Center,
-  Button,
-  HStack,
-  Spinner,
-  useToast,
-} from 'native-base';
-import React, {useState, useEffect, useCallback} from 'react';
+import {Text, Box, Center, Button, HStack, useToast} from 'native-base';
+import React, {useEffect, useCallback} from 'react';
 import {Header} from './Login';
 import {useNavigation} from '@react-navigation/native';
 import RoleButton from '../components/Seller/role/RoleButton';
@@ -34,7 +26,11 @@ const Role = () => {
 
   const handleRoleButtonPress = useCallback(
     selected => {
-      dispatch(setSelectedRole(selected));
+      if (selected?.name.toLowerCase() === 'client') {
+        dispatch(setSelectedRole(selected));
+      } else if (selected?.name === 'Rider') {
+        navigation.navigate('select_rider_category');
+      }
     },
     [dispatch, setSelectedRole],
   );
@@ -63,7 +59,7 @@ const Role = () => {
 
         {/* Buttons  */}
         <Center my={6}>
-          <HStack space={4} flexWrap={'wrap'} justifyContent="space-between">
+          <HStack space={5} flexWrap={'wrap'} justifyContent="center">
             {roles.map(r => (
               <RoleButton
                 key={r?._id}

@@ -3,17 +3,19 @@ import {Box, Center, HStack, VStack, Image, Checkbox, Text} from 'native-base';
 import {assets} from '../../constants';
 import {Header} from '../Login';
 import {LoadingButton, SubmitButton} from '../Credentials';
+import {useNavigation} from '@react-navigation/native';
 
 const SelectRiderCategory = () => {
   const [rider, setRider] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   // functions:
   const handleChange = values => {
     console.log(values);
   };
   const handleContinue = () => {
-    console.log('Continue');
+    navigation.navigate('create_rider_profile');
   };
 
   return (

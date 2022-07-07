@@ -1,15 +1,12 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-import {COLORS} from '../../constants';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontiso from 'react-native-vector-icons/Fontisto';
-import {Box, Center, Icon, Stack, Text} from 'native-base';
+import {Center, Icon, Stack, Text} from 'native-base';
 import React from 'react';
-import {useSelector} from 'react-redux';
-import {Dashboard, ViewShelfProducts} from '../../screens';
-import {TouchableOpacity} from 'react-native';
+import {Dashboard, Tracker, ViewShelfProducts} from '../../screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -61,6 +58,26 @@ export const Navigator = () => {
                   as={<Fontiso name={'shopping-package'} />}
                 />
                 <Text fontSize={'xs'}>shelf</Text>
+              </Center>
+            );
+          },
+        }}
+      />
+
+      {/* shelf screen */}
+      <Tab.Screen
+        name="tracker"
+        component={Tracker}
+        options={{
+          tabBarIcon: ({focused}) => {
+            return (
+              <Center p={2}>
+                <Icon
+                  color={focused ? 'muted.800' : 'muted.400'}
+                  size={ICON_SIZE}
+                  as={<IonIcon name={'location'} />}
+                />
+                <Text fontSize={'xs'}>Track Package</Text>
               </Center>
             );
           },
