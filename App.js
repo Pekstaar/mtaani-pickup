@@ -25,13 +25,13 @@ import {GoogleSignin} from '@react-native-community/google-signin';
 import {COLORS} from './constants';
 import SplashScreen from 'react-native-splash-screen';
 import CreateRiderProfile from './screens/rider/CreateRiderProfile';
-import {
-  NotificationListener,
-  requestUserPermission,
-} from './globals/pushnotifications_helper';
+
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
 import {Navigator} from './components/navigation/BottomNav';
+import {LocalNotification} from './src/services/LocalPushController';
+import messaging from '@react-native-firebase/messaging';
+import NotificationController from './src/services/NotificationController';
 
 const Stack = createStackNavigator();
 
@@ -76,18 +76,16 @@ const App = () => {
     },
   });
 
+  // const handleButtonPress = () => {
+
+  // }
+
   useEffect(() => {
     SplashScreen.hide();
 
     GoogleSignin.configure({
       webClientId: '',
     });
-  }, []);
-
-  useEffect(() => {
-    requestUserPermission();
-
-    NotificationListener();
   }, []);
 
   return (

@@ -9,18 +9,53 @@ import {
   Text,
   VStack,
 } from 'native-base';
-import React from 'react';
+import React, {useEffect} from 'react';
 import assets from '../../constants/assets';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 import {logoutUser} from '../../globals/Utils';
+import {LocalNotification} from '../../src/services/LocalPushController';
+import messaging from '@react-native-firebase/messaging';
+import {Alert} from 'react-native';
+import NotificationController from '../../src/services/NotificationController';
 
 const Dashboard = () => {
   const navigation = useNavigation();
+
+  const getToken = async () => {
+    try {
+      const fcmToken = await messaging().getToken();
+
+      if (fcmToken) {
+        console.log(fcmToken);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in background', remoteMessage);
+    });
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+
+      console.log(remoteMessage);
+    });
+
+    getToken();
+
+    return unsubscribe;
+  }, []);
+
   return (
     <ScrollView>
       <Box safeArea p={3}>
+        <NotificationController />
+
         {/* header */}
         <HStack justifyContent={'space-between'} alignItems={'center'} p={2}>
           <Image
@@ -30,6 +65,14 @@ const Dashboard = () => {
             width={12}
             borderRadius={'full'}
           />
+
+          <Pressable
+            bg={'white'}
+            p={2}
+            borderRadius={'full'}
+            onPress={getToken}>
+            <Text>Pop Notification</Text>
+          </Pressable>
 
           <Pressable
             bg={'white'}
