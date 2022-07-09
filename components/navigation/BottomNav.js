@@ -1,27 +1,31 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-import IonIcon from 'react-native-vector-icons/Ionicons';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Fontiso from 'react-native-vector-icons/Fontisto';
-import {Center, Icon, Stack, Text} from 'native-base';
+import {Box, Center, Icon, Stack, Text} from 'native-base';
 import React from 'react';
 import {Dashboard, Tracker, ViewShelfProducts} from '../../screens';
+
+// icons
+import IonIcon from 'react-native-vector-icons/Ionicons';
+// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import CurrentNavMarker from './CurrentNavMarker';
 
 const Tab = createBottomTabNavigator();
 
 export const Navigator = () => {
-  const ICON_SIZE = 5;
+  const ICON_SIZE = 6;
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: 58,
+          height: 62,
           borderRadius: 10,
           // position: 'absolute'
-          paddingHorizontal: 6,
+          paddingHorizontal: 5,
         },
       }}>
       {/* Dashboard screen */}
@@ -31,13 +35,22 @@ export const Navigator = () => {
         options={{
           tabBarIcon: ({focused}) => {
             return (
-              <Center p={2}>
+              <Center>
                 <Icon
-                  color={focused ? 'muted.800' : 'muted.400'}
+                  color={focused ? 'muted.800' : 'trueGray.300'}
                   size={ICON_SIZE}
-                  as={<FontAwesome name={'home'} />}
+                  as={
+                    <MaterialCommunityIcons name={'view-dashboard-outline'} />
+                  }
                 />
-                <Text fontSize={'xs'}>Dashboard</Text>
+                <Text
+                  color={focused ? 'muted.800' : 'trueGray.400'}
+                  fontWeight={'black'}
+                  fontSize={'xs'}>
+                  Dashboard
+                </Text>
+
+                {focused && <CurrentNavMarker />}
               </Center>
             );
           },
@@ -51,13 +64,21 @@ export const Navigator = () => {
         options={{
           tabBarIcon: ({focused}) => {
             return (
-              <Center p={2}>
+              <Center>
                 <Icon
-                  color={focused ? 'muted.800' : 'muted.400'}
-                  size={ICON_SIZE}
-                  as={<Fontiso name={'shopping-package'} />}
+                  color={focused ? 'muted.800' : 'trueGray.300'}
+                  size={ICON_SIZE + 1}
+                  as={<MaterialCommunityIcons name={'truck-fast-outline'} />}
                 />
-                <Text fontSize={'xs'}>shelf</Text>
+
+                <Text
+                  color={focused ? 'muted.800' : 'trueGray.400'}
+                  fontSize={'xs'}
+                  fontWeight={'black'}>
+                  Send
+                </Text>
+
+                {focused && <CurrentNavMarker />}
               </Center>
             );
           },
@@ -71,13 +92,74 @@ export const Navigator = () => {
         options={{
           tabBarIcon: ({focused}) => {
             return (
-              <Center p={2}>
+              <Center>
                 <Icon
-                  color={focused ? 'muted.800' : 'muted.400'}
+                  color={focused ? 'muted.800' : 'trueGray.300'}
                   size={ICON_SIZE}
-                  as={<IonIcon name={'location'} />}
+                  as={<MaterialCommunityIcons name={'tshirt-crew-outline'} />}
                 />
-                <Text fontSize={'xs'}>Track Package</Text>
+                <Text
+                  color={focused ? 'muted.800' : 'trueGray.400'}
+                  fontSize={'xs'}
+                  fontWeight={'black'}>
+                  Products
+                </Text>
+
+                {focused && <CurrentNavMarker />}
+              </Center>
+            );
+          },
+        }}
+      />
+
+      {/* shelf screen */}
+      <Tab.Screen
+        name="sales"
+        component={Tracker}
+        options={{
+          tabBarIcon: ({focused}) => {
+            return (
+              <Center>
+                <Icon
+                  color={focused ? 'muted.800' : 'trueGray.300'}
+                  size={ICON_SIZE}
+                  as={<Entypo name={'bar-graph'} />}
+                />
+                <Text
+                  color={focused ? 'muted.800' : 'trueGray.400'}
+                  fontSize={'xs'}
+                  fontWeight={'black'}>
+                  Sales
+                </Text>
+
+                {focused && <CurrentNavMarker />}
+              </Center>
+            );
+          },
+        }}
+      />
+
+      {/* shelf screen */}
+      <Tab.Screen
+        name="menu"
+        component={Tracker}
+        options={{
+          tabBarIcon: ({focused}) => {
+            return (
+              <Center>
+                <Icon
+                  color={focused ? 'muted.800' : 'trueGray.300'}
+                  size={ICON_SIZE}
+                  as={<AntDesign name={'menu-unfold'} />}
+                />
+                <Text
+                  color={focused ? 'muted.800' : 'trueGray.400'}
+                  fontSize={'xs'}
+                  fontWeight={'black'}>
+                  Menu
+                </Text>
+
+                {focused && <CurrentNavMarker />}
               </Center>
             );
           },

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "url": "https://images.pexels.com/photos/1051744/pexels-photo-1051744.jpeg?auto=compress&cs=tinysrgb&w=600,"
+  },
+
+  {
+    "id": 2,
+    "url": "https://images.pexels.com/photos/1336873/pexels-photo-1336873.jpeg?auto=compress&cs=tinysrgb&w=600,"
+  },
+
+  {
+    "id": 3,
+    "url": "https://images.pexels.com/photos/52518/jeans-pants-blue-shop-52518.jpeg?auto=compress&cs=tinysrgb&w=600,"
+  },
+
+  {
+    "id": 4,
+    "url":"https://images.pexels.com/photos/5887647/pexels-photo-5887647.jpeg?auto=compress&cs=tinysrgb&w=600,"
+  },
+
+  {
+    "id": 5,
+    "url":"https://images.pexels.com/photos/2002717/pexels-photo-2002717.jpeg?auto=compress&cs=tinysrgb&w=600,"
+  }
+]

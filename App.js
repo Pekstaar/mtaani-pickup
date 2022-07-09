@@ -29,9 +29,10 @@ import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
 import {Navigator} from './components/navigation/BottomNav';
-import {LocalNotification} from './src/services/LocalPushController';
-import messaging from '@react-native-firebase/messaging';
-import NotificationController from './src/services/NotificationController';
+import {CheckConnectivity} from './src/Utils';
+// import {LocalNotification} from './src/services/LocalPushController';
+// import messaging from '@react-native-firebase/messaging';
+// import NotificationController from './src/services/NotificationController';
 
 const Stack = createStackNavigator();
 
@@ -45,34 +46,41 @@ const App = () => {
   const theme = extendTheme({
     colors: colorTheme,
     fontConfig: {
-      Poppins: {
+      Lato: {
         900: {
-          normal: 'Poppins-Black',
+          normal: 'Lato-Heavy',
+          italic: 'Lato-HeavyItalic',
         },
         800: {
-          normal: 'Poppins-ExtraBold',
+          normal: 'Lato-Black',
+          italic: 'Lato-BlackItalic',
         },
         700: {
-          normal: 'Poppins-Bold',
+          normal: 'Lato-Bold',
+          italic: 'Lato-BoldItalic',
         },
         600: {
-          normal: 'Poppins-SemiBold',
+          normal: 'Lato-Semibold',
+          italic: 'Lato-SemiboldItalic',
         },
         500: {
-          normal: 'Poppins-Medium',
+          normal: 'Lato-Medium',
+          italic: 'Lato-MediumItalic',
         },
         400: {
-          normal: 'Poppins-Regular',
+          normal: 'Lato-Regular',
+          italic: 'Lato-Italic',
         },
         300: {
-          normal: 'Poppins-light',
+          normal: 'Lato-light',
+          italic: 'Lato-lightItalic',
         },
       },
     },
     fonts: {
-      heading: 'Poppins',
-      body: 'Poppins',
-      mono: 'Poppins',
+      heading: 'Lato',
+      body: 'Lato',
+      mono: 'Lato',
     },
   });
 
@@ -80,7 +88,9 @@ const App = () => {
 
   // }
 
-  useEffect(() => {
+  useEffect(async () => {
+    await CheckConnectivity();
+
     SplashScreen.hide();
 
     GoogleSignin.configure({

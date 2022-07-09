@@ -25,7 +25,7 @@ import {useNavigation} from '@react-navigation/native';
 // import { MODAL_TIMEOUT } from "../globals/Utils";
 import {ErrorAlert, SuccessAlert} from '../components';
 import {LoadingButton, SubmitButton} from './Credentials';
-import {MODAL_TIMEOUT} from '../globals/Utils';
+import {MODAL_TIMEOUT} from '../src/Utils';
 import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';
 import {useSelector} from 'react-redux';
