@@ -18,6 +18,9 @@ import {
   AddProduct,
   Delivery,
   Role,
+  Method,
+  NewPassword,
+  SmsRecovery,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
@@ -88,9 +91,8 @@ const App = () => {
 
   // }
 
-  useEffect(async () => {
-    await CheckConnectivity();
-
+  useEffect(() => {
+    // CheckConnectivity()
     SplashScreen.hide();
 
     GoogleSignin.configure({
@@ -116,6 +118,19 @@ const App = () => {
               <Stack.Screen name="verification" component={Verification} />
               <Stack.Screen name="tracker" component={Tracker} />
               <Stack.Screen name="roles" component={Role} />
+
+              <Stack.Screen
+                name="password_recovery_method"
+                component={Method}
+              />
+              <Stack.Screen
+                name="password_sms_recovery"
+                component={SmsRecovery}
+              />
+              <Stack.Screen
+                name="password_create_new"
+                component={NewPassword}
+              />
 
               {/* seller screens */}
               <Stack.Screen name="about_business" component={AboutBusiness} />

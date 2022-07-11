@@ -1,10 +1,16 @@
 import {Pressable, HStack, Image, Icon, Text} from 'native-base';
 import React from 'react';
 import {assets} from '../../../constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import ActiveNotificationLabel from './ActiveNotificaitonLabel';
+import {logoutUser} from '../../../src/Utils';
+import {useNavigation} from '@react-navigation/native';
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const DashboardHeader = ({isActive = true}) => {
+  const navigation = useNavigation();
+
   return (
     <HStack justifyContent={'space-between'} alignItems={'center'} p={2}>
       <Image
@@ -14,6 +20,16 @@ const DashboardHeader = ({isActive = true}) => {
         width={10}
         borderRadius={'full'}
       />
+
+      <Pressable
+        bg={'white'}
+        p={2}
+        borderRadius={'full'}
+        onPress={() => {
+          logoutUser(() => navigation.navigate('Login'));
+        }}>
+        <Icon color={'gray.500'} size={6} as={<AntDesign name="logout" />} />
+      </Pressable>
 
       <Pressable>
         <Icon

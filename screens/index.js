@@ -10,6 +10,9 @@ import Tracker from './Tracker';
 import AddProduct from './seller/AddProduct';
 import Delivery from './seller/Delivery';
 import ViewShelfProducts from './seller/ViewShelfProducts';
+import Method from './recover_password/Method';
+import NewPassword from './recover_password/NewPassword';
+import SmsRecovery from './recover_password/SmsRecovery';
 
 // rider
 import SelectRiderCategory from './rider/SelectRiderCategory';
@@ -29,4 +32,7 @@ export {
   ViewShelfProducts,
   // rider
   SelectRiderCategory,
+  Method,
+  NewPassword,
+  SmsRecovery,
 };

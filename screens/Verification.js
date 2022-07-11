@@ -14,7 +14,7 @@ import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
 import {COLORS, FONTS, SIZES} from '../constants';
-import {MODAL_TIMEOUT} from '../globals/Utils';
+import {MODAL_TIMEOUT} from '../src/Utils';
 import {reset, verifyUser} from '../Redux/reducers/authSlice';
 import {LoadingButton, SubmitButton} from './Credentials';
 import {Header} from './Login';

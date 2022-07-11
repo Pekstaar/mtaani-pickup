@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Spinner,
   Stack,
   Text,
+  useToast,
   View,
   VStack,
 } from 'native-base';
@@ -23,91 +24,66 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 
 // import { MODAL_TIMEOUT } from "../globals/Utils";
-import {ErrorAlert, SuccessAlert} from '../components';
 import {LoadingButton, SubmitButton} from './Credentials';
-import {MODAL_TIMEOUT} from '../src/Utils';
 import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';
-import {useSelector} from 'react-redux';
+import Toast from '../components/general/toasts';
 // import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
   const navigation = useNavigation();
   // const dispatch = useDispatch();
+  const toast = useToast();
 
-  const NEXT_SCREEN = 'main';
+  const NEXT_SCREEN = useMemo(() => 'main', []);
+  const TOAST_PROPS = useMemo(
+    () => ({placement: 'bottom', duration: 3000}),
+    [],
+  );
 
   // manage state
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [showModal, setShowModal] = useState({type: '', show: false});
-  const [modalMessage, setModalMessage] = useState('');
-  const [validation, setValidation] = useState({
-    message: '',
-    isError: false,
-    isSuccess: false,
-  });
+
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
-  const {isSuccess, isLoading, isError, message} = useSelector(
-    state => state.auth,
-  );
-
-  // METHODS
-  const showSuccessModal = pMessage => {
-    setShowModal({
-      type: 'success',
-      show: true,
-      message: pMessage,
-    });
-    setLoading(false);
-  };
-
-  const showErrorModal = pMessage => {
-    setShowModal({
-      type: 'error',
-      show: true,
-      message: pMessage,
-    });
-    setLoading(false);
-  };
-
-  const resetModal = () => {
-    setShowModal({
-      type: '',
-      show: false,
-      message: '',
-    });
-  };
-
-  const resetModalOnTimeout = time => {
-    setTimeout(function () {
-      resetModal();
-    }, time);
-  };
+  // const {isSuccess, isLoading, isError, message} = useSelector(
+  //   state => state.auth,
+  // );
 
   const validateCredentials = () => {
     if (phone === '') {
-      setValidation({
-        isError: true,
-        message: 'please input Phone number!',
-        isSuccess: false,
+      toast.show({
+        render: () => {
+          return <Toast.error message={'please provide your phone number!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
       });
 
       return false;
     } else if (phone.length < 9 || phone.length > 10) {
-      setValidation({
-        isError: true,
-        message: 'Invalid phone number!',
-        isSuccess: false,
+      // setValidation({
+      //   isError: true,
+      //   message: 'Invalid phone number!',
+      //   isSuccess: false,
+      // });
+      toast.show({
+        render: () => {
+          return <Toast.error message={'invalid phone number!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
       });
 
       return false;
     } else if (password === '') {
-      setValidation({
-        isError: true,
-        message: 'please input your password!',
-        isSuccess: false,
+      toast.show({
+        render: () => {
+          return <Toast.error message={'please provide password!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
       });
 
       return false;
@@ -117,29 +93,43 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    setLoading(true);
-
     const isValidationSuccessful = validateCredentials();
+
+    setLoading(true);
 
     if (isValidationSuccessful) {
       AuthService.loginUser({
         phone_number: phone,
         password,
       })
-        .then(user => {
-          showSuccessModal('Login Succesful!');
-          resetModalOnTimeout(MODAL_TIMEOUT);
-
+        .then(async user => {
           console.log(user);
+          await AsyncStorageService.setData('user', JSON.stringify(user));
+
+          toast.show({
+            render: () => {
+              return <Toast.success message={'Login successful!!'} />;
+            },
+            placement: TOAST_PROPS.placement,
+            duration: TOAST_PROPS.duration,
+          });
 
           if (user?.token) {
-            navigation.navigate(NEXT_SCREEN);
+            // navigation.navigate(NEXT_SCREEN);
           }
         })
         .catch(e => {
-          showErrorModal(e?.response?.data?.message || e?.message || e);
-
-          resetModalOnTimeout(MODAL_TIMEOUT);
+          toast.show({
+            render: () => {
+              return (
+                <Toast.error
+                  message={e?.response?.data?.message || e?.message || e}
+                />
+              );
+            },
+            placement: TOAST_PROPS.placement,
+            duration: TOAST_PROPS.duration,
+          });
 
           setLoading(false);
           console.log(e);
@@ -152,6 +142,7 @@ const Login = () => {
   };
 
   const handleSocialUser = async userDetails => {
+    setLoading(true);
     const response = await AuthService.authenticateUserSocially({
       f_name: userDetails?.name.split(' ')[0],
       l_name: userDetails?.name.split(' ')[1],
@@ -167,8 +158,20 @@ const Login = () => {
     await AsyncStorageService?.setData('user', JSON.stringify(response?.data));
 
     if (userExistsInDb) {
+      // setLoading(false);
+
       navigation.navigate(NEXT_SCREEN);
+
+      toast.show({
+        render: () => {
+          return <Toast.success message={'Login Successful!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
     } else if (userDoesNotExist) {
+      // setLoading(false);
+
       navigation.navigate('credentials', {
         details: {
           name: userDetails?.name,
@@ -215,7 +218,13 @@ const Login = () => {
     }
   };
 
+  const handleRecoverPassword = () => {
+    navigation.navigate('password_recovery_method');
+  };
+
   useEffect(() => {
+    setLoading(false);
+
     const fetchUser = async () => {
       setPageLoading(true);
 
@@ -236,50 +245,6 @@ const Login = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isError) {
-      setModalMessage(message);
-      setShowModal({type: 'error', show: true});
-
-      setTimeout(function () {
-        setShowModal(prev => ({...prev, show: false}));
-        setModalMessage('');
-      }, 2500);
-    }
-
-    if (isSuccess) {
-      console.log('Facebook  Successfull!');
-
-      // navigation.navigate(NEXT_SCREEN);
-      //
-    }
-
-    if (isLoading) {
-      console.log('loading...');
-      setLoading(true);
-    }
-
-    return () => {
-      setLoading(false);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (validation?.isError) {
-      showErrorModal(validation?.message);
-
-      resetModalOnTimeout(MODAL_TIMEOUT);
-    }
-
-    if (validation?.isSuccess) {
-      // navigation.navigate(NEXT_SCREEN);
-    }
-
-    return () => {
-      setLoading(false);
-    };
-  }, [validation]);
-
   // Use Effect
 
   if (pageLoading)
@@ -291,21 +256,6 @@ const Login = () => {
 
   return (
     <Box flex={'1'}>
-      {showModal?.type === 'error' ? (
-        <ErrorAlert
-          showModal={showModal?.show}
-          handleClose={() => setShowModal(false)}
-          message={showModal?.message}
-        />
-      ) : showModal?.type === 'success' ? (
-        <SuccessAlert
-          showModal={showModal?.show}
-          handleClose={() => setShowModal(false)}
-          message={showModal?.message}
-        />
-      ) : (
-        <></>
-      )}
       <Stack position={'relative'} height="full" bg={'white'}>
         <Box>
           <Image
@@ -328,7 +278,7 @@ const Login = () => {
           right="0"
           height={'4/6'}
           mx={5}
-          space={4}>
+          space={6}>
           {/* title */}
           <Header title={'Enter login details'} />
 
@@ -353,11 +303,11 @@ const Login = () => {
             />
 
             <Text ml={6} fontWeight={600} fontSize={'xs'} mt={2}>
-              Forgot Password?{' '}
+              Forgot Password?
               <Text
                 fontWeight={700}
-                fontSize={SIZES.sm + 1}
-                textDecorationLine={'underline'}>
+                textDecorationLine={'underline'}
+                onPress={handleRecoverPassword}>
                 Click Here
               </Text>
             </Text>
@@ -427,7 +377,7 @@ const Login = () => {
 export default Login;
 
 export const Header = ({title}) => (
-  <HStack px={1} py={2.5} alignItems={'center'} space={1}>
+  <HStack px={1} py={3} alignItems={'center'} space={2}>
     {/* <Line /> */}
     <Box
       width={1}
@@ -437,7 +387,7 @@ export const Header = ({title}) => (
       bg={'primary'}
     />
 
-    <Text fontWeight={600} fontSize={SIZES.lg}>
+    <Text fontWeight={'700'} fontSize={SIZES.lg}>
       {title}
     </Text>
   </HStack>

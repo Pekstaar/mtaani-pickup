@@ -11,7 +11,7 @@ import {
   useToast,
   Center,
 } from 'native-base';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ErrorAlert, SuccessAlert} from '../components';
@@ -47,88 +47,86 @@ const Credentials = ({route}) => {
   const dispatch = useDispatch();
   const toast = useToast();
 
+  // const NEXT_SCREEN = useMemo(() => 'main', []);
+  const TOAST_PROPS = useMemo(
+    () => ({placement: 'bottom', duration: 3000}),
+    [],
+  );
+
   const validateFields = () => {
     const {firstName, lastName, phone, password, confirmPassword, role, email} =
       credentials;
 
     if (firstName === '' || firstName === null || !firstName) {
-      setValidation(prev => ({
-        ...prev,
-        message: 'First name required!',
-        isError: true,
-      }));
+      toast.show({
+        render: () => {
+          return <Toast.error message={'First name required!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
 
       return false;
     } else if (phone === '' || phone === null || !phone) {
-      setValidation(prev => ({
-        ...prev,
-        message: 'Phone number required!',
-        isError: true,
-      }));
+      toast.show({
+        render: () => {
+          return <Toast.error message={'Phone number required!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
 
       return false;
     } else if (email === '' || email === null || !email) {
-      setValidation(prev => ({
-        ...prev,
-        message: 'Email required!',
-        isError: true,
-      }));
+      toast.show({
+        render: () => {
+          return <Toast.error message={'Email required!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
 
       return false;
     } else if (
       !credentials?.socialAuth &&
       (password === '' || password === null || !password)
     ) {
-      setValidation(prev => ({
-        ...prev,
-        message: 'password required!',
-        isError: true,
-      }));
+      toast.show({
+        render: () => {
+          return <Toast.error message={'password required!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
 
       return false;
     } else if (
       !credentials?.socialAuth &&
       (confirmPassword === '' || confirmPassword === null || !confirmPassword)
     ) {
-      setValidation(prev => ({
-        ...prev,
-        message: 'please confirm password!',
-        isError: true,
-      }));
+      toast.show({
+        render: () => {
+          return <Toast.error message={'please confirm password!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
 
       return false;
     } else if (!credentials?.socialAuth && confirmPassword !== password) {
-      setValidation(prev => ({
-        ...prev,
-        message: 'Passwords do not match!',
-        isError: true,
-      }));
+      toast.show({
+        render: () => {
+          return <Toast.error message={'Passwords do not match!'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
+      });
 
       return false;
     }
 
     return true;
   };
-
-  useEffect(() => {
-    if (validation?.isError) {
-      toast.show({
-        render: () => {
-          return <Toast.error message={validation?.message} />;
-        },
-        placement: 'top',
-        duration: 5000,
-      });
-    }
-
-    return () => {
-      setValidation({
-        message: '',
-        isError: false,
-        isSuccess: false,
-      });
-    };
-  }, [validation.isError, validation.message]);
 
   useEffect(() => {
     if (route.params) {
@@ -158,8 +156,7 @@ const Credentials = ({route}) => {
     if (!isValid) return;
 
     setLoading(true);
-    const {firstName, lastName, phone, password, confirmPassword, role, email} =
-      credentials;
+    const {firstName, lastName, phone, password, role, email} = credentials;
 
     if (credentials?.socialAuth) {
       //
@@ -209,8 +206,8 @@ const Credentials = ({route}) => {
                   <Toast.success message={'Account created successfully'} />
                 );
               },
-              placement: 'top',
-              duration: 3000,
+              placement: TOAST_PROPS.placement,
+              duration: TOAST_PROPS.duration,
             });
 
             navigation.navigate('verification', {user: saved});
@@ -224,8 +221,8 @@ const Credentials = ({route}) => {
                 <Toast.error message={JSON.stringify(err?.response?.data)} />
               );
             },
-            placement: 'top',
-            duration: 3000,
+            placement: TOAST_PROPS.placement,
+            duration: TOAST_PROPS.duration,
           });
 
           setLoading(false);
@@ -363,12 +360,12 @@ export const SubmitButton = ({text, handlePress, ...rest}) => (
       borderRadius={'full'}
       mt={4}
       width={'full'}
-      py={2}
+      py={2.5}
       {...rest}>
       <Text
         color={'secondary'}
         textTransform={'uppercase'}
-        fontWeight={700}
+        fontWeight={'800'}
         fontSize={'md'}>
         {text}
       </Text>
