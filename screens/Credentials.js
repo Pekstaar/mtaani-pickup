@@ -334,7 +334,7 @@ const Credentials = ({route}) => {
   );
 };
 
-export const LoadingButton = ({text}) => (
+export const LoadingButton = ({text = 'Loading . . .'}) => (
   <Button
     bg={'primary'}
     opacity={'60'}
@@ -347,7 +347,7 @@ export const LoadingButton = ({text}) => (
     <HStack space={2}>
       <Spinner color={'gray.600'} />
       <Text color={'gray.600'} fontWeight={700} fontSize={'md'}>
-        Loading . . .
+        {text}
       </Text>
     </HStack>
   </Button>

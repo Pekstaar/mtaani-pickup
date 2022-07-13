@@ -28,7 +28,7 @@ const MethodInput = ({icon, text, handlePress, isCurrent, ...rest}) => (
         )}
       </Center>
 
-      <Text fontSize={'md'} fontWeight={'800'}>
+      <Text fontSize={'md'} fontWeight={'700'}>
         {text}
       </Text>
 

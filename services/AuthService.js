@@ -106,9 +106,24 @@ const googleLogin = async () => {
 // activate user:
 const activateUser = async ({id, code}) => {
   const response = await axios.put(`/user/${id}/activate`, {code});
-
+  // console.log(id, code);
   return response?.data;
 };
+
+const resendVerificationCode = async id => {
+  const response = await axios.post(`/${id}/resend_token`);
+
+  return response.data;
+};
+
+// *************Password recovery************
+// send verification code to recover account
+const recoveryVerification = async data => {
+  const response = await axios.post(`/recover_account`, data);
+
+  return response.data;
+};
+// *************Password recovery************
 
 // fetch facebook user details
 const fetchFacebookUserDetails = async token => {
@@ -154,6 +169,8 @@ const AuthService = {
   authenticateUserSocially,
   updateUser,
   fetchUserRoles,
+  resendVerificationCode,
+  recoveryVerification,
 };
 
 export default AuthService;

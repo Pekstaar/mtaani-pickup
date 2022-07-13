@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
+import {SIZES} from '../../constants';
 // icons: checkmark-circle,
 // AntDesign: exclamationcircle
 // Entypo: info-with-cirle, warning
@@ -12,23 +13,28 @@ const success = ({message}) => {
   return (
     <HStack
       px={'5'}
+      w={SIZES.width * 0.9}
       borderRadius={'md'}
       p={'3'}
       alignItems={'center'}
       space={'3'}
       bg={'#4AA255'}
-      mx={'auto'}
-      w={'95%'}>
-      <Icon
-        size={7}
-        color={'white'}
-        as={<Ionicons name={'checkmark-circle'} />}
-      />
+      mx={'auto'}>
+      <VStack space={1} w={'full'}>
+        <Box
+          flexDir={'row'}
+          justifyContent={'space-between'}
+          alignItems={'center'}>
+          <Text fontWeight={'semibold'} color={'white'}>
+            Success
+          </Text>
 
-      <VStack space={1} flex={'1'}>
-        <Text fontWeight={'semibold'} color={'white'}>
-          Success
-        </Text>
+          <Icon
+            size={6}
+            color={'white'}
+            as={<Ionicons name={'checkmark-circle'} />}
+          />
+        </Box>
 
         <Box _text={{fontSize: 'xs', color: 'white'}} maxW={'98%'}>
           {message}
@@ -42,7 +48,7 @@ const error = ({message, title = 'Error'}) => {
   return (
     <HStack
       px={'5'}
-      w={'95%'}
+      w={SIZES.width * 0.9}
       mx={'auto'}
       borderRadius={'md'}
       p={'3'}
@@ -72,7 +78,7 @@ const info = ({message}) => {
   return (
     <HStack
       px={'5'}
-      w={'95%'}
+      w={SIZES.width * 0.9}
       mx={'auto'}
       borderRadius={'md'}
       p={'3'}
@@ -102,7 +108,7 @@ const warning = ({message}) => {
   return (
     <HStack
       px={'5'}
-      maxW={'95%'}
+      maxW={SIZES.width * 0.9}
       mx={'auto'}
       borderRadius={'md'}
       p={'3'}

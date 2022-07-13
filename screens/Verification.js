@@ -30,12 +30,8 @@ const Verification = ({route: {params}}) => {
   const [otp, setOtp] = useState([]);
   const [inputIsFocused, setInputIsFocused] = useState(false);
 
-  const [validation, setValidation] = useState({
-    isError: false,
-    message: '',
-  });
-
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
 
   const navigation = useNavigation();
   const {user} = params;
@@ -50,40 +46,39 @@ const Verification = ({route: {params}}) => {
   const handleVerify = () => {
     setLoading(true);
     if (otp?.length < 5) {
-      setValidation({
-        isError: true,
-        message: 'Invalid Code!',
-        isSuccess: false,
-      });
-
       toast.show({
         render: () => {
           return <Toast.error message={'Invalid Code!'} />;
         },
-        placement: 'top',
-        duration: 3000,
       });
       setLoading(false);
+
       return;
     }
-    const code = otp?.join();
+
+    const code = parseInt(otp?.join(''));
     // dispatch(verifyUser({id: user?._id || id, code: code}));
 
     AuthService.activateUser({id: user?._id, code})
       .then(r => {
-        console.log(r);
+        toast.show({
+          render: () => {
+            return <Toast.success message={r?.message} />;
+          },
+        });
 
         setLoading(false);
+        navigation.navigate('Login');
       })
       .catch(err => {
         toast.show({
           render: () => {
             return (
-              <Toast.error message={JSON.stringify(err?.response?.data)} />
+              <Toast.error
+                message={JSON.stringify(err?.response?.data?.message)}
+              />
             );
           },
-          placement: 'top',
-          duration: 3000,
         });
 
         setLoading(false);
@@ -115,6 +110,19 @@ const Verification = ({route: {params}}) => {
         code={digit}
       />
     );
+  };
+
+  const handleResend = () => {
+    setResending(true);
+    AuthService.resendVerificationCode(user?._id)
+      .then(() => {
+        //
+        setResending(false);
+      })
+      .catch(err => {
+        console.log(err?.response?.data?.message);
+        setResending(false);
+      });
   };
 
   return (
@@ -151,8 +159,11 @@ const Verification = ({route: {params}}) => {
               />
             </HStack>
 
-            {loading ? (
-              <LoadingButton />
+            {loading || resending ? (
+              <LoadingButton
+                w={'5/6'}
+                text={resending ? 'resending code . . .' : 'verifying . . .'}
+              />
             ) : (
               <SubmitButton
                 width={'220px'}
@@ -160,6 +171,16 @@ const Verification = ({route: {params}}) => {
                 handlePress={handleVerify}
               />
             )}
+
+            <Box flexDir={'row'} my={'2'} justifyContent={'center'}>
+              Didn't receive code?{' '}
+              <Text
+                textDecorationLine={'underline'}
+                fontWeight={'800'}
+                onPress={handleResend}>
+                Click here to Resend
+              </Text>
+            </Box>
           </Center>
         </Box>
       </Box>

@@ -1,7 +1,6 @@
 import empty from '../assets/images/empty.png';
 import empty_2 from '../assets/icons/empty.png';
 import profile from '../assets/images/profile_pic.webp';
-import shopify from '../assets/images/shopify.jpg';
 import pickupLogo from '../assets/icons/logo.jpg';
 import motorMobile from '../assets/images/bike.jpg';
 import bgImage from '../assets/images/image_bg.jpg';
@@ -17,7 +16,6 @@ import store from '../assets/icons/store.png';
 export default {
   empty,
   profile,
-  shopify,
   pickupLogo,
   motorMobile,
   bgImage,

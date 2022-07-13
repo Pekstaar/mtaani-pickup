@@ -13,6 +13,7 @@ import ViewShelfProducts from './seller/ViewShelfProducts';
 import Method from './recover_password/Method';
 import NewPassword from './recover_password/NewPassword';
 import SmsRecovery from './recover_password/SmsRecovery';
+import EmailRecovery from './recover_password/EmailRecovery';
 
 // rider
 import SelectRiderCategory from './rider/SelectRiderCategory';
@@ -30,9 +31,11 @@ export {
   AddProduct,
   Delivery,
   ViewShelfProducts,
-  // rider
-  SelectRiderCategory,
+  // recover password screens
   Method,
   NewPassword,
   SmsRecovery,
+  EmailRecovery,
+  // rider
+  SelectRiderCategory,
 };

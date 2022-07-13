@@ -21,6 +21,7 @@ import {
   Method,
   NewPassword,
   SmsRecovery,
+  EmailRecovery,
 } from './screens';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/Store';
@@ -105,8 +106,8 @@ const App = () => {
       <Provider store={Store}>
         <KeyboardAvoidingView
           flex={1}
-          behavior={Platform === 'ios' ? 'padding' : 'height'}>
-          {/* <ScrollView h={'full'} w={'full'}> */}
+          behavior={Platform === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={10}>
           <NavigationContainer>
             <Stack.Navigator
               screenOptions={{
@@ -118,7 +119,6 @@ const App = () => {
               <Stack.Screen name="verification" component={Verification} />
               <Stack.Screen name="tracker" component={Tracker} />
               <Stack.Screen name="roles" component={Role} />
-
               <Stack.Screen
                 name="password_recovery_method"
                 component={Method}
@@ -128,10 +128,13 @@ const App = () => {
                 component={SmsRecovery}
               />
               <Stack.Screen
+                name="password_email_recovery"
+                component={EmailRecovery}
+              />
+              <Stack.Screen
                 name="password_create_new"
                 component={NewPassword}
               />
-
               {/* seller screens */}
               <Stack.Screen name="about_business" component={AboutBusiness} />
               <Stack.Screen name="last" component={Last} />
@@ -145,7 +148,6 @@ const App = () => {
               /> */}
               <Stack.Screen name="deliver_product" component={Delivery} />
               <Stack.Screen name="main" component={Navigator} />
-
               {/* rider */}
               <Stack.Screen
                 name="select_rider_category"

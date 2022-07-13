@@ -104,6 +104,7 @@ const Login = () => {
       })
         .then(async user => {
           console.log(user);
+
           await AsyncStorageService.setData('user', JSON.stringify(user));
 
           toast.show({
@@ -114,8 +115,9 @@ const Login = () => {
             duration: TOAST_PROPS.duration,
           });
 
+          console.log(user);
           if (user?.token) {
-            // navigation.navigate(NEXT_SCREEN);
+            navigation.navigate(NEXT_SCREEN);
           }
         })
         .catch(e => {
@@ -132,7 +134,6 @@ const Login = () => {
           });
 
           setLoading(false);
-          console.log(e);
           return;
         });
     } else {
@@ -314,7 +315,7 @@ const Login = () => {
           </Box>
 
           {loading ? (
-            <LoadingButton />
+            <LoadingButton text={'logging in ...'} />
           ) : (
             <SubmitButton text={'LOG IN'} handlePress={handleLogin} />
           )}
@@ -359,7 +360,7 @@ const Login = () => {
           bottom={'4'}
           justifyContent={'center'}
           mx={'auto'}>
-          <Text color="gray.500" mt={1} fontWeight={600}>
+          <Text color="gray.500" mt={1} fontWeight={600} textAlign={'center'}>
             Don't have an account?&nbsp;
             <Text
               color={'secondary'}

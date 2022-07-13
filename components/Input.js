@@ -114,7 +114,7 @@ export const LabeledInput = ({
 
   return (
     <Box flex={1} {...rest}>
-      <Text fontWeight={'800'} fontSize={'md'}>
+      <Text fontWeight={'700'} fontSize={'md'}>
         {label}
       </Text>
       {exp && (
