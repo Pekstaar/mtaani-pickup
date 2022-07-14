@@ -103,8 +103,6 @@ const Login = () => {
         password,
       })
         .then(async user => {
-          console.log(user);
-
           await AsyncStorageService.setData('user', JSON.stringify(user));
 
           toast.show({
@@ -115,7 +113,11 @@ const Login = () => {
             duration: TOAST_PROPS.duration,
           });
 
-          console.log(user);
+          // console.log(user);
+          setLoading(false);
+          setPhone('');
+          setPassword('');
+
           if (user?.token) {
             navigation.navigate(NEXT_SCREEN);
           }
@@ -303,12 +305,13 @@ const Login = () => {
               handleChange={pwd => setPassword(pwd)}
             />
 
-            <Text ml={6} fontWeight={600} fontSize={'xs'} mt={2}>
-              Forgot Password?
+            <Text ml={6} fontSize={'xs'} mt={2}>
+              Forgot Password?&nbsp;
               <Text
-                fontWeight={700}
+                fontWeight={'800'}
                 textDecorationLine={'underline'}
-                onPress={handleRecoverPassword}>
+                onPress={handleRecoverPassword}
+                py={'2'}>
                 Click Here
               </Text>
             </Text>
@@ -333,7 +336,7 @@ const Login = () => {
                 borderRadius={'full'}
                 p="3"
                 onPress={handleGoogleLogin}>
-                <Icon size={7} color="primary" as={<FIcon name="google" />} />
+                <Icon size={25} color="primary" as={<FIcon name="google" />} />
               </Button>
 
               {/* Facebook button */}
@@ -342,10 +345,11 @@ const Login = () => {
                 borderRadius={'full'}
                 height={12}
                 width={12}
-                onPress={handleFacebookLogin}
-                pl="5">
+                p="3"
+                onPress={handleFacebookLogin}>
                 <Icon
                   size={7}
+                  ml={'2'}
                   color="primary"
                   as={<FIcon name="facebook-f" />}
                 />
@@ -357,15 +361,16 @@ const Login = () => {
           pl={'4'}
           position={'absolute'}
           w={'full'}
-          bottom={'4'}
+          bottom={'10'}
           justifyContent={'center'}
           mx={'auto'}>
-          <Text color="gray.500" mt={1} fontWeight={600} textAlign={'center'}>
+          <Text color="gray.500" mt={1} textAlign={'center'}>
             Don't have an account?&nbsp;
             <Text
               color={'secondary'}
               textDecorationLine={'underline'}
-              onPress={() => navigation.navigate('roles')}>
+              onPress={() => navigation.navigate('roles')}
+              fontWeight={'700'}>
               Register here
             </Text>
           </Text>

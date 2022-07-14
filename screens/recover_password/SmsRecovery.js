@@ -1,9 +1,12 @@
 import {useNavigation} from '@react-navigation/native';
-import {Box, Text} from 'native-base';
-import React from 'react';
+import {combineReducers} from '@reduxjs/toolkit';
+import {Box, Text, useToast} from 'native-base';
+import React, {useState} from 'react';
+import Toast from '../../components/general/toasts';
 import {LabeledInput} from '../../components/Input';
 import CurrentScreenSelector from '../../components/Seller/password/CurrentScreenSelector';
-import {SubmitButton} from '../Credentials';
+import AuthService from '../../services/AuthService';
+import {LoadingButton, SubmitButton} from '../Credentials';
 import {Header} from '../Login';
 
 const SmsRecovery = ({
@@ -12,9 +15,76 @@ const SmsRecovery = ({
   },
 }) => {
   const navigation = useNavigation();
+  const toast = useToast();
+
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const validateCode = () => {
+    if (code === '') {
+      toast.show({
+        render: () => {
+          return (
+            <Toast.error
+              message={JSON.stringify(
+                'Please pass in the code sent to your phone',
+              )}
+            />
+          );
+        },
+      });
+      return false;
+    } else if (code.length < 5 || code.length > 5) {
+      toast.show({
+        render: () => {
+          return (
+            <Toast.error
+              message={JSON.stringify(
+                'Invalide code. The code should be atleast 5 characters',
+              )}
+            />
+          );
+        },
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   const handleVerificaiton = () => {
-    navigation.navigate('password_create_new');
+    const isValid = validateCode();
+
+    if (!isValid) return;
+
+    setLoading(true);
+    AuthService.confirmRecoveryVerification({
+      phone_number,
+      code,
+    })
+      .then(r => {
+        toast.show({
+          render: () => {
+            return <Toast.success message={JSON.stringify(r?.message)} />;
+          },
+        });
+        setLoading(false);
+        navigation.navigate('password_create_new');
+      })
+      .catch(err => {
+        toast.show({
+          render: () => {
+            return (
+              <Toast.error
+                message={JSON.stringify(err?.response?.data?.message)}
+              />
+            );
+          },
+        });
+        setLoading(false);
+
+        console.log(err);
+      });
   };
 
   return (
@@ -30,15 +100,18 @@ const SmsRecovery = ({
         <LabeledInput
           label={''}
           placeholder={'code'}
-          //   value={credentials.password}
-          //   handleChange={pwd =>
-          //     setCredentials(prev => ({...prev, password: pwd}))
-          //   }
+          value={code}
+          handleChange={txt => setCode(txt)}
         />
       </Box>
 
-      <SubmitButton handlePress={handleVerificaiton} text={'Verify Code'} />
-
+      <Box>
+        {loading ? (
+          <LoadingButton text="Verifying code . . ." />
+        ) : (
+          <SubmitButton handlePress={handleVerificaiton} text={'Verify Code'} />
+        )}
+      </Box>
       <Box flexDir={'row'} my={'4'} justifyContent={'center'}>
         Didn't receive code?{' '}
         <Text textDecorationLine={'underline'} fontWeight={'800'}>

@@ -111,7 +111,7 @@ const activateUser = async ({id, code}) => {
 };
 
 const resendVerificationCode = async id => {
-  const response = await axios.post(`/${id}/resend_token`);
+  const response = await axios.post(`/${id}/resend-token`);
 
   return response.data;
 };
@@ -123,6 +123,21 @@ const recoveryVerification = async data => {
 
   return response.data;
 };
+
+const confirmRecoveryVerification = async data => {
+  const response = await axios.put(`/user/re-activate`, data);
+
+  return response.data;
+};
+
+// send new password
+
+const createNewPassword = async data => {
+  const response = await axios.put(`/reset-password`, data);
+
+  return response.data;
+};
+
 // *************Password recovery************
 
 // fetch facebook user details
@@ -171,6 +186,8 @@ const AuthService = {
   fetchUserRoles,
   resendVerificationCode,
   recoveryVerification,
+  confirmRecoveryVerification,
+  createNewPassword,
 };
 
 export default AuthService;

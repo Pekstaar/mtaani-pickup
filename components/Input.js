@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Box,
-  Button,
+  Pressable,
   Center,
   HStack,
   Icon,
@@ -11,7 +11,7 @@ import {
 } from 'native-base';
 import {COLORS, SIZES} from '../constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Pressable, TextInput as TInput, TouchableOpacity} from 'react-native';
+import {TextInput as TInput, TouchableOpacity} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 export const TextInput = ({
@@ -134,13 +134,14 @@ export const LabeledInput = ({
         type={type === 'password' ? (show ? 'text' : 'password') : 'text'}
         InputRightElement={
           type === 'password' && (
-            <Icon
-              as={<Entypo name={show ? 'eye' : 'eye-with-line'} />}
-              size={5}
-              mr="2"
-              color="muted.500"
-              onPress={() => setShow(!show)}
-            />
+            <Pressable p={'3'} onPress={() => setShow(!show)}>
+              <Icon
+                as={<Entypo name={show ? 'eye' : 'eye-with-line'} />}
+                size={5}
+                mr="2"
+                color="muted.500"
+              />
+            </Pressable>
           )
         }
       />

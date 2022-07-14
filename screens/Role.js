@@ -59,7 +59,12 @@ const Role = () => {
 
         {/* Buttons  */}
         <Center my={6}>
-          <HStack space={5} flexWrap={'wrap'} justifyContent="center">
+          <HStack
+            space={5}
+            flexWrap={'wrap'}
+            w={'auto'}
+            mx={'8'}
+            justifyContent="flex-start">
             {roles.map(r => (
               <RoleButton
                 key={r?._id}
@@ -69,12 +74,11 @@ const Role = () => {
               />
             ))}
           </HStack>
-
           <Button
             bg={'primary'}
             borderRadius={'full'}
             mt={4}
-            width={'full'}
+            width={'5/6'}
             onPress={handleContinue}>
             <Text color={'secondary'} fontWeight={800} fontSize={'md'}>
               CONTINUE

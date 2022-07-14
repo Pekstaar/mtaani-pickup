@@ -22,6 +22,7 @@ import AsyncStorageService from '../../services/AsyncStorageService';
 import AboutBusinessService from '../../services/AboutBusinessService';
 import {LoadingButton, SubmitButton} from '../Credentials';
 import AuthService from '../../services/AuthService';
+import {TouchableOpacity} from 'react-native';
 
 const AboutBusiness = () => {
   const toast = useToast();
@@ -152,11 +153,11 @@ const AboutBusiness = () => {
       });
   };
 
-  const logoutUser = () => {
-    // dispatch(logout);
-    AsyncStorageService.removeData('user');
-    navigation.navigate('Login');
-  };
+  // const logoutUser = () => {
+  //   // dispatch(logout);
+  //   AsyncStorageService.removeData('user');
+  //   navigation.navigate('Login');
+  // };
 
   useEffect(() => {
     const fetch = async () => {
@@ -173,6 +174,8 @@ const AboutBusiness = () => {
           businessCategories.Categories.map(({name, _id}) =>
             cats.push({name, id: _id}),
           );
+
+          console.log(cats);
 
           setCategories(cats);
         } else {
@@ -319,15 +322,31 @@ const AboutBusiness = () => {
             </VStack>
           </Box>
 
-          <Button bg={'black'} onPress={logoutUser}>
-            Logout
-          </Button>
+          <Box>
+            {loading ? (
+              <LoadingButton />
+            ) : (
+              <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
+            )}
 
-          {loading ? (
-            <LoadingButton />
-          ) : (
-            <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
-          )}
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Center
+                bg={'secondary'}
+                borderRadius={'full'}
+                mt={4}
+                width={'full'}
+                py={2.5}>
+                <Text
+                  color={'white'}
+                  textTransform={'uppercase'}
+                  fontSize={'md'}
+                  fontWeight={'700'}>
+                  Skip
+                </Text>
+              </Center>
+            </TouchableOpacity>
+          </Box>
+
           {/* </Button> */}
         </VStack>
       </Box>

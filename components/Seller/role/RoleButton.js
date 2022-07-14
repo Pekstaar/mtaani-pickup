@@ -13,6 +13,7 @@ const RoleButton = ({pressed, handleRoleButtonPress, currentRole}) => {
       my={'2'}
       bg={'white'}
       px={4}
+      minWidth={'135px'}
       borderRadius={'2xl'}
       onPress={handleRoleButtonPress}
       _pressed={{

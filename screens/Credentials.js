@@ -10,6 +10,7 @@ import {
   Spinner,
   useToast,
   Center,
+  Pressable,
 } from 'native-base';
 import React, {useEffect, useState, useMemo} from 'react';
 import {TouchableOpacity} from 'react-native';
@@ -236,7 +237,7 @@ const Credentials = ({route}) => {
 
       <Box p={3} safeArea style={{flex: 1}}>
         <KeyboardAvoidingView style={{flex: 1}}>
-          <ScrollView style={{flex: 1}}>
+          <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="always">
             {/* Header  */}
             <Header title={'Credentials'} />
             {/* inputs */}
@@ -252,7 +253,7 @@ const Credentials = ({route}) => {
                 />
                 <LabeledInput
                   label={'Last Name'}
-                  placeholder={'First name'}
+                  placeholder={'Last name'}
                   value={credentials.lastName}
                   handleChange={name =>
                     setCredentials(prev => ({...prev, lastName: name}))
@@ -290,7 +291,7 @@ const Credentials = ({route}) => {
                   </Box>
                 )}
                 {!credentials?.socialAuth && (
-                  <Box height={20}>
+                  <Box height={20} mt={4}>
                     <LabeledInput
                       label={'Confirm Password'}
                       placeholder={'Re-type your password'}
@@ -346,7 +347,7 @@ export const LoadingButton = ({text = 'Loading . . .'}) => (
   >
     <HStack space={2}>
       <Spinner color={'gray.600'} />
-      <Text color={'gray.600'} fontWeight={700} fontSize={'md'}>
+      <Text color={'gray.600'} fontWeight={700} fontSize={'md'} Text>
         {text}
       </Text>
     </HStack>
@@ -362,11 +363,7 @@ export const SubmitButton = ({text, handlePress, ...rest}) => (
       width={'full'}
       py={2.5}
       {...rest}>
-      <Text
-        color={'secondary'}
-        textTransform={'uppercase'}
-        fontWeight={'800'}
-        fontSize={'md'}>
+      <Text color={'secondary'} textTransform={'uppercase'} fontWeight={'800'}>
         {text}
       </Text>
     </Center>

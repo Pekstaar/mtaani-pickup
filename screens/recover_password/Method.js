@@ -62,11 +62,13 @@ const Method = () => {
               );
             },
           });
+          setLoading(false);
+
           navigation.navigate('password_sms_recovery', {
             phone_number: state,
           });
 
-          setLoading(false);
+          return;
         })
         .catch(err => {
           toast.show({
@@ -80,8 +82,6 @@ const Method = () => {
           });
 
           console.log(err);
-
-          setLoading(false);
         });
     }
     if (current === 'email') {
