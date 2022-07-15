@@ -1,30 +1,17 @@
 import {useNavigation} from '@react-navigation/native';
-import {
-  Box,
-  Button,
-  Center,
-  HStack,
-  Input,
-  Pressable,
-  Text,
-  useToast,
-} from 'native-base';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {StyleSheet} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {ErrorAlert, SuccessAlert} from '../components';
+import {Box, Center, HStack, Pressable, Text, useToast} from 'native-base';
+import React, {useMemo, useRef, useState} from 'react';
+import {StyleSheet, TextInput} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../constants';
-import {MODAL_TIMEOUT} from '../src/Utils';
-import {reset, verifyUser} from '../Redux/reducers/authSlice';
 import {LoadingButton, SubmitButton} from './Credentials';
 import {Header} from './Login';
-import {Keyboard} from 'react-native';
 import Toast from '../components/general/toasts';
 import AuthService from '../services/AuthService';
 
 const Verification = ({route: {params}}) => {
   // input references:
-  const VerificationInputRef = useRef(null);
+
+  let otpInputRef = useRef();
   const toast = useToast();
 
   const [otp, setOtp] = useState([]);
@@ -40,10 +27,6 @@ const Verification = ({route: {params}}) => {
   const VERIFICATION_LENGTH = useMemo(() => 5, []);
 
   const codeArray = new Array(VERIFICATION_LENGTH).fill(0);
-
-  useEffect(() => {
-    VerificationInputRef.current.focus();
-  }, [inputIsFocused]);
 
   const handleVerify = () => {
     setLoading(true);
@@ -88,12 +71,20 @@ const Verification = ({route: {params}}) => {
     // navigation.navigate('login');
   };
 
+  // const handleFocus = () => {
+  //   ref.current.focus();
+  // };
   // handle verification input press
   const handlePress = () => {
+    otpInputRef.current.focus();
+    // console.log('Input pressed');
     setInputIsFocused(true);
-    VerificationInputRef.current.focus();
-    Keyboard?.emit;
+    // Keyboard?.emit;
   };
+
+  // useEffect(() => {
+  //   handleFocus();
+  // }, []);
 
   const fillCodeDigitInput = (value, index) => {
     const emptyChar = ' ';
@@ -139,6 +130,23 @@ const Verification = ({route: {params}}) => {
         {/* Header */}
         <Header title={'Verify Phone number'} />
 
+        <TextInput
+          ref={otpInputRef}
+          keyboardType="number-pad"
+          style={{
+            backgroundColor: '#ddd',
+            bottom: 0,
+            right: 0,
+            opacity: 0,
+            position: 'absolute',
+            width: 5,
+            height: 5,
+          }}
+          onChangeText={text => setOtp(text.split(''))}
+          maxLength={5}
+        />
+        {/* <Button onPress={() => ref.current.focus()}> Press</Button> */}
+
         <Box>
           <Text
             color={'gray.500'}
@@ -154,18 +162,6 @@ const Verification = ({route: {params}}) => {
             <Box>
               <HStack space={3} justifyContent={'center'} py={5}>
                 {codeArray?.map(fillCodeDigitInput)}
-                <Input
-                  position="absolute"
-                  width={3}
-                  height={3}
-                  keyboardType="number-pad"
-                  returnKeyType="done"
-                  textContentType="oneTimeCode"
-                  ref={VerificationInputRef}
-                  onChangeText={text => setOtp(prev => text.split(''))}
-                  maxLength={5}
-                  opacity={0}
-                />
               </HStack>
               <Box>
                 {loading || resending ? (

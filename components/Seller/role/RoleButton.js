@@ -1,5 +1,5 @@
 import {Text, HStack, Image, Box, Button} from 'native-base';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {assets} from '../../../constants';
 import {SHADOWS, SIZES} from '../../../constants/theme';
 
@@ -30,12 +30,6 @@ const RoleButton = ({pressed, handleRoleButtonPress, currentRole}) => {
       }>
       <HStack space={3} alignItems={'center'}>
         <Box bg={'primary_light'} p={2} borderRadius={'full'}>
-          {/* <Icon
-          size={6}
-          color="black"
-          borderRadius={"full"}
-          as={<MaterialCommunityIcons name="sale" />}
-        /> */}
           <Image
             source={
               currentRole?.toLowerCase() === 'agent'

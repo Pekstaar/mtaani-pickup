@@ -10,15 +10,12 @@ import {
   Spinner,
   useToast,
   Center,
-  Pressable,
 } from 'native-base';
 import React, {useEffect, useState, useMemo} from 'react';
 import {TouchableOpacity} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {ErrorAlert, SuccessAlert} from '../components';
+import {useSelector} from 'react-redux';
 import Toast from '../components/general/toasts';
 import {LabeledInput} from '../components/Input';
-import {registerUser} from '../Redux/reducers/registrationSlice';
 import AuthService from '../services/AuthService';
 import {Header} from './Login';
 // import Success from '../components/general/toasts'
@@ -37,15 +34,9 @@ const Credentials = ({route}) => {
     role: selectedRole?._id,
   });
 
-  const [validation, setValidation] = useState({
-    message: '',
-    isError: false,
-    isSuccess: false,
-  });
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const toast = useToast();
 
   // const NEXT_SCREEN = useMemo(() => 'main', []);
@@ -219,7 +210,9 @@ const Credentials = ({route}) => {
           toast.show({
             render: () => {
               return (
-                <Toast.error message={JSON.stringify(err?.response?.data)} />
+                <Toast.error
+                  message={JSON.stringify(err?.response?.data?.message)}
+                />
               );
             },
             placement: TOAST_PROPS.placement,
@@ -272,15 +265,26 @@ const Credentials = ({route}) => {
                 />
               </Box>
 
+              <Box height={20}>
+                <LabeledInput
+                  label={'Email'}
+                  placeholder={'E.g. username@email.com'}
+                  value={credentials.email}
+                  handleChange={email =>
+                    setCredentials(prev => ({...prev, email}))
+                  }
+                />
+              </Box>
+
               {/* passwords */}
-              <VStack mt={3} space={4}>
+              <VStack space={4}>
                 {!credentials?.socialAuth && (
                   <Box height={24}>
                     <LabeledInput
                       label={'Create Password'}
                       placeholder={'create a 6 digit password'}
                       exp={
-                        'choose a 6 word password, with atleast 1 numerical character.'
+                        'choose an 8 word password, with atleast 1 numerical character.'
                       }
                       type={'password'}
                       value={credentials.password}
@@ -306,17 +310,6 @@ const Credentials = ({route}) => {
                     />
                   </Box>
                 )}
-
-                <Box height={20}>
-                  <LabeledInput
-                    label={'Email'}
-                    placeholder={'E.g. username@email.com'}
-                    value={credentials.email}
-                    handleChange={email =>
-                      setCredentials(prev => ({...prev, email}))
-                    }
-                  />
-                </Box>
               </VStack>
 
               {loading ? (

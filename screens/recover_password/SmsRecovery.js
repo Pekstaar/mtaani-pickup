@@ -69,7 +69,7 @@ const SmsRecovery = ({
           },
         });
         setLoading(false);
-        navigation.navigate('password_create_new');
+        navigation.navigate('password_create_new', {phone: phone_number});
       })
       .catch(err => {
         toast.show({

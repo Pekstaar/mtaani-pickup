@@ -33,7 +33,6 @@ import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
 import {Navigator} from './components/navigation/BottomNav';
-import {CheckConnectivity} from './src/Utils';
 // import {LocalNotification} from './src/services/LocalPushController';
 // import messaging from '@react-native-firebase/messaging';
 // import NotificationController from './src/services/NotificationController';

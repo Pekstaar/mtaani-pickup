@@ -6,13 +6,11 @@ import {
   HStack,
   Icon,
   Image,
-  ScrollView,
   // ScrollView,
   Spinner,
   Stack,
   Text,
   useToast,
-  View,
   VStack,
 } from 'native-base';
 import FIcon from 'react-native-vector-icons/FontAwesome';
@@ -23,7 +21,6 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 
-// import { MODAL_TIMEOUT } from "../globals/Utils";
 import {LoadingButton, SubmitButton} from './Credentials';
 import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';

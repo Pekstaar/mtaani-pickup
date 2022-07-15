@@ -1,15 +1,4 @@
-import {
-  Box,
-  Checkbox,
-  Pressable,
-  Text,
-  HStack,
-  VStack,
-  Icon,
-  KeyboardAvoidingView,
-  ScrollView,
-  useToast,
-} from 'native-base';
+import {Box, Text, VStack, Icon, ScrollView, useToast} from 'native-base';
 import React, {useState} from 'react';
 import {Header} from '../Login';
 
@@ -81,6 +70,7 @@ const Method = () => {
             },
           });
 
+          setLoading(false);
           console.log(err);
         });
     }
