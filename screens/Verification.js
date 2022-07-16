@@ -1,5 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
-import {Box, Center, HStack, Pressable, Text, useToast} from 'native-base';
+import {
+  Box,
+  Button,
+  Center,
+  HStack,
+  Pressable,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base';
 import React, {useMemo, useRef, useState} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../constants';
@@ -7,6 +16,7 @@ import {LoadingButton, SubmitButton} from './Credentials';
 import {Header} from './Login';
 import Toast from '../components/general/toasts';
 import AuthService from '../services/AuthService';
+import CButton from '../components/general/Buttons';
 
 const Verification = ({route: {params}}) => {
   // input references:
@@ -21,7 +31,7 @@ const Verification = ({route: {params}}) => {
   const [resending, setResending] = useState(false);
 
   const navigation = useNavigation();
-  const {user} = params;
+  const {user} = params || {};
   // const dispatch = useDispatch();
 
   const VERIFICATION_LENGTH = useMemo(() => 5, []);
@@ -154,7 +164,11 @@ const Verification = ({route: {params}}) => {
             fontWeight={600}
             fontSize={SIZES.sm + 0.5}>
             A {VERIFICATION_LENGTH} digit code has been sent via SMS to{' '}
-            {user?.phone_number}. Paste the code here
+            <Text color={'gray.800'}>{user?.phone_number}</Text>
+            <Text color={'gray.800'}>
+              {user?.email && `and via Email to ${user?.email}`}
+            </Text>
+            . Please type in the code
           </Text>
           {/* <Text>{JSON.stringify(otp)}</Text> */}
 
@@ -163,7 +177,7 @@ const Verification = ({route: {params}}) => {
               <HStack space={3} justifyContent={'center'} py={5}>
                 {codeArray?.map(fillCodeDigitInput)}
               </HStack>
-              <Box>
+              <VStack space={'2'}>
                 {loading || resending ? (
                   <LoadingButton
                     w={'full'}
@@ -178,7 +192,7 @@ const Verification = ({route: {params}}) => {
                     handlePress={handleVerify}
                   />
                 )}
-              </Box>
+              </VStack>
             </Box>
 
             <Box flexDir={'row'} my={'6'} justifyContent={'center'}>

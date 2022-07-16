@@ -33,6 +33,7 @@ import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
 import {Navigator} from './components/navigation/BottomNav';
+import DrawerNav from './components/navigation/DrawerNav';
 // import {LocalNotification} from './src/services/LocalPushController';
 // import messaging from '@react-native-firebase/messaging';
 // import NotificationController from './src/services/NotificationController';
@@ -113,9 +114,15 @@ const App = () => {
                 headerShown: false,
               }}
               initialRouteName="Login">
+              {/* bottom tab */}
+              <Stack.Screen name="main" component={Navigator} />
+              {/* drawer */}
+              <Stack.Screen name="drawer" component={DrawerNav} />
+
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="credentials" component={Credentials} />
               <Stack.Screen name="verification" component={Verification} />
+
               <Stack.Screen name="tracker" component={Tracker} />
               <Stack.Screen name="roles" component={Role} />
               <Stack.Screen
@@ -146,7 +153,6 @@ const App = () => {
                 component={ViewShelfProducts}
               /> */}
               <Stack.Screen name="deliver_product" component={Delivery} />
-              <Stack.Screen name="main" component={Navigator} />
               {/* rider */}
               <Stack.Screen
                 name="select_rider_category"

@@ -23,7 +23,8 @@ export const Navigator = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           height: 62,
-          borderRadius: 10,
+          borderTopStartRadius: 10,
+          borderTopEndRadius: 10,
           // position: 'absolute'
           paddingHorizontal: 5,
         },
@@ -47,7 +48,7 @@ export const Navigator = () => {
                   color={focused ? 'muted.800' : 'trueGray.400'}
                   fontWeight={'black'}
                   fontSize={'xs'}>
-                  Dashboard
+                  Discover
                 </Text>
 
                 {focused && <CurrentNavMarker />}

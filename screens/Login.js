@@ -6,7 +6,7 @@ import {
   HStack,
   Icon,
   Image,
-  // ScrollView,
+  ScrollView,
   Spinner,
   Stack,
   Text,
@@ -139,6 +139,20 @@ const Login = () => {
       setLoading(false);
       return;
     }
+
+    setTimeout(() => {
+      if (loading) {
+        // setLoading();
+        toast.show({
+          render: () => {
+            return <Toast.error message={'Request timeout try again later'} />;
+          },
+          placement: TOAST_PROPS.placement,
+          duration: TOAST_PROPS.duration,
+        });
+        setLoading(false);
+      }
+    }, 6500);
   };
 
   const handleSocialUser = async userDetails => {
@@ -271,107 +285,107 @@ const Login = () => {
           />
           <Image h={'300px'} alt={'map background'} source={assets.bgImage} />
         </Box>
-        <VStack
+        <ScrollView
           position={'absolute'}
           bottom={0}
           left={'0'}
           right="0"
           height={'4/6'}
-          mx={5}
-          space={6}>
-          {/* title */}
-          <Header title={'Enter login details'} />
+          mx={5}>
+          <VStack space={6}>
+            {/* title */}
+            <Header title={'Enter login details'} />
 
-          {/* inputs */}
-          <TextInput
-            icon={<SimpleLineIcons name="screen-smartphone" />}
-            placeholder={'phone number'}
-            preInputText={'+254'}
-            value={phone}
-            handleChange={number => setPhone(number)}
-          />
-
-          {/* password */}
-          <Box>
-            <PasswordInput
-              icon={<AntDesign name="lock" />}
-              placeholder={'Enter password'}
-              preInputText={'Password'}
-              type={'password'}
-              value={password}
-              handleChange={pwd => setPassword(pwd)}
+            {/* inputs */}
+            <TextInput
+              icon={<SimpleLineIcons name="screen-smartphone" />}
+              placeholder={'phone number'}
+              preInputText={'+254'}
+              value={phone}
+              handleChange={number => setPhone(number)}
             />
 
-            <Text ml={6} fontSize={'xs'} mt={2}>
-              Forgot Password?&nbsp;
-              <Text
-                fontWeight={'800'}
-                textDecorationLine={'underline'}
-                onPress={handleRecoverPassword}
-                py={'2'}>
-                Click Here
+            {/* password */}
+            <Box>
+              <PasswordInput
+                icon={<AntDesign name="lock" />}
+                placeholder={'Enter password'}
+                preInputText={'Password'}
+                type={'password'}
+                value={password}
+                handleChange={pwd => setPassword(pwd)}
+              />
+
+              <Text ml={6} fontSize={'xs'} mt={2}>
+                Forgot Password?&nbsp;
+                <Text
+                  fontWeight={'800'}
+                  textDecorationLine={'underline'}
+                  onPress={handleRecoverPassword}
+                  py={'2'}>
+                  Click Here
+                </Text>
               </Text>
-            </Text>
-          </Box>
+            </Box>
 
-          {loading ? (
-            <LoadingButton text={'logging in ...'} />
-          ) : (
-            <SubmitButton text={'LOG IN'} handlePress={handleLogin} />
-          )}
+            {loading ? (
+              <LoadingButton text={'logging in ...'} />
+            ) : (
+              <SubmitButton text={'LOG IN'} handlePress={handleLogin} />
+            )}
 
-          {/* social icons */}
-          <Center>
-            <Text fontWeight={700} fontSize={SIZES.md - 1}>
-              ------&nbsp; Or continue with &nbsp; -------
-            </Text>
+            {/* social icons */}
+            <Center>
+              <Text fontWeight={700} fontSize={SIZES.md - 1}>
+                ------&nbsp; Or continue with &nbsp; -------
+              </Text>
 
-            <HStack space={5} py={3}>
-              {/* Google connect button */}
-              <Button
-                bg={'secondary'}
-                borderRadius={'full'}
-                p="3"
-                onPress={handleGoogleLogin}>
-                <Icon size={25} color="primary" as={<FIcon name="google" />} />
-              </Button>
+              <HStack space={5} py={3}>
+                {/* Google connect button */}
+                <Button
+                  bg={'secondary'}
+                  borderRadius={'full'}
+                  p="3"
+                  onPress={handleGoogleLogin}>
+                  <Icon
+                    size={25}
+                    color="primary"
+                    as={<FIcon name="google" />}
+                  />
+                </Button>
 
-              {/* Facebook button */}
-              <Button
-                bg={'secondary'}
-                borderRadius={'full'}
-                height={12}
-                width={12}
-                p="3"
-                onPress={handleFacebookLogin}>
-                <Icon
-                  size={7}
-                  ml={'2'}
-                  color="primary"
-                  as={<FIcon name="facebook-f" />}
-                />
-              </Button>
-            </HStack>
-          </Center>
-        </VStack>
-        <Box
-          pl={'4'}
-          position={'absolute'}
-          w={'full'}
-          bottom={'10'}
-          justifyContent={'center'}
-          mx={'auto'}>
-          <Text color="gray.500" mt={1} textAlign={'center'}>
-            Don't have an account?&nbsp;
-            <Text
-              color={'secondary'}
-              textDecorationLine={'underline'}
-              onPress={() => navigation.navigate('roles')}
-              fontWeight={'700'}>
-              Register here
-            </Text>
-          </Text>
-        </Box>
+                {/* Facebook button */}
+                <Button
+                  bg={'secondary'}
+                  borderRadius={'full'}
+                  height={12}
+                  width={12}
+                  p="3"
+                  onPress={handleFacebookLogin}>
+                  <Icon
+                    size={7}
+                    ml={'2'}
+                    color="primary"
+                    as={<FIcon name="facebook-f" />}
+                  />
+                </Button>
+              </HStack>
+
+              <Box pl={'4'} w={'full'} justifyContent={'center'} mx={'auto'}>
+                <Text color="gray.500" textAlign={'center'}>
+                  Don't have an account?&nbsp;
+                  <Text
+                    color={'secondary'}
+                    textDecorationLine={'underline'}
+                    onPress={() => navigation.navigate('roles')}
+                    fontWeight={'700'}>
+                    Register here
+                  </Text>
+                </Text>
+              </Box>
+            </Center>
+          </VStack>
+        </ScrollView>
       </Stack>
     </Box>
   );

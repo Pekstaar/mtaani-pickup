@@ -12,7 +12,13 @@ const DashboardHeader = ({isActive = true}) => {
   const navigation = useNavigation();
 
   return (
-    <HStack justifyContent={'space-between'} alignItems={'center'} p={2}>
+    <HStack
+      justifyContent={'space-between'}
+      alignItems={'center'}
+      px={5}
+      py={3}
+      shadow={'1'}
+      bg={'#fff'}>
       <Image
         source={assets.profile}
         alt="profile pic"

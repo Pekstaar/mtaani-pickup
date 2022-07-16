@@ -49,20 +49,21 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <ScrollView>
+    <>
+      <NotificationController />
+
+      {/* header */}
+      <DashboardHeader />
       <Box safeArea p={3}>
-        <NotificationController />
+        <ScrollView>
+          {/* featured seller */}
+          <FeaturedSeller />
 
-        {/* header */}
-        <DashboardHeader />
-
-        {/* featured seller */}
-        <FeaturedSeller />
-
-        {/* Top sellers */}
-        <TopSellers />
+          {/* Top sellers */}
+          <TopSellers />
+        </ScrollView>
       </Box>
-    </ScrollView>
+    </>
   );
 };
 

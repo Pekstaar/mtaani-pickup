@@ -16,6 +16,7 @@ import {TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
 import Toast from '../components/general/toasts';
 import {LabeledInput} from '../components/Input';
+import AsyncStorageService from '../services/AsyncStorageService';
 import AuthService from '../services/AuthService';
 import {Header} from './Login';
 // import Success from '../components/general/toasts'
@@ -121,10 +122,14 @@ const Credentials = ({route}) => {
   };
 
   useEffect(() => {
+    setLoading(false);
     if (route.params) {
       toast.show({
-        title: 'Info',
-        description: 'Please provide the details above!',
+        render: () => {
+          return <Toast.info message={'Please Provide the details above'} />;
+        },
+        placement: TOAST_PROPS.placement,
+        duration: TOAST_PROPS.duration,
       });
 
       const {details, socialLogin} = route.params;
@@ -139,11 +144,6 @@ const Credentials = ({route}) => {
   }, [route.params]);
 
   const handleContinue = async () => {
-    // navigation.navigate('verification', {
-    //   phone: '',
-    // });
-    // return;
-
     const isValid = validateFields();
     if (!isValid) return;
 
@@ -160,23 +160,35 @@ const Credentials = ({route}) => {
           phone_number: credentials?.phone,
         });
 
+        toast.show({
+          render: () => {
+            return <Toast.success message={'Credentials update successful!'} />;
+          },
+          placement: TOAST_PROPS.placement,
+          duration: TOAST_PROPS.duration,
+        });
+
         if (
           await JSON.parse(await AsyncStorageService.getData('user'))?.token
         ) {
-          navigation.navigate('dashboard');
+          navigation.navigate('main');
         } else {
-          navigation.navigate('login');
+          navigation.navigate('Login');
         }
 
         setLoading(false);
       } catch (error) {
         console.log(error);
         toast.show({
-          title: 'ERROR!',
-          description: JSON.stringify(
-            error || error?.message || error?.response.data,
-          ),
+          render: () => {
+            return (
+              <Toast.error
+                message={error.response?.data?.message || error.message}
+              />
+            );
+          },
         });
+
         setLoading(false);
         return;
       }
@@ -207,17 +219,41 @@ const Credentials = ({route}) => {
           setLoading(false);
         })
         .catch(err => {
-          toast.show({
-            render: () => {
-              return (
-                <Toast.error
-                  message={JSON.stringify(err?.response?.data?.message)}
-                />
-              );
-            },
-            placement: TOAST_PROPS.placement,
-            duration: TOAST_PROPS.duration,
-          });
+          if (err.response.status === 402) {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast.error
+                    message={
+                      'User exists but the account not activated. Please activate account'
+                    }
+                  />
+                );
+              },
+            });
+
+            AuthService.resendVerificationCode(err.response.data?.user?._id)
+              .then(() => {
+                -navigation.navigate('verification', {
+                  user: err.response.data?.user,
+                });
+              })
+              .catch(err => console.log(err));
+          } else {
+            toast.show({
+              render: () => {
+                return (
+                  <Toast.error
+                    message={JSON.stringify(err?.response?.data?.message)}
+                  />
+                );
+              },
+              placement: TOAST_PROPS.placement,
+              duration: TOAST_PROPS.duration,
+            });
+          }
+
+          console.log(err);
 
           setLoading(false);
         });

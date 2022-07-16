@@ -83,7 +83,7 @@ const EmailRecovery = ({
         });
         setLoading(false);
 
-        navigation.navigate('password_create_new');
+        navigation.navigate('password_create_new', {email: email});
       })
       .catch(err => {
         toast.show({

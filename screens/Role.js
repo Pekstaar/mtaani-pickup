@@ -6,6 +6,8 @@ import RoleButton from '../components/Seller/role/RoleButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchRoles, setSelectedRole} from '../Redux/reducers/authSlice';
 import Loader from '../components/general/Loader';
+import {SIZES} from '../constants';
+import Toast from '../components/general/toasts';
 
 const Role = () => {
   const navigation = useNavigation();
@@ -18,7 +20,11 @@ const Role = () => {
 
   const handleContinue = () => {
     if (!selectedRole) {
-      toast.show({type: 'Error', description: 'Please pick a role!'});
+      toast.show({
+        render: () => {
+          return <Toast.error message={'You need to select a role!'} />;
+        },
+      });
     } else {
       navigation.navigate('credentials');
     }
@@ -60,11 +66,12 @@ const Role = () => {
         {/* Buttons  */}
         <Center my={6}>
           <HStack
-            space={5}
+            // space={5}
             flexWrap={'wrap'}
+            py={'3'}
             w={'auto'}
-            mx={'8'}
-            justifyContent="flex-start">
+            mx={SIZES.width * 0.02}
+            justifyContent="center">
             {roles.map(r => (
               <RoleButton
                 key={r?._id}

@@ -1,5 +1,4 @@
 import {useNavigation} from '@react-navigation/native';
-import {combineReducers} from '@reduxjs/toolkit';
 import {Box, Text, useToast} from 'native-base';
 import React, {useState} from 'react';
 import Toast from '../../components/general/toasts';

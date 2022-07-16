@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import {Box, Text, VStack, useToast} from 'native-base';
+import {Box, Text, VStack, useToast, ScrollView} from 'native-base';
 import React, {useEffect, useMemo, useState} from 'react';
 import Toast from '../../components/general/toasts';
 import {LabeledInput} from '../../components/Input';
@@ -11,11 +11,7 @@ import {Header} from '../Login';
 
 import Validation from '../../components/Seller/password/Validation';
 
-const NewPassword = ({
-  route: {
-    params: {phone, email},
-  },
-}) => {
+const NewPassword = ({route: {params}}) => {
   // navigation var
   const navigation = useNavigation();
   const toast = useToast();
@@ -72,8 +68,8 @@ const NewPassword = ({
     AuthService.createNewPassword({
       new_password: password,
       confirm_password: confirmPassword,
-      phone_number: phone || null,
-      email: email || null,
+      phone_number: params?.phone || null,
+      email: params?.email || null,
     })
       .then(r => {
         toast.show({
@@ -102,73 +98,76 @@ const NewPassword = ({
   return (
     <Box px={'4'}>
       <Header title={'Create a new password'} />
+      <ScrollView>
+        <Text color={'gray.600'} fontWeight={'semibold'}>
+          Make sure to follow the password creation criteria, and don’t share
+          your new password with anyone.
+        </Text>
 
-      <Text color={'gray.600'} fontWeight={'semibold'}>
-        Make sure to follow the password creation criteria, and don’t share your
-        new password with anyone.
-      </Text>
+        <VStack space={'3'}>
+          <Box h={'20'} mt={'6'}>
+            <LabeledInput
+              label={'New Password'}
+              type={'password'}
+              placeholder={'**********'}
+              value={password}
+              handleChange={pwd => setNewPassword(pwd)}
+            />
+          </Box>
 
-      <VStack space={'3'}>
-        <Box h={'20'} mt={'6'}>
-          <LabeledInput
-            label={'New Password'}
-            type={'password'}
-            placeholder={'**********'}
-            value={password}
-            handleChange={pwd => setNewPassword(pwd)}
-          />
-        </Box>
+          <VStack
+            space={'1'}
+            bg={'trueGray.200'}
+            px={'2'}
+            py={'4'}
+            borderRadius={'md'}>
+            <Text fontWeight={'600'}>Password Criteria</Text>
 
-        <VStack
-          space={'1'}
-          bg={'trueGray.200'}
-          px={'2'}
-          py={'4'}
-          borderRadius={'md'}>
-          <Text fontWeight={'600'}>Password Criteria</Text>
+            <Validation
+              isCurrent={validation?.length}
+              value={'Be at least 8 characters in length'}
+            />
+            <Validation
+              isCurrent={validation?.case}
+              value={
+                'Contain both upper and lowercase alphabetic characters (e.g. A-Z, a-z)'
+              }
+            />
+            <Validation
+              isCurrent={validation?.numeral}
+              value={'Have at least one numerical character (e.g. 0-9)'}
+            />
+            <Validation
+              isCurrent={validation?.special}
+              value={
+                'Have at least one special character (e.g. ~!@#$%^&*()_-+=)'
+              }
+            />
+          </VStack>
 
-          <Validation
-            isCurrent={validation?.length}
-            value={'Be at least 8 characters in length'}
-          />
-          <Validation
-            isCurrent={validation?.case}
-            value={
-              'Contain both upper and lowercase alphabetic characters (e.g. A-Z, a-z)'
-            }
-          />
-          <Validation
-            isCurrent={validation?.numeral}
-            value={'Have at least one numerical character (e.g. 0-9)'}
-          />
-          <Validation
-            isCurrent={validation?.special}
-            value={'Have at least one special character (e.g. ~!@#$%^&*()_-+=)'}
-          />
+          <Box h={'24'}>
+            <LabeledInput
+              label={'Confirm Password'}
+              type={'password'}
+              placeholder={'**********'}
+              value={confirmPassword}
+              handleChange={pwd => setConfirmPassword(pwd)}
+            />
+          </Box>
         </VStack>
-
-        <Box h={'24'}>
-          <LabeledInput
-            label={'Confirm Password'}
-            type={'password'}
-            placeholder={'**********'}
-            value={confirmPassword}
-            handleChange={pwd => setConfirmPassword(pwd)}
+        {loading ? (
+          <LoadingButton text="Resetting password . . ." />
+        ) : (
+          <SubmitButton
+            handlePress={handleResetPassword}
+            text={'Reset Password'}
           />
-        </Box>
-      </VStack>
-      {loading ? (
-        <LoadingButton text="Resetting password . . ." />
-      ) : (
-        <SubmitButton
-          handlePress={handleResetPassword}
-          text={'Reset Password'}
-        />
-      )}
+        )}
 
-      <Box mt={'5'}>
-        <CurrentScreenSelector currentScreen={'new_password'} />
-      </Box>
+        <Box mt={'5'}>
+          <CurrentScreenSelector currentScreen={'new_password'} />
+        </Box>
+      </ScrollView>
     </Box>
   );
 };

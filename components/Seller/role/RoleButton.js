@@ -11,6 +11,7 @@ const RoleButton = ({pressed, handleRoleButtonPress, currentRole}) => {
   return (
     <Button
       my={'2'}
+      mx={'2.5'}
       bg={'white'}
       px={4}
       minWidth={'135px'}
