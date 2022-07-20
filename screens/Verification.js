@@ -31,7 +31,7 @@ const Verification = ({route: {params}}) => {
   const [resending, setResending] = useState(false);
 
   const navigation = useNavigation();
-  const {user} = params || {};
+  const {user} = params;
   // const dispatch = useDispatch();
 
   const VERIFICATION_LENGTH = useMemo(() => 5, []);
@@ -63,7 +63,7 @@ const Verification = ({route: {params}}) => {
         });
 
         setLoading(false);
-        navigation.navigate('about_business');
+        navigation.navigate('about_business', {user});
       })
       .catch(err => {
         toast.show({

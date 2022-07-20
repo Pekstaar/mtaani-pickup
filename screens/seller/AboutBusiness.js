@@ -21,10 +21,15 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorageService from '../../services/AsyncStorageService';
 import AboutBusinessService from '../../services/AboutBusinessService';
 import {LoadingButton, SubmitButton} from '../Credentials';
-import AuthService from '../../services/AuthService';
 import {TouchableOpacity} from 'react-native';
+import {useSelector} from 'react-redux';
+import Toast from '../../components/general/toasts';
 
-const AboutBusiness = () => {
+const AboutBusiness = ({
+  route: {
+    params: {user},
+  },
+}) => {
   const toast = useToast();
 
   const [details, setDetails] = useState({
@@ -58,12 +63,13 @@ const AboutBusiness = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    console.log(businessLogo);
+    // console.log(businessLogo);
 
     if (businessLogo) {
       try {
         const formData = new FormData();
         formData.append('name', details?.bName);
+        formData.append('user_id', user?._id);
         formData.append('what_u_sale', details?.itemSold);
         formData.append('category', details?.category?.id);
 
@@ -77,18 +83,30 @@ const AboutBusiness = () => {
           type: businessLogo?.mime, // This is important for Android!!
         });
 
-        await AboutBusinessService.setBusinessCategoryDetails(formData);
+        const r = await AboutBusinessService.setBusinessCategoryDetails(
+          formData,
+        );
+
+        toast.show({
+          render: () => {
+            return <Toast.success message={r?.message} />;
+          },
+        });
 
         setLoading(false);
+
+        console.log(r);
+        navigation.navigate('last', {business: r?.biz});
         return;
       } catch (error) {
-        const err = JSON.stringify(
-          error?.response.data.message || error?.response.data,
-        );
+        console.log(error);
+        // const err = JSON.stringify(
+        //   error?.response.data.message || error?.response.data,
+        // );
         toast.show({
-          title: 'Error!',
-          status: 'error',
-          description: err,
+          render: () => {
+            return <Toast.error message={error.response.data?.message} />;
+          },
         });
 
         setLoading(false);
@@ -99,23 +117,33 @@ const AboutBusiness = () => {
     } else {
       const formData = new FormData();
       formData.append('name', details?.bName);
+      formData.append('user_id', user?._id);
       formData.append('what_u_sale', details?.itemSold);
       formData.append('category', details?.category?.id);
 
       try {
-        await AboutBusinessService.setBusinessCategoryDetails(formData);
-
-        setLoading(false);
-        return;
-      } catch (error) {
-        const err = JSON.stringify(
-          error?.response.data.message || error?.response.data,
+        const r = await AboutBusinessService.setBusinessCategoryDetails(
+          formData,
         );
 
         toast.show({
-          title: 'Error!',
-          status: 'error',
-          description: err,
+          render: () => {
+            return <Toast.success message={r?.message} />;
+          },
+        });
+        setLoading(false);
+        return;
+      } catch (error) {
+        console.log(error);
+
+        // const err = JSON.stringify(
+        //   error?.response.data.message || error?.response.data,
+        // );
+
+        toast.show({
+          render: () => {
+            return <Toast.error message={error.response.data?.message} />;
+          },
         });
 
         setLoading(false);
@@ -160,26 +188,22 @@ const AboutBusiness = () => {
   // };
 
   useEffect(() => {
+    setLoading(false);
     const fetch = async () => {
       try {
-        const user = await JSON.parse(
-          await AsyncStorageService.getData('user'),
+        const businessCategories =
+          await AboutBusinessService.fetchBusinessCategoriesNoAuth();
+
+        const cats = [];
+        businessCategories.Categories.map(({name, _id}) =>
+          cats.push({name, id: _id}),
         );
 
-        if (user?.token) {
-          const businessCategories =
-            await AboutBusinessService.fetchBusinessCategories();
+        console.log(cats);
 
-          const cats = [];
-          businessCategories.Categories.map(({name, _id}) =>
-            cats.push({name, id: _id}),
-          );
-
-          console.log(cats);
-
-          setCategories(cats);
-        } else {
-        }
+        setCategories(cats);
+        // } else {
+        // }
       } catch (error) {
         console.log(error);
         return;
@@ -189,13 +213,13 @@ const AboutBusiness = () => {
     fetch();
   }, []);
 
-  useEffect(() => {
-    const initFetch = async () => {
-      await AuthService.fetchFacebookUserDetails();
-    };
+  // useEffect(() => {
+  //   const initFetch = async () => {
+  //     await AuthService.fetchFacebookUserDetails();
+  //   };
 
-    initFetch();
-  }, []);
+  //   initFetch();
+  // }, []);
 
   // useFocusEffect
 
@@ -329,7 +353,7 @@ const AboutBusiness = () => {
               <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
             )}
 
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Center
                 bg={'secondary'}
                 borderRadius={'full'}
@@ -344,7 +368,7 @@ const AboutBusiness = () => {
                   Skip
                 </Text>
               </Center>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </Box>
 
           {/* </Button> */}

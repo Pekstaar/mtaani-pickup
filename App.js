@@ -22,8 +22,9 @@ import {
   NewPassword,
   SmsRecovery,
   EmailRecovery,
+  SellerProfile,
 } from './screens';
-import {Provider} from 'react-redux';
+import {Provider, useDispatch} from 'react-redux';
 import {Store} from './Redux/Store';
 import {GoogleSignin} from '@react-native-community/google-signin';
 import {COLORS} from './constants';
@@ -32,7 +33,6 @@ import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
-import {Navigator} from './components/navigation/BottomNav';
 import DrawerNav from './components/navigation/DrawerNav';
 // import {LocalNotification} from './src/services/LocalPushController';
 // import messaging from '@react-native-firebase/messaging';
@@ -109,13 +109,14 @@ const App = () => {
           behavior={Platform === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={10}>
           <NavigationContainer>
+            {/* stack navigator */}
             <Stack.Navigator
               screenOptions={{
                 headerShown: false,
               }}
-              initialRouteName="Login">
+              initialRouteName="drawer">
               {/* bottom tab */}
-              <Stack.Screen name="main" component={Navigator} />
+
               {/* drawer */}
               <Stack.Screen name="drawer" component={DrawerNav} />
 
@@ -147,12 +148,18 @@ const App = () => {
               <Stack.Screen name="rider_details" component={RiderDetails} />
               {/* <Stack.Screen name="dashboard" component={Dashboard} /> */}
               <Stack.Screen name="address" component={LocationPickerDemo} />
+              <Stack.Screen
+                // options={{headerShown: 'true'}}
+                name="profile"
+                component={SellerProfile}
+              />
               <Stack.Screen name="add_product" component={AddProduct} />
+              <Stack.Screen name="deliver_product" component={Delivery} />
               {/* <Stack.Screen
                 name="view_products"
                 component={ViewShelfProducts}
               /> */}
-              <Stack.Screen name="deliver_product" component={Delivery} />
+
               {/* rider */}
               <Stack.Screen
                 name="select_rider_category"
@@ -164,6 +171,7 @@ const App = () => {
               />
             </Stack.Navigator>
           </NavigationContainer>
+
           {/* </ScrollView> */}
         </KeyboardAvoidingView>
       </Provider>

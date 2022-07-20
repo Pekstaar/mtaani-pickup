@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Pressable,
-  HStack,
-  Icon,
-  Input,
-  Select,
-  Text,
-} from 'native-base';
+import {Box, Pressable, HStack, Icon, Input, Select, Text} from 'native-base';
 import {COLORS, SIZES} from '../constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {TextInput as TInput, TouchableOpacity} from 'react-native';
@@ -107,15 +99,14 @@ export const LabeledInput = ({
   handleChange,
   exp,
   type = 'text',
+  disabled,
   ...rest
 }) => {
   const [show, setShow] = React.useState(false);
 
   return (
     <Box flex={1} {...rest}>
-      <Text fontWeight={'700'} fontSize={'md'}>
-        {label}
-      </Text>
+      <Text fontWeight={'600'}>{label}</Text>
       {exp && (
         <Text fontWeight={'medium'} fontSize={'sm'} color={'gray.500'} my={1}>
           {exp}
@@ -130,6 +121,7 @@ export const LabeledInput = ({
         onChangeText={handleChange}
         borderRadius={'xl'}
         size={'md'}
+        isDisabled={disabled}
         type={type === 'password' ? (show ? 'text' : 'password') : 'text'}
         InputRightElement={
           type === 'password' && (
@@ -181,7 +173,7 @@ export const CInput = ({
   // />
 );
 
-export const Selector = () => (
+export const Selector = ({list}) => (
   <Select
     accessibilityLabel="Choose Service"
     placeholder="Choose Service"
@@ -195,51 +187,23 @@ export const Selector = () => (
     borderWidth={'1.5px'}
     borderRadius={'xl'}
     size={'md'}>
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
-    <Select.Item label="UX Research" value="ux" />
-    <Select.Item label="Web Development" value="web" />
-    <Select.Item label="Cross Platform Development" value="cross" />
-    <Select.Item label="UI Designing" value="ui" />
-    <Select.Item label="Backend Development" value="backend" />
+    <Select.Item
+      bg={'amber.100'}
+      p={'2.5'}
+      key={item?._id}
+      label={item?.agent_location}
+      value={item?._id}
+    />
+    {list?.map(item => (
+      <Select.Item
+        bg={'amber.100'}
+        p={'2.5'}
+        // key={item?._id}
+        label={item?.agent_location}
+        value={item?._id}>
+        <Text>Hellow</Text>
+      </Select.Item>
+    ))}
   </Select>
 );
 

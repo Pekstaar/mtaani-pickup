@@ -16,9 +16,15 @@ import NotificationController from '../../src/services/NotificationController';
 import DashboardHeader from '../../components/Seller/Dashboard/DashboardHeader';
 import FeaturedSeller from '../../components/Seller/Dashboard/FeaturedSeller';
 import TopSellers from '../../components/Seller/Dashboard/TopSellers';
+import {useDispatch, useSelector} from 'react-redux';
+import {setUser} from '../../Redux/reducers/authSlice';
+import AsyncStorageService from '../../services/AsyncStorageService';
 
 const Dashboard = () => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const s = useSelector(state => state.auth);
 
   const getToken = async () => {
     try {
@@ -32,7 +38,15 @@ const Dashboard = () => {
     }
   };
 
+  const fetchUser = async () => {
+    const user = await JSON.parse(await AsyncStorageService.getData('user'));
+
+    dispatch(setUser(user));
+  };
+
   useEffect(() => {
+    fetchUser();
+
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in background', remoteMessage);
     });

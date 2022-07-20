@@ -1,5 +1,5 @@
 import AsyncStorageService from './AsyncStorageService';
-import axios from './AxiosService';
+import axios, {setAuthToken} from './AxiosService';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-community/google-signin';
@@ -38,6 +38,22 @@ const updateUser = async loginDetails => {
   // await setData('user', JSON.stringify(response?.data));
 
   return response;
+};
+
+const getUserDetails = async id => {
+  await setAuthToken(axios);
+
+  const response = await axios.get(`/user/${id}`);
+
+  return response.data;
+};
+
+const getBusinessDetails = async id => {
+  await setAuthToken(axios);
+
+  const response = await axios.get(`/business/${id}`);
+
+  return response.data;
 };
 
 // facebook login
@@ -188,6 +204,8 @@ const AuthService = {
   recoveryVerification,
   confirmRecoveryVerification,
   createNewPassword,
+  getUserDetails,
+  getBusinessDetails,
 };
 
 export default AuthService;

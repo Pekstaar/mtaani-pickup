@@ -25,6 +25,8 @@ import {LoadingButton, SubmitButton} from './Credentials';
 import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';
 import Toast from '../components/general/toasts';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../Redux/reducers/authSlice';
 // import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
@@ -32,7 +34,7 @@ const Login = () => {
   // const dispatch = useDispatch();
   const toast = useToast();
 
-  const NEXT_SCREEN = useMemo(() => 'main', []);
+  const NEXT_SCREEN = useMemo(() => 'drawer', []);
   const TOAST_PROPS = useMemo(
     () => ({placement: 'bottom', duration: 3000}),
     [],
@@ -246,7 +248,8 @@ const Login = () => {
 
       if (user?.token) {
         setPageLoading(false);
-        navigation.navigate(NEXT_SCREEN);
+
+        // navigation.navigate(NEXT_SCREEN);
       } else {
         setPageLoading(false);
       }

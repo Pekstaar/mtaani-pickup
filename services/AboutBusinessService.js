@@ -9,10 +9,23 @@ const fetchBusinessCategories = async () => {
   return response.data;
 };
 
-const setBusinessCategoryDetails = async formData => {
-  await setAuthToken(axios);
+const fetchBusinessCategoriesNoAuth = async () => {
+  const response = await axios.get(`/busines-categories`);
 
-  await axios({
+  return response.data;
+};
+
+// fetch mtaani agents
+const fetchAgents = async () => {
+  const response = await axios.get(`/shelf_locations`);
+
+  return response.data;
+};
+
+const setBusinessCategoryDetails = async formData => {
+  // await setAuthToken(axios);
+
+  const response = await axios({
     url: `/business`,
     method: 'POST',
     data: formData,
@@ -21,6 +34,14 @@ const setBusinessCategoryDetails = async formData => {
       'Content-Type': 'multipart/form-data',
     },
   });
+
+  return response.data;
+};
+
+const addBusinessDetails = async (id, data) => {
+  const response = await axios.post(`/business/${id}/details`, data);
+
+  return response.data;
 };
 
 const createBusinessProduct = async formData => {
@@ -55,10 +76,13 @@ const fetchProducts = async () => {
 
 const AboutBusinessService = {
   fetchBusinessCategories,
+  fetchBusinessCategoriesNoAuth,
   setBusinessCategoryDetails,
   createBusinessProduct,
   fetchProducts,
   updateBusinessProduct,
+  addBusinessDetails,
+  fetchAgents,
 };
 
 export default AboutBusinessService;
