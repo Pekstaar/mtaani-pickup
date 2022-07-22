@@ -13,6 +13,7 @@ import {TouchableOpacity} from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {SIZES} from '../../../constants';
 const Selector = ({
   isOpen,
   onClose,
@@ -48,7 +49,22 @@ const Selector = ({
       </Pressable>
 
       <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
-        <Actionsheet.Content py={5}>
+        <Actionsheet.Content py={5} minH={SIZES.height * 0.9}>
+          <Pressable
+            _pressed={{opacity: '80'}}
+            onPress={onClose}
+            borderRadius={'full'}
+            p={'1'}
+            position={'absolute'}
+            top={'5'}
+            right={'5'}
+            bg={'trueGray.100'}>
+            <Icon
+              color={'trueGray.500'}
+              size={'5'}
+              as={<Ionicons name={'close'} />}
+            />
+          </Pressable>
           <Box
             flexDir={'row'}
             w={'full'}

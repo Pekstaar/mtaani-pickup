@@ -74,12 +74,12 @@ const Head = ({handlePress, user}) => (
         source={{
           uri: user?.business?.logo,
         }}>
-        EP
+        {user?.f_name?.charAt(0) + user?.f_name?.charAt(1)}
       </Avatar>
       {/* details */}
       <Box>
         <Text fontSize={'md'} fontWeight={'700'}>
-          Christine
+          {user?.f_name}
         </Text>
         <Text fontSize={'xs'}>View account</Text>
       </Box>

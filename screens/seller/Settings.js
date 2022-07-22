@@ -11,9 +11,14 @@ import React from 'react';
 import {Header} from '../Login';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {logoutUser} from '../../src/Utils';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../Redux/reducers/authSlice';
 
 const Settings = ({navigation}) => {
+  const dispatch = useDispatch();
+
   const handleLogout = async () => {
+    dispatch(setUser(null));
     await logoutUser(() => navigation.navigate('Login'));
   };
   return (

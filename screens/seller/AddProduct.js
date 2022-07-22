@@ -91,6 +91,8 @@ const AboutBusiness = ({route: {params}}) => {
   // let images = new Array(5).fill(null);
 
   const resetState = () => {
+    setImages(new Array(5).fill(''));
+
     setDetails({
       name: '',
       colors: [''],
@@ -120,6 +122,8 @@ const AboutBusiness = ({route: {params}}) => {
 
   const manageColor = color => {
     const isContained = details?.colors?.includes(color.name);
+
+    const colors = colors.split(',');
 
     if (!isContained) {
       setDetails(prev => ({

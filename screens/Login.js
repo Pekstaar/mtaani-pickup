@@ -89,7 +89,7 @@ const Login = () => {
       });
 
       return false;
-    } else if (phone.length < 9 || phone.length > 10) {
+    } else if (phone.length < 9 || phone.length > 13) {
       // setValidation({
       //   isError: true,
       //   message: 'Invalid phone number!',
@@ -136,7 +136,10 @@ const Login = () => {
             token: user?.token,
           });
 
-          console.log(fetchedDetails);
+          // console.log(fetchedDetails);
+
+          // store details to redux
+          dispatch(setUser(fetchedDetails));
 
           await storeDetailsToLocalStorage('user', fetchedDetails);
 
@@ -299,7 +302,11 @@ const Login = () => {
             zIndex={'3'}
             source={assets.pickupLogoPng}
           />
-          <Image h={'300px'} alt={'map background'} source={assets.bgImage} />
+          <Image
+            h={'300px'}
+            alt={'map background'}
+            source={require('../assets/images/image_bg.jpg')}
+          />
         </Box>
         <ScrollView
           position={'absolute'}

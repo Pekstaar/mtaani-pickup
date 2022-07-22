@@ -14,6 +14,7 @@ import CustomDrawer from './CustomDrawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const DrawerNav = () => {
   const Drawer = createDrawerNavigator();
@@ -38,15 +39,11 @@ const DrawerNav = () => {
       }}>
       {/* <Stack.Screen name="main" component={Navigator} /> */}
       <Drawer.Screen
-        name="Discover"
+        name="Home"
         component={Navigator}
         options={{
           drawerIcon: ({color}) => (
-            <MaterialCommunityIcons
-              size={22}
-              color={color}
-              name={'view-dashboard-outline'}
-            />
+            <AntDesign name={'home'} size={22} color={color} />
           ),
         }}
       />

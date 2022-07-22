@@ -144,7 +144,7 @@ export const Navigator = () => {
         }}
       />
 
-      {/* shelf screen */}
+      {/* shelf screen
       <Tab.Screen
         name="sales"
         component={Tracker}
@@ -169,7 +169,7 @@ export const Navigator = () => {
             );
           },
         }}
-      />
+      /> */}
 
       {/* shelf screen
       <Tab.Screen

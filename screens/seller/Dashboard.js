@@ -69,7 +69,7 @@ const Dashboard = () => {
       <DashboardHeader user={user} />
       <Box safeArea p={3} pb={'16'} bg={'white'}>
         <ScrollView>
-          {user?.business?._id && <NotificationToolTip />}
+          {!user?.business?._id && <NotificationToolTip user={user} />}
           {/* send package panel */}
           <SendPackage user={user} />
           {/* Tracking snippet */}

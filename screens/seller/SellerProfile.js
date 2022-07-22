@@ -76,7 +76,7 @@ const SellerProfile = () => {
             <Box height={20}>
               <LabeledInput
                 label={'Business/shop name'}
-                placeholder={'e.g. shoes'}
+                placeholder={'e.g. Business name'}
                 value={user?.business?.name}
                 disabled={true}
                 handleChange={name =>
@@ -100,7 +100,7 @@ const SellerProfile = () => {
             <Box height={20}>
               <LabeledInput
                 label={'Till Number'}
-                placeholder={'e.g. shoes'}
+                placeholder={'enter your business till number'}
                 value={user?.business?.till_No?.toString()}
                 disabled={true}
                 // handleChange={name =>
@@ -112,7 +112,7 @@ const SellerProfile = () => {
             <Box height={20}>
               <LabeledInput
                 label={'Mpesa phone Number'}
-                placeholder={'e.g. shoes'}
+                placeholder={'enter your mpesa phone number'}
                 value={user?.business?.Mpesa_No?.toString()}
                 disabled={true}
                 // handleChange={name =>
