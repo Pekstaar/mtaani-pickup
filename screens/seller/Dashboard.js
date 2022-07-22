@@ -19,12 +19,15 @@ import TopSellers from '../../components/Seller/Dashboard/TopSellers';
 import {useDispatch, useSelector} from 'react-redux';
 import {setUser} from '../../Redux/reducers/authSlice';
 import AsyncStorageService from '../../services/AsyncStorageService';
+import SendPackage from '../../components/Seller/Dashboard/SendPackage';
+import TrackingSnippet from '../../components/Seller/Dashboard/TrackingSnippet';
+import NotificationToolTip from '../../components/Seller/Dashboard/NotificationToolTip';
 
 const Dashboard = () => {
   // const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const s = useSelector(state => state.auth);
+  const {user} = useSelector(state => state.auth);
 
   const getToken = async () => {
     try {
@@ -38,15 +41,11 @@ const Dashboard = () => {
     }
   };
 
-  const fetchUser = async () => {
-    const user = await JSON.parse(await AsyncStorageService.getData('user'));
-
-    dispatch(setUser(user));
-  };
+  useEffect(() => {
+    console.log('User is:', user);
+  }, [user?.token]);
 
   useEffect(() => {
-    fetchUser();
-
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in background', remoteMessage);
     });
@@ -64,17 +63,17 @@ const Dashboard = () => {
 
   return (
     <>
-      <NotificationController />
+      {!user?.business?._id && <NotificationController />}
 
       {/* header */}
-      <DashboardHeader />
-      <Box safeArea p={3}>
+      <DashboardHeader user={user} />
+      <Box safeArea p={3} pb={'16'} bg={'white'}>
         <ScrollView>
-          {/* featured seller */}
-          <FeaturedSeller />
-
-          {/* Top sellers */}
-          <TopSellers />
+          {user?.business?._id && <NotificationToolTip />}
+          {/* send package panel */}
+          <SendPackage user={user} />
+          {/* Tracking snippet */}
+          <TrackingSnippet />
         </ScrollView>
       </Box>
     </>
@@ -82,26 +81,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-const Circle = ({children}) => (
-  <Box borderColor={'primary'} borderWidth={2} borderRadius={'full'}>
-    <Box borderWidth={3} borderColor={'white'} borderRadius={'full'}>
-      {children}
-    </Box>
-  </Box>
-);
-
-const Card = () => (
-  <VStack height={'300px'} shadow={'7'} bg={'white'} borderRadius={'lg'} mt={5}>
-    <Image source={assets.shopify} alt="image" flex={1} />
-    <HStack alignItems={'center'} p={2}>
-      <Center height={12} width={12} bg={'secondary'} borderRadius={'full'}>
-        <Text color={'white'}>sellers</Text>
-      </Center>
-
-      <Box flex={1} padding={5}>
-        <Text>Sellers</Text>
-      </Box>
-    </HStack>
-  </VStack>
-);

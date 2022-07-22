@@ -4,8 +4,15 @@ import CategoryButton from '../../general/CategoryButton';
 import AboutBusinessService from '../../../services/AboutBusinessService';
 import AsyncStorageService from '../../../services/AsyncStorageService';
 import {SIZES} from '../../../constants';
+import {LabeledInput} from '../../Input';
 
-export const SelectColor = ({manageColor, details}) => {
+export const SelectColor = ({
+  manageColor,
+  details,
+  showColorInput,
+  toggleColorInput,
+  handleOtherColorChange,
+}) => {
   const [colors] = useState([
     {
       name: 'Black',
@@ -58,10 +65,19 @@ export const SelectColor = ({manageColor, details}) => {
         ))}
         <CategoryButton
           name={'Other'}
-          // handlePress={toggleCategoryInput}
-          // isSelected={showCategoryInput}
+          handlePress={toggleColorInput}
+          isSelected={showColorInput}
         />
       </HStack>
+
+      {showColorInput && (
+        <LabeledInput
+          // label={'color'}
+          placeholder={'e.g. yellow, green '}
+          value={details?.colors[0]}
+          handleChange={handleOtherColorChange}
+        />
+      )}
     </>
   );
 };

@@ -1,11 +1,11 @@
-import {View, Text} from 'react-native';
+import {Center, Text} from 'native-base';
 import React from 'react';
 
 const SendPackage = () => {
   return (
-    <View>
-      <Text>SendPackage</Text>
-    </View>
+    <Center flex={'1'}>
+      <Text>Send Products</Text>
+    </Center>
   );
 };
 

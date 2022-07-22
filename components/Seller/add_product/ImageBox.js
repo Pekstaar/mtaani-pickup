@@ -7,7 +7,7 @@ const ImageBox = ({image}) => {
     <Box borderRadius={'sm'} bg={'muted.300'} height={10} width={10}>
       <Image
         borderRadius={'sm'}
-        source={{uri: image.uri}}
+        source={{uri: image?.uri ? image?.uri : image}}
         alt={'upload image'}
         flex={1}
         resizeMode={'cover'}

@@ -8,23 +8,40 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Avatar, Box, HStack, Icon, Pressable, Text} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const CustomDrawer = props => {
-  const navigation = useNavigation();
+  const {navigation} = props;
+  const {user} = useSelector(state => state.auth);
+
   return (
     <>
       <Box flex={'1'}>
         <DrawerContentScrollView
           {...props}
           contentContainerStyle={{backgroundColor: '#fff'}}>
-          <Head handlePress={() => navigation.navigate('profile')} />
+          <Head
+            user={user}
+            handlePress={() => {
+              navigation.navigate('profile');
+
+              navigation.closeDrawer();
+            }}
+          />
 
           <DrawerItemList {...props} />
         </DrawerContentScrollView>
       </Box>
 
       <Box h={130}>
-        <Pressable mx={'3'} _pressed={{bg: 'amber.50'}} borderRadius="full">
+        <Pressable
+          onPress={() => {
+            navigation.navigate('settings');
+            navigation.closeDrawer();
+          }}
+          mx={'3'}
+          _pressed={{bg: 'amber.50'}}
+          borderRadius="full">
           <HStack space={'5'} p={'3'}>
             {/* icon */}
             <Icon size={22} as={<Ionicons name={'md-settings-outline'} />} />
@@ -47,14 +64,15 @@ const CustomDrawer = props => {
 
 export default CustomDrawer;
 
-const Head = ({handlePress}) => (
+const Head = ({handlePress, user}) => (
   <Pressable _pressed={{bg: 'amber.50'}} onPress={handlePress} mb={'3'}>
     <HStack p={4} justifyContent={'center'} space={'3'} alignItems={'center'}>
       {/* avatar */}
       <Avatar
         bg="cyan.500"
+        shadow={'1'}
         source={{
-          uri: 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
+          uri: user?.business?.logo,
         }}>
         EP
       </Avatar>

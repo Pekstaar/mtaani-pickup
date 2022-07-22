@@ -26,12 +26,14 @@ import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';
 import Toast from '../components/general/toasts';
 import {useDispatch} from 'react-redux';
+
+import {fetchProfileDetails, storeDetailsToLocalStorage} from '../src/Utils';
 import {setUser} from '../Redux/reducers/authSlice';
 // import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
   const navigation = useNavigation();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const toast = useToast();
 
   const NEXT_SCREEN = useMemo(() => 'drawer', []);
@@ -49,6 +51,32 @@ const Login = () => {
   // const {isSuccess, isLoading, isError, message} = useSelector(
   //   state => state.auth,
   // );
+
+  useEffect(() => {
+    setLoading(false);
+
+    const fetchUser = async () => {
+      setPageLoading(true);
+
+      const user = await JSON.parse(await AsyncStorageService.getData('user'));
+
+      if (user?.token) {
+        dispatch(setUser(user));
+
+        setPageLoading(false);
+
+        navigation.navigate(NEXT_SCREEN);
+      } else {
+        setPageLoading(false);
+      }
+    };
+
+    fetchUser();
+
+    return () => {
+      setPageLoading(false);
+    };
+  }, []);
 
   const validateCredentials = () => {
     if (phone === '') {
@@ -102,7 +130,15 @@ const Login = () => {
         password,
       })
         .then(async user => {
-          await AsyncStorageService.setData('user', JSON.stringify(user));
+          // await AsyncStorageService.setData('user', JSON.stringify(user));
+          // fetch profile details
+          const fetchedDetails = await fetchProfileDetails(user?._id, {
+            token: user?.token,
+          });
+
+          console.log(fetchedDetails);
+
+          await storeDetailsToLocalStorage('user', fetchedDetails);
 
           toast.show({
             render: () => {
@@ -126,7 +162,7 @@ const Login = () => {
             render: () => {
               return (
                 <Toast.error
-                  message={e?.response?.data?.message || e?.message || e}
+                  message={e?.response?.data?.message || e?.message}
                 />
               );
             },
@@ -238,30 +274,6 @@ const Login = () => {
     navigation.navigate('password_recovery_method');
   };
 
-  useEffect(() => {
-    setLoading(false);
-
-    const fetchUser = async () => {
-      setPageLoading(true);
-
-      const user = await JSON.parse(await AsyncStorageService.getData('user'));
-
-      if (user?.token) {
-        setPageLoading(false);
-
-        // navigation.navigate(NEXT_SCREEN);
-      } else {
-        setPageLoading(false);
-      }
-    };
-
-    fetchUser();
-
-    return () => {
-      setPageLoading(false);
-    };
-  }, []);
-
   // Use Effect
 
   if (pageLoading)
@@ -272,6 +284,7 @@ const Login = () => {
     );
 
   return (
+    // <PrivateSeller>
     <Box flex={'1'}>
       <Stack position={'relative'} height="full" bg={'white'}>
         <Box>
@@ -391,6 +404,7 @@ const Login = () => {
         </ScrollView>
       </Stack>
     </Box>
+    // </PrivateSeller>
   );
 };
 

@@ -4,42 +4,17 @@ import CategoryButton from './CategoryButton';
 import AboutBusinessService from '../../services/AboutBusinessService';
 import AsyncStorageService from '../../services/AsyncStorageService';
 import {SIZES} from '../../constants';
+import {LabeledInput} from '../Input';
 
 export const SelectCategory = ({
   categories,
   manageCategory,
   details,
   toggleCategoryInput,
+  showCategoryInput = true,
+  handleOtherCategoryChange,
 }) => {
   // const [categories, setCategories] = useState(categories);
-
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     try {
-  //       const user = await JSON.parse(
-  //         await AsyncStorageService.getData('user'),
-  //       );
-
-  //       if (user?.token) {
-  //         const businessCategories =
-  //           await AboutBusinessService.fetchBusinessCategories();
-
-  //         const cats = [];
-  //         businessCategories.Categories.map(({name, _id}) =>
-  //           cats.push({name, id: _id}),
-  //         );
-
-  //         setCategories(cats);
-  //       } else {
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //       return;
-  //     }
-  //   };
-
-  //   fetch();
-  // }, []);
 
   return (
     <>
@@ -64,9 +39,18 @@ export const SelectCategory = ({
         <CategoryButton
           name={'Other'}
           handlePress={toggleCategoryInput}
-          // isSelected={showCategoryInput}
+          isSelected={showCategoryInput}
         />
       </HStack>
+
+      {showCategoryInput && (
+        <LabeledInput
+          label={'category'}
+          placeholder={'other category'}
+          value={details?.itemSold}
+          handleChange={handleOtherCategoryChange}
+        />
+      )}
     </>
   );
 };

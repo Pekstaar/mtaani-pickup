@@ -2,10 +2,16 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import {Box, Center, Icon, Stack, Text} from 'native-base';
 import React from 'react';
-import {Dashboard, Tracker, ViewShelfProducts} from '../../screens';
+import {
+  Dashboard,
+  Notifications,
+  SendPackage,
+  Tracker,
+  ViewShelfProducts,
+} from '../../screens';
 
 // icons
-import IonIcon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -40,15 +46,13 @@ export const Navigator = () => {
                 <Icon
                   color={focused ? 'muted.800' : 'trueGray.300'}
                   size={ICON_SIZE}
-                  as={
-                    <MaterialCommunityIcons name={'view-dashboard-outline'} />
-                  }
+                  as={<AntDesign name={'home'} />}
                 />
                 <Text
                   color={focused ? 'muted.800' : 'trueGray.400'}
-                  fontWeight={'black'}
-                  fontSize={'xs'}>
-                  Discover
+                  fontWeight={'700'}
+                  fontSize={'12px'}>
+                  Home
                 </Text>
 
                 {focused && <CurrentNavMarker />}
@@ -58,10 +62,10 @@ export const Navigator = () => {
         }}
       />
 
-      {/* shelf screen */}
+      {/* send package screen */}
       <Tab.Screen
-        name="view_shelf_products"
-        component={ViewShelfProducts}
+        name="send_package"
+        component={SendPackage}
         options={{
           tabBarIcon: ({focused}) => {
             return (
@@ -74,8 +78,8 @@ export const Navigator = () => {
 
                 <Text
                   color={focused ? 'muted.800' : 'trueGray.400'}
-                  fontSize={'xs'}
-                  fontWeight={'black'}>
+                  fontSize={'12px'}
+                  fontWeight={'700'}>
                   Send
                 </Text>
 
@@ -86,10 +90,10 @@ export const Navigator = () => {
         }}
       />
 
-      {/* shelf screen */}
+      {/* Products screen */}
       <Tab.Screen
-        name="tracker"
-        component={Tracker}
+        name="products"
+        component={ViewShelfProducts}
         options={{
           tabBarIcon: ({focused}) => {
             return (
@@ -101,9 +105,36 @@ export const Navigator = () => {
                 />
                 <Text
                   color={focused ? 'muted.800' : 'trueGray.400'}
-                  fontSize={'xs'}
-                  fontWeight={'black'}>
+                  fontSize={'12px'}
+                  fontWeight={'700'}>
                   Products
+                </Text>
+
+                {focused && <CurrentNavMarker />}
+              </Center>
+            );
+          },
+        }}
+      />
+
+      {/* Notifications screen */}
+      <Tab.Screen
+        name="notifications"
+        component={Notifications}
+        options={{
+          tabBarIcon: ({focused}) => {
+            return (
+              <Center>
+                <Icon
+                  color={focused ? 'muted.800' : 'trueGray.300'}
+                  size={ICON_SIZE}
+                  as={<Ionicons name="ios-notifications-outline" />}
+                />
+                <Text
+                  color={focused ? 'muted.800' : 'trueGray.400'}
+                  fontSize={'12px'}
+                  fontWeight={'600'}>
+                  Notifications
                 </Text>
 
                 {focused && <CurrentNavMarker />}
@@ -128,8 +159,8 @@ export const Navigator = () => {
                 />
                 <Text
                   color={focused ? 'muted.800' : 'trueGray.400'}
-                  fontSize={'xs'}
-                  fontWeight={'black'}>
+                  fontSize={'12px'}
+                  fontWeight={'700'}>
                   Sales
                 </Text>
 
@@ -140,7 +171,7 @@ export const Navigator = () => {
         }}
       />
 
-      {/* shelf screen */}
+      {/* shelf screen
       <Tab.Screen
         name="menu"
         component={Tracker}
@@ -155,8 +186,8 @@ export const Navigator = () => {
                 />
                 <Text
                   color={focused ? 'muted.800' : 'trueGray.400'}
-                  fontSize={'xs'}
-                  fontWeight={'black'}>
+                  fontSize={'12px'}
+                  fontWeight={'700'}>
                   Menu
                 </Text>
 
@@ -165,7 +196,7 @@ export const Navigator = () => {
             );
           },
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

@@ -1,15 +1,18 @@
 import {Pressable, HStack, Image, Icon, Text} from 'native-base';
 import React from 'react';
 import {assets} from '../../../constants';
-import ActiveNotificationLabel from './ActiveNotificaitonLabel';
-import {logoutUser} from '../../../src/Utils';
+
 import {useNavigation} from '@react-navigation/native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const DashboardHeader = ({isActive = true}) => {
+const DashboardHeader = ({user}) => {
   const navigation = useNavigation();
+  // const {isActive = true} = props;
+
+  const handleOpenDrawer = () => {
+    navigation.openDrawer();
+  };
 
   return (
     <HStack
@@ -19,32 +22,31 @@ const DashboardHeader = ({isActive = true}) => {
       py={3}
       shadow={'1'}
       bg={'#fff'}>
-      <Image
-        source={assets.profile}
-        alt="profile pic"
-        height={10}
-        width={10}
-        borderRadius={'full'}
-      />
-
-      <Pressable
-        bg={'white'}
-        p={2}
-        borderRadius={'full'}
-        onPress={() => {
-          logoutUser(() => navigation.navigate('Login'));
-        }}>
-        <Icon color={'gray.500'} size={6} as={<AntDesign name="logout" />} />
+      <Pressable shadow={'1'} borderRadius={'full'} bg={'white'}>
+        <Image
+          source={
+            user?.token
+              ? {
+                  uri: user?.business?.logo,
+                }
+              : assets.profile
+          }
+          alt="profile pic"
+          resizeMode={'cover'}
+          borderRadius={'full'}
+          width={10}
+          height={10}
+        />
       </Pressable>
 
-      <Pressable>
+      <Pressable onPress={handleOpenDrawer}>
         <Icon
           size={'6'}
-          color={'black'}
-          as={<Ionicons name="ios-notifications-outline" />}
+          color={'trueGray.700'}
+          as={<AntDesign name={'menu-unfold'} />}
         />
 
-        {isActive && <ActiveNotificationLabel />}
+        {/* {isActive && <ActiveNotificationLabel />} */}
       </Pressable>
     </HStack>
   );

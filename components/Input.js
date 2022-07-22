@@ -187,18 +187,18 @@ export const Selector = ({list}) => (
     borderWidth={'1.5px'}
     borderRadius={'xl'}
     size={'md'}>
-    <Select.Item
+    {/* <Select.Item
       bg={'amber.100'}
       p={'2.5'}
       key={item?._id}
       label={item?.agent_location}
       value={item?._id}
-    />
-    {list?.map(item => (
+    /> */}
+    {list?.map((item, index) => (
       <Select.Item
         bg={'amber.100'}
         p={'2.5'}
-        // key={item?._id}
+        key={index}
         label={item?.agent_location}
         value={item?._id}>
         <Text>Hellow</Text>

@@ -23,6 +23,8 @@ import {
   SmsRecovery,
   EmailRecovery,
   SellerProfile,
+  Settings,
+  ViewShelfProducts,
 } from './screens';
 import {Provider, useDispatch} from 'react-redux';
 import {Store} from './Redux/Store';
@@ -114,7 +116,7 @@ const App = () => {
               screenOptions={{
                 headerShown: false,
               }}
-              initialRouteName="drawer">
+              initialRouteName="Login">
               {/* bottom tab */}
 
               {/* drawer */}
@@ -123,6 +125,7 @@ const App = () => {
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="credentials" component={Credentials} />
               <Stack.Screen name="verification" component={Verification} />
+              <Stack.Screen name="settings" component={Settings} />
 
               <Stack.Screen name="tracker" component={Tracker} />
               <Stack.Screen name="roles" component={Role} />
@@ -155,10 +158,10 @@ const App = () => {
               />
               <Stack.Screen name="add_product" component={AddProduct} />
               <Stack.Screen name="deliver_product" component={Delivery} />
-              {/* <Stack.Screen
+              <Stack.Screen
                 name="view_products"
                 component={ViewShelfProducts}
-              /> */}
+              />
 
               {/* rider */}
               <Stack.Screen

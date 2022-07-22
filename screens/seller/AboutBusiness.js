@@ -353,7 +353,7 @@ const AboutBusiness = ({
               <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
             )}
 
-            {/* <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Center
                 bg={'secondary'}
                 borderRadius={'full'}
@@ -368,7 +368,7 @@ const AboutBusiness = ({
                   Skip
                 </Text>
               </Center>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </Box>
 
           {/* </Button> */}

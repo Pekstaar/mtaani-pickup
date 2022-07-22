@@ -21,20 +21,22 @@ const Selector = ({
   Text,
   onSelect,
   placeHolderText = '--Please Select item--',
+  label,
 }) => {
   return (
     <>
       <Pressable onPress={onOpen}>
+        <Box>{label}</Box>
         <HStack
-          my={'4'}
+          my={'2'}
           p={'3'}
-          borderWidth={'1.5'}
+          borderWidth={'1'}
           borderColor={'primary'}
           alignItems={'center'}
           borderRadius={'xl'}>
           <Box
             flexGrow={'1'}
-            _text={{color: Text ? 'trueGray.800' : 'trueGray.500'}}>
+            _text={{color: Text ? 'trueGray.800' : 'trueGray.400'}}>
             {Text ? Text : placeHolderText}
           </Box>
           <Icon
@@ -55,7 +57,7 @@ const Selector = ({
             mb={'2'}
             py={'2'}
             _text={{
-              fontSize: 'xl',
+              fontSize: 'lg',
               textTransform: 'uppercase',
               fontWeight: '700',
             }}>

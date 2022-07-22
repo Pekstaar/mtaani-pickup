@@ -12,6 +12,7 @@ import agent from '../assets/icons/agent.png';
 import rider from '../assets/icons/rider.png';
 import staff from '../assets/icons/staff.png';
 import store from '../assets/icons/store.png';
+import deliver from '../assets/images/delivery_rider.webp';
 
 export default {
   empty,
@@ -28,4 +29,5 @@ export default {
   rider,
   staff,
   store,
+  deliver,
 };

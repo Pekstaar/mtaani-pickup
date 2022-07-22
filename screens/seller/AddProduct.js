@@ -23,6 +23,7 @@ import {SelectColor} from '../../components/Seller/add_product/SelectColor';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
 import {SelectSize} from '../../components/Seller/add_product/Sizes';
+import Toast from '../../components/general/toasts';
 
 const AboutBusiness = ({route: {params}}) => {
   const toast = useToast();
@@ -49,12 +50,13 @@ const AboutBusiness = ({route: {params}}) => {
     name: '',
     colors: [],
     category: '',
-    price: '',
+    price: [],
     sizes: '',
-    quantity: '',
+    qty: '',
     quantity_unit: 'pieces',
   });
   const [showCategoryInput, setShowCategoryInput] = useState(false);
+  const [showColorInput, setShowColorInput] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -63,26 +65,42 @@ const AboutBusiness = ({route: {params}}) => {
   useEffect(() => {
     if (params?.mode === 'update') {
       setDetails({
-        name: selectedProduct?.product_name,
-        colors: [selectedProduct?.color],
-        category: selectedProduct?.category._id,
-        price: selectedProduct?.price?.toString(),
+        name: params?.product?.product_name,
+        colors: [...params?.product?.colors],
+        category: params?.product?.category._id,
+        price: params?.product?.price?.toString(),
+        sizes: [params?.product?.size],
+        qty: params?.product?.qty,
+        quantity_unit: 'pieces',
       });
     }
-  }, [params]);
+  }, [params?.product?._id]);
 
   useEffect(() => {
-    if (mode === 'update' && selectedProduct?.images.length > 0) {
-      const arr = [];
-      selectedProduct.images.map(item => arr.push({uri: item}));
+    if (mode === 'update' && params?.product?.images.length > 0) {
+      let arr = [];
+      params?.product?.images.map(item => arr.push({uri: item}));
 
-      setImages(arr);
+      setImages([...arr]);
+      console.log(arr);
     } else {
       setImages(new Array(5).fill(''));
     }
-  }, [selectedProduct]);
+  }, [params?.product]);
   // product images;
   // let images = new Array(5).fill(null);
+
+  const resetState = () => {
+    setDetails({
+      name: '',
+      colors: [''],
+      category: '',
+      price: '',
+      sizes: [''],
+      qty: '',
+      quantity_unit: 'pieces',
+    });
+  };
 
   const manageCategory = c => {
     const isContained = details?.category.id === c?.id;
@@ -126,7 +144,7 @@ const AboutBusiness = ({route: {params}}) => {
         sizes: [size.name, ...prev.sizes],
       }));
     } else {
-      const prevArrExcludeColor = details?.sizes.filter(c => c !== size.name);
+      const prevArrExcludeColor = details?.sizes?.filter(c => c !== size.name);
       setDetails(prev => ({
         ...prev,
         sizes: prevArrExcludeColor,
@@ -144,15 +162,25 @@ const AboutBusiness = ({route: {params}}) => {
       if (selectedProductId && mode === 'update') {
         const data = {
           product_name: details?.name,
-          color: details?.colors[0],
+          color: details?.colors,
           price: details?.price,
           category: details?.category,
+          qty: details?.qty,
+          size: details?.sizes[0],
         };
 
         await AboutBusinessService.updateBusinessProduct(
           data,
           selectedProductId,
         );
+
+        toast.show({
+          render: () => {
+            return <Toast.success message={'Product Update Successful! '} />;
+          },
+        });
+
+        resetState();
 
         dispatch(fetchProductsOnShelf());
         setLoading(false);
@@ -164,7 +192,7 @@ const AboutBusiness = ({route: {params}}) => {
         formData.append('price', details.price);
         formData.append('category', details.category);
         formData.append('size', details.sizes[0]);
-        formData.append('qty', details.quantity);
+        formData.append('qty', details.qty);
         formData.append('min_order', 2);
 
         // details?.colors.forEach(color => {
@@ -177,11 +205,24 @@ const AboutBusiness = ({route: {params}}) => {
             type: img?.type,
           });
         });
+
+        details.colors.forEach(c => {
+          formData.append('colors', c);
+        });
+
         await AboutBusinessService.createBusinessProduct(formData);
+
+        toast.show({
+          render: () => {
+            return <Toast.success message={'Product Creation Successful! '} />;
+          },
+        });
+
+        resetState();
 
         dispatch(fetchProductsOnShelf());
         setLoading(false);
-        navigation.navigate('view_products');
+        // navigation.navigate('view_products');
       }
 
       // navigation.navigate('view_products');
@@ -190,21 +231,34 @@ const AboutBusiness = ({route: {params}}) => {
       console.log(error);
       setLoading(false);
 
-      const err = JSON.stringify(
-        error?.response.data || error?.message || error,
-      );
+      const err = JSON.stringify(error?.response.data?.message);
       toast.show({
-        title: 'Error!',
-        status: 'error',
-        description: err,
+        render: () => {
+          return <Toast.error message={('Product Creation error! ', err)} />;
+        },
       });
       // setLoading(false);
       return;
     }
   };
 
+  const handleOtherCategoryChange = text => {
+    //  setDetails(prev => ({...prev, itemSold: text}))
+  };
+
+  const handleOtherColorChange = text => {
+    setDetails(prev => ({
+      ...prev,
+      colors: [text, ...prev.colors],
+    }));
+  };
+
   const toggleCategoryInput = () => {
     setShowCategoryInput(!showCategoryInput);
+  };
+
+  const toggleColorInput = () => {
+    setShowColorInput(!showColorInput);
   };
 
   const uploadImage = () => {
@@ -325,10 +379,17 @@ const AboutBusiness = ({route: {params}}) => {
             details={details}
             toggleCategoryInput={toggleCategoryInput}
             showCategoryInput={showCategoryInput}
+            handleOtherCategoryChange={handleOtherCategoryChange}
           />
 
           {/* select color */}
-          <SelectColor manageColor={manageColor} details={details} />
+          <SelectColor
+            manageColor={manageColor}
+            details={details}
+            handleOtherColorChange={handleOtherColorChange}
+            toggleColorInput={toggleColorInput}
+            showColorInput={showColorInput}
+          />
 
           <FormControl display={'flex'} p={0}>
             <FormControl.Label _text={{color: 'black'}}>
@@ -342,8 +403,9 @@ const AboutBusiness = ({route: {params}}) => {
                 placeholder="--kg/ltr/pieces--"
                 bg={'secondary'}
                 color="primary"
-                width={'160px'}
+                width={'140px'}
                 borderRadius={'xl'}
+                _text={{fontSize: 'md'}}
                 // style={{color: 'white'}}
                 onValueChange={itemValue =>
                   setDetails(prev => ({...prev, quantity_unit: itemValue}))
@@ -357,11 +419,11 @@ const AboutBusiness = ({route: {params}}) => {
 
               <LabeledInput
                 // label={'Selling Price'}
+                value={details?.qty?.toString()}
                 mt={-5}
                 placeholder={'eg. 20'}
-                value={details?.quantity}
                 handleChange={name =>
-                  setDetails(prev => ({...prev, quantity: name}))
+                  setDetails(prev => ({...prev, qty: name}))
                 }
               />
             </HStack>

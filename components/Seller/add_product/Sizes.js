@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {HStack, Text} from 'native-base';
 import CategoryButton from '../../general/CategoryButton';
-import AboutBusinessService from '../../../services/AboutBusinessService';
-import AsyncStorageService from '../../../services/AsyncStorageService';
+
 import {SIZES} from '../../../constants';
 
 export const SelectSize = ({manageSizes, details}) => {
@@ -49,14 +48,14 @@ export const SelectSize = ({manageSizes, details}) => {
             key={i}
             name={size?.name || ''}
             handlePress={() => manageSizes(size)}
-            isSelected={details?.sizes.includes(size.name)}
+            isSelected={details?.sizes?.includes(size.name)}
           />
         ))}
-        <CategoryButton
+        {/* <CategoryButton
           name={'Other'}
           // handlePress={toggleCategoryInput}
           // isSelected={showCategoryInput}
-        />
+        /> */}
       </HStack>
     </>
   );

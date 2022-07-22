@@ -5,6 +5,7 @@ import {
   HStack,
   Icon,
   Image,
+  Pressable,
   Stack,
   Text,
 } from 'native-base';
@@ -27,9 +28,13 @@ const ProductUploader = ({images, uploadImage}) => {
         rounded="md"
         position={'relative'}>
         <Image
-          source={images[0]?.uri ? {uri: images[0].uri} : assets?.empty_2}
-          width={images[0]?.uri ? 'full' : 12}
-          height={images[0]?.uri ? 'full' : 10}
+          source={
+            images[currentImage]?.uri
+              ? {uri: images[currentImage]?.uri}
+              : assets?.empty_2
+          }
+          width={images[currentImage]?.uri ? 'full' : 12}
+          height={images[currentImage]?.uri ? 'full' : 10}
           resizeMode={'cover'}
           // flex={1}
           alt="upload image"
@@ -65,7 +70,12 @@ const ProductUploader = ({images, uploadImage}) => {
       <HStack py={1} space={2} px={2} justifyContent={'flex-end'}>
         {images.map((image, i) =>
           image?.uri ? (
-            <ImageBox key={i} image={image} />
+            <Pressable
+              key={i}
+              _pressed={{opacity: '70'}}
+              onPress={() => setCurrentImage(i)}>
+              <ImageBox image={image} />
+            </Pressable>
           ) : (
             <Box
               key={i}

@@ -1,10 +1,12 @@
 import AsyncStorageService from '../services/AsyncStorageService';
 import {Alert, Platform} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import AuthService from '../services/AuthService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const MODAL_TIMEOUT = 2500;
 
-export const logoutUser = callback => {
-  AsyncStorageService.removeData('user');
+export const logoutUser = async callback => {
+  await AsyncStorage.removeItem('user');
   callback();
 };
 
@@ -28,6 +30,26 @@ export const CheckConnectivity = () => {
   });
 };
 
+export const fetchProfileDetails = async (userId, otherUserDetails) => {
+  // fetch user details
+  const userDetails = await AuthService.getUserDetails(userId);
+  // fetch business details
+  const businessDetails = await AuthService.getBusinessDetails(userId);
+  // return combined object of user and business details
+  return {
+    ...userDetails?.userObj,
+    ...otherUserDetails,
+    business: {...businessDetails?.Bus},
+  };
+};
+
+export const storeDetailsToLocalStorage = async (name, details) => {
+  try {
+    await AsyncStorageService.setData(name, JSON.stringify(details));
+  } catch (error) {
+    return error;
+  }
+};
 /**
  * validate password requirements:
  *  - 8 characters length
@@ -36,7 +58,6 @@ export const CheckConnectivity = () => {
  *  - have a special character
  *
  */
-
 export const passwordValidations = [
   'Be at least 6 characters in length',
   'Contain both upper and lowercase alphabetic characters (e.g. A-Z, a-z)',
