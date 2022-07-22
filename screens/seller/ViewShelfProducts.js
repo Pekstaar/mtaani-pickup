@@ -136,23 +136,25 @@ const ViewShelfProducts = () => {
           )}
         </ScrollView>
       </Box>
-      <Button
-        onPress={() => navigation?.navigate('add_product')}
-        bg={'primary'}
-        w={'130px'}
-        borderRadius={'full'}
-        position={'absolute'}
-        right={'3'}
-        shadow={'2'}
-        bottom={'3'}
-        _text={{
-          textTransform: 'uppercase',
-          color: 'secondary',
-          fontWeight: 'semibold',
-          fontSize: 'xs',
-        }}>
-        + Add Product
-      </Button>
+      {!currentProduct._id && (
+        <Button
+          onPress={() => navigation?.navigate('add_product')}
+          bg={'primary'}
+          w={'130px'}
+          borderRadius={'full'}
+          position={'absolute'}
+          right={'3'}
+          shadow={'2'}
+          bottom={'3'}
+          _text={{
+            textTransform: 'uppercase',
+            color: 'secondary',
+            fontWeight: 'semibold',
+            fontSize: 'xs',
+          }}>
+          + Add Product
+        </Button>
+      )}
     </>
   );
 };
@@ -162,7 +164,7 @@ export default ViewShelfProducts;
 const ViewFull = ({product, handleDeliver, onEdit, onClose}) => {
   const [currentImage, setCurrentImage] = useState(0);
   return (
-    <ScrollView py={2} w={'full'}>
+    <ScrollView py={2} w={'full'} zIndex={'10'}>
       <Box borderRadius={'xl'} bg={'white'} shadow={'1'} w={'full'} mb={'2'}>
         <Box overflow={'hidden'} borderRadius={'xl'} w={'full'} h={'280px'}>
           <Image

@@ -123,8 +123,6 @@ const AboutBusiness = ({route: {params}}) => {
   const manageColor = color => {
     const isContained = details?.colors?.includes(color.name);
 
-    const colors = colors.split(',');
-
     if (!isContained) {
       setDetails(prev => ({
         ...prev,
@@ -251,9 +249,11 @@ const AboutBusiness = ({route: {params}}) => {
   };
 
   const handleOtherColorChange = text => {
+    const colors = text.split(',');
+    console.log(colors);
     setDetails(prev => ({
       ...prev,
-      colors: [text, ...prev.colors],
+      colors: [...colors, ...prev.colors],
     }));
   };
 

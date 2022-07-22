@@ -73,8 +73,8 @@ export const SelectColor = ({
       {showColorInput && (
         <LabeledInput
           // label={'color'}
-          placeholder={'e.g. yellow, green '}
-          value={details?.colors[0]}
+          placeholder={'seperate colors via comma e.g. yellow, green'}
+          // value={details?.colors[0]}
           handleChange={handleOtherColorChange}
         />
       )}
