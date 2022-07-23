@@ -17,6 +17,9 @@ import {Header} from './Login';
 import Toast from '../components/general/toasts';
 import AuthService from '../services/AuthService';
 import CButton from '../components/general/Buttons';
+import {useDispatch} from 'react-redux';
+import {storeDetailsToLocalStorage} from '../src/Utils';
+import {setUser} from '../Redux/reducers/authSlice';
 
 const Verification = ({route: {params}}) => {
   // input references:
@@ -32,7 +35,7 @@ const Verification = ({route: {params}}) => {
 
   const navigation = useNavigation();
   const {user} = params;
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const VERIFICATION_LENGTH = useMemo(() => 5, []);
 
@@ -55,7 +58,13 @@ const Verification = ({route: {params}}) => {
     // dispatch(verifyUser({id: user?._id || id, code: code}));
 
     AuthService.activateUser({id: user?._id, code})
-      .then(r => {
+      .then(async r => {
+        console.log(r);
+
+        dispatch(setUser({...user, token: r?.token}));
+
+        await storeDetailsToLocalStorage('user', {...user, token: r?.token});
+
         toast.show({
           render: () => {
             return <Toast.success message={r?.message} />;
@@ -63,7 +72,9 @@ const Verification = ({route: {params}}) => {
         });
 
         setLoading(false);
-        navigation.navigate('about_business', {user});
+        navigation.navigate('about_business', {
+          user: {...user, token: r?.token},
+        });
       })
       .catch(err => {
         toast.show({
@@ -77,6 +88,7 @@ const Verification = ({route: {params}}) => {
         });
 
         setLoading(false);
+        console.log(err.message);
       });
     // navigation.navigate('login');
   };

@@ -16,6 +16,9 @@ import AboutBusinessService from '../../services/AboutBusinessService';
 import Selector from '../../components/Seller/business_details/Selector';
 import Toast from '../../components/general/toasts';
 import {LoadingButton, SubmitButton} from '../Credentials';
+import {fetchProfileDetails, storeDetailsToLocalStorage} from '../../src/Utils';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../Redux/reducers/authSlice';
 
 const INITIAL_REGION = {
   latitude: -1.286389,
@@ -36,6 +39,8 @@ const Last = ({route: {params}}) => {
     region: INITIAL_REGION,
   });
 
+  const dispatch = useDispatch();
+
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState({});
   const [showSelector, setShowSelector] = useState(false);
@@ -44,6 +49,8 @@ const Last = ({route: {params}}) => {
   // console.log(params?.business);
 
   useEffect(() => {
+    console.log(params);
+
     setLoading(false);
     const fetchAgents = () => {
       AboutBusinessService.fetchAgents()
@@ -75,8 +82,47 @@ const Last = ({route: {params}}) => {
   //   navigation.navigate('rider_details');
   // };
 
+  const validateCredentials = () => {
+    if (details?.till === '') {
+      toast.show({
+        render: () => {
+          return <Toast.error message={'please pass in your till number!'} />;
+        },
+        duration: 2300,
+      });
+
+      return false;
+    } else if (details?.mpesaPhone === '') {
+      toast.show({
+        render: () => {
+          return <Toast.error message={'please pass in your phone number!'} />;
+        },
+        duration: 2300,
+      });
+
+      return false;
+    } else if (!selectedAgent?._id) {
+      toast.show({
+        render: () => {
+          return <Toast.error message={'please select Agent!'} />;
+        },
+        duration: 2300,
+      });
+
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
+
+    const isValid = validateCredentials();
+    if (!isValid) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const r = await AboutBusinessService?.addBusinessDetails(
@@ -88,6 +134,17 @@ const Last = ({route: {params}}) => {
         },
       );
 
+      const fetchedDetails = await fetchProfileDetails(params?.user?._id, {
+        token: params?.user?.token,
+      });
+
+      // console.log(fetchedDetails);user
+
+      // store details to redux
+      dispatch(setUser(fetchedDetails));
+
+      await storeDetailsToLocalStorage('user', fetchedDetails);
+
       toast.show({
         render: () => {
           return <Toast.success message={r?.message} />;
@@ -95,7 +152,11 @@ const Last = ({route: {params}}) => {
       });
 
       setLoading(false);
-      navigator.navigate('Login');
+      if (params?.user?.token) {
+        navigator.navigate('drawer');
+      } else {
+        navigator.navigate('Login');
+      }
     } catch (err) {
       console.log(err);
 

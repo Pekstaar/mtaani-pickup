@@ -25,7 +25,7 @@ import {LoadingButton, SubmitButton} from './Credentials';
 import AuthService from '../services/AuthService';
 import AsyncStorageService from '../services/AsyncStorageService';
 import Toast from '../components/general/toasts';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {fetchProfileDetails, storeDetailsToLocalStorage} from '../src/Utils';
 import {setUser} from '../Redux/reducers/authSlice';
@@ -51,10 +51,19 @@ const Login = () => {
   // const {isSuccess, isLoading, isError, message} = useSelector(
   //   state => state.auth,
   // );
+  const {user: rUser} = useSelector(state => state.auth);
 
   useEffect(() => {
     setLoading(false);
 
+    if (rUser?.token) {
+      // setLoading(false);
+      console.log(rUser);
+
+      navigation.navigate(NEXT_SCREEN);
+
+      return;
+    }
     const fetchUser = async () => {
       setPageLoading(true);
 
@@ -197,42 +206,68 @@ const Login = () => {
   };
 
   const handleSocialUser = async userDetails => {
-    setLoading(true);
-    const response = await AuthService.authenticateUserSocially({
-      f_name: userDetails?.name.split(' ')[0],
-      l_name: userDetails?.name.split(' ')[1],
-      email: userDetails?.email,
-      password: '',
-    });
+    try {
+      setLoading(true);
+      const response = await AuthService.authenticateUserSocially({
+        f_name: userDetails?.name.split(' ')[0],
+        l_name: userDetails?.name.split(' ')[1],
+        email: userDetails?.email,
+        password: '',
+      });
 
-    // console.log(response);
+      // console.log(response);
 
-    const userExistsInDb = response.status === 201;
-    const userDoesNotExist = response.status === 200;
+      const userExistsInDb = response.status === 201;
+      const userDoesNotExist = response.status === 200;
 
-    await AsyncStorageService?.setData('user', JSON.stringify(response?.data));
+      if (userExistsInDb && response?.data?.phone_number) {
+        await AsyncStorageService?.setData(
+          'user',
+          JSON.stringify(response?.data),
+        );
+        // setLoading(false);
+        const fetchedDetails = await fetchProfileDetails(response?.data?._id, {
+          token: response?.data?.token,
+        });
+        // console.log(response?.data?.token);
 
-    if (userExistsInDb) {
-      // setLoading(false);
+        // console.log(fetchedDetails);
 
-      navigation.navigate(NEXT_SCREEN);
+        // store details to redux
+        dispatch(setUser(fetchedDetails));
 
+        console.log('Fetched Social details: ', fetchProfileDetails);
+
+        await storeDetailsToLocalStorage('user', fetchedDetails);
+
+        // navigation.navigate(NEXT_SCREEN);
+
+        toast.show({
+          render: () => {
+            return <Toast.success message={'Login Successful!'} />;
+          },
+          placement: TOAST_PROPS.placement,
+          duration: TOAST_PROPS.duration,
+        });
+      } else if (userDoesNotExist) {
+        // setLoading(false);
+
+        navigation.navigate('credentials', {
+          details: {
+            name: userDetails?.name,
+            email: userDetails?.email,
+          },
+          socialLogin: true,
+        });
+      }
+    } catch (error) {
+      console.log(error);
       toast.show({
         render: () => {
-          return <Toast.success message={'Login Successful!'} />;
+          return <Toast.error message={'Social Login Error!'} />;
         },
         placement: TOAST_PROPS.placement,
         duration: TOAST_PROPS.duration,
-      });
-    } else if (userDoesNotExist) {
-      // setLoading(false);
-
-      navigation.navigate('credentials', {
-        details: {
-          name: userDetails?.name,
-          email: userDetails?.email,
-        },
-        socialLogin: true,
       });
     }
   };

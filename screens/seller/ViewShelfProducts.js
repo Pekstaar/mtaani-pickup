@@ -32,6 +32,7 @@ import DeliverButton from '../../components/Seller/view_shelf_products/DeliverBu
 import ImageBox from '../../components/Seller/add_product/ImageBox';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import EmptyShelf from '../../components/Seller/view_shelf_products/EmptyShelf';
 
 const ViewShelfProducts = () => {
   const navigation = useNavigation();
@@ -42,6 +43,7 @@ const ViewShelfProducts = () => {
   const [viewModal, setViewModal] = useState(false);
   // const [products, setProducts] = useState(shelfProducts);
   const [currentLayout, setCurrentLayout] = useState('list');
+  const [empty, setEmpty] = useState(true);
 
   const handleClose = () => {
     setViewModal(false);
@@ -88,6 +90,8 @@ const ViewShelfProducts = () => {
           layout={currentLayout}
         />
         {/* list */}
+        {/* {empty && <EmptyShelf />} */}
+
         <ScrollView mb={'100px'}>
           {currentLayout === 'grid' ? (
             <Stack
@@ -140,7 +144,7 @@ const ViewShelfProducts = () => {
         <Button
           onPress={() => navigation?.navigate('add_product')}
           bg={'primary'}
-          w={'130px'}
+          minW={'160px'}
           borderRadius={'full'}
           position={'absolute'}
           right={'3'}

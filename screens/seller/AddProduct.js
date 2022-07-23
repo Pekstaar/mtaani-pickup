@@ -25,18 +25,18 @@ import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
 import {SelectSize} from '../../components/Seller/add_product/Sizes';
 import Toast from '../../components/general/toasts';
 
-const AboutBusiness = ({route: {params}}) => {
+const AddProduct = ({route: {params}}) => {
   const toast = useToast();
-  const {selectedProduct: selectedProductId, products} = useSelector(
-    state => state.shelf,
-  );
+  // const {selectedProduct: selectedProductId, products} = useSelector(
+  //   state => state.shelf,
+  // );
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const selectedProduct = useMemo(
-    () => products.find(item => item._id === selectedProductId),
-    [selectedProductId, products],
-  );
+  // const selectedProduct = useMemo(
+  //   () => products.find(item => item._id === selectedProductId),
+  //   [selectedProductId, products],
+  // );
 
   const mode = useMemo(() => {
     if (params?.mode === 'update') {
@@ -50,8 +50,8 @@ const AboutBusiness = ({route: {params}}) => {
     name: '',
     colors: [],
     category: '',
-    price: [],
-    sizes: '',
+    price: '',
+    sizes: [],
     qty: '',
     quantity_unit: 'pieces',
   });
@@ -161,7 +161,7 @@ const AboutBusiness = ({route: {params}}) => {
     try {
       // formData.append('images', images);
 
-      if (selectedProductId && mode === 'update') {
+      if (params?.product && mode === 'update') {
         const data = {
           product_name: details?.name,
           color: details?.colors,
@@ -169,6 +169,7 @@ const AboutBusiness = ({route: {params}}) => {
           category: details?.category,
           qty: details?.qty,
           size: details?.sizes[0],
+          unit: details?.quantity_unit,
         };
 
         await AboutBusinessService.updateBusinessProduct(
@@ -195,6 +196,7 @@ const AboutBusiness = ({route: {params}}) => {
         formData.append('category', details.category);
         formData.append('size', details.sizes[0]);
         formData.append('qty', details.qty);
+        formData.append('unit', details.quantity_unit);
         formData.append('min_order', 2);
 
         // details?.colors.forEach(color => {
@@ -212,6 +214,10 @@ const AboutBusiness = ({route: {params}}) => {
           formData.append('colors', c);
         });
 
+        // details.sizes.forEach(s => {
+        //   formData.append('size', s);
+        // });
+
         await AboutBusinessService.createBusinessProduct(formData);
 
         toast.show({
@@ -224,7 +230,7 @@ const AboutBusiness = ({route: {params}}) => {
 
         dispatch(fetchProductsOnShelf());
         setLoading(false);
-        // navigation.navigate('view_products');
+        navigation.navigate('view_products');
       }
 
       // navigation.navigate('view_products');
@@ -440,7 +446,7 @@ const AboutBusiness = ({route: {params}}) => {
             <LoadingButton />
           ) : (
             <SubmitButton
-              text={selectedProductId ? 'Update ' : 'Add Product'}
+              text={params?.product?._id ? 'Update ' : 'Add Product'}
               handlePress={handleSubmit}
             />
           )}
@@ -451,4 +457,4 @@ const AboutBusiness = ({route: {params}}) => {
   );
 };
 
-export default AboutBusiness;
+export default AddProduct;

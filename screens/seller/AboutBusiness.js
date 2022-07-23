@@ -43,6 +43,8 @@ const AboutBusiness = ({
 
   const navigation = useNavigation();
 
+  // console.log(user)/
+
   const [businessLogo, setBusinessLogo] = useState(null);
 
   const manageCategory = c => {
@@ -96,7 +98,7 @@ const AboutBusiness = ({
         setLoading(false);
 
         console.log(r);
-        navigation.navigate('last', {business: r?.biz});
+        navigation.navigate('last', {business: r?.biz, user});
         return;
       } catch (error) {
         console.log(error);
@@ -157,6 +159,16 @@ const AboutBusiness = ({
 
   const toggleCategoryInput = () => {
     setShowCategoryInput(!showCategoryInput);
+  };
+
+  const handleSkip = () => {
+    //  navigation.navigate('Login')
+
+    if (user?.token) {
+      navigation.navigate('drawer');
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   const uploadImage = () => {
@@ -353,7 +365,7 @@ const AboutBusiness = ({
               <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
             )}
 
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={handleSkip}>
               <Center
                 bg={'secondary'}
                 borderRadius={'full'}

@@ -26,3 +26,5 @@ WEEK 2
 <!-- _ clear photo on update product -->
 
 \_ validate add product fields polish social authentication
+
+View Product: stock,price
