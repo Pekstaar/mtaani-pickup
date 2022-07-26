@@ -7,12 +7,11 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Avatar, Box, HStack, Icon, Pressable, Text} from 'native-base';
-import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
 const CustomDrawer = props => {
   const {navigation} = props;
-  const {user} = useSelector(state => state.auth);
+  const {user, currentBusiness} = useSelector(state => state.auth);
 
   return (
     <>
@@ -21,7 +20,7 @@ const CustomDrawer = props => {
           {...props}
           contentContainerStyle={{backgroundColor: '#fff'}}>
           <Head
-            user={user}
+            business={currentBusiness}
             handlePress={() => {
               navigation.navigate('profile');
 
@@ -64,7 +63,7 @@ const CustomDrawer = props => {
 
 export default CustomDrawer;
 
-const Head = ({handlePress, user}) => (
+const Head = ({handlePress, business}) => (
   <Pressable _pressed={{bg: 'amber.50'}} onPress={handlePress} mb={'3'}>
     <HStack p={4} justifyContent={'center'} space={'3'} alignItems={'center'}>
       {/* avatar */}
@@ -72,14 +71,14 @@ const Head = ({handlePress, user}) => (
         bg="cyan.500"
         shadow={'1'}
         source={{
-          uri: user?.business?.logo,
+          uri: business?.logo,
         }}>
-        {user?.f_name?.charAt(0) + user?.f_name?.charAt(1)}
+        {business?.name?.charAt(0) + business?.name?.charAt(1)}
       </Avatar>
       {/* details */}
       <Box>
         <Text fontSize={'md'} fontWeight={'700'}>
-          {user?.f_name}
+          {business.name}
         </Text>
         <Text fontSize={'xs'}>View account</Text>
       </Box>

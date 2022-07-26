@@ -9,7 +9,7 @@ import Loader from '../components/general/Loader';
 import {SIZES} from '../constants';
 import Toast from '../components/general/toasts';
 
-const Role = () => {
+const Role = ({route: {params}}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const toast = useToast();
@@ -26,13 +26,14 @@ const Role = () => {
         },
       });
     } else {
-      navigation.navigate('credentials');
+      navigation.navigate('credentials', {...params});
+      console.log(params);
     }
   };
 
   const handleRoleButtonPress = useCallback(
     selected => {
-      if (selected?.name.toLowerCase() === 'client') {
+      if (selected?.name.toLowerCase() === 'seller') {
         dispatch(setSelectedRole(selected));
       } else if (selected?.name === 'Rider') {
         navigation.navigate('select_rider_category');
@@ -72,14 +73,18 @@ const Role = () => {
             w={'auto'}
             mx={SIZES.width * 0.02}
             justifyContent="center">
-            {roles.map(r => (
-              <RoleButton
-                key={r?._id}
-                pressed={selectedRole?.name}
-                handleRoleButtonPress={() => handleRoleButtonPress(r)}
-                currentRole={r?.name}
-              />
-            ))}
+            {roles.map(r => {
+              if (r?.name.toLowerCase() === 'admin') return;
+
+              return (
+                <RoleButton
+                  key={r?._id}
+                  pressed={selectedRole?.name}
+                  handleRoleButtonPress={() => handleRoleButtonPress(r)}
+                  currentRole={r?.name}
+                />
+              );
+            })}
           </HStack>
           <Button
             bg={'primary'}

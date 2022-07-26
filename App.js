@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
@@ -26,7 +26,7 @@ import {
   Settings,
   ViewShelfProducts,
 } from './screens';
-import {Provider, useDispatch} from 'react-redux';
+import {Provider, useDispatch, useSelector} from 'react-redux';
 import {Store} from './Redux/Store';
 import {GoogleSignin} from '@react-native-community/google-signin';
 import {COLORS} from './constants';
@@ -36,6 +36,8 @@ import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
 import DrawerNav from './components/navigation/DrawerNav';
+import AsyncStorageService from './services/AsyncStorageService';
+import BusinessRequired from './screens/BusinessRequired';
 // import {LocalNotification} from './src/services/LocalPushController';
 // import messaging from '@react-native-firebase/messaging';
 // import NotificationController from './src/services/NotificationController';
@@ -126,6 +128,10 @@ const App = () => {
               <Stack.Screen name="credentials" component={Credentials} />
               <Stack.Screen name="verification" component={Verification} />
               <Stack.Screen name="settings" component={Settings} />
+              <Stack.Screen
+                name="business_required"
+                component={BusinessRequired}
+              />
 
               <Stack.Screen name="tracker" component={Tracker} />
               <Stack.Screen name="roles" component={Role} />

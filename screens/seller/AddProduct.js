@@ -27,9 +27,7 @@ import Toast from '../../components/general/toasts';
 
 const AddProduct = ({route: {params}}) => {
   const toast = useToast();
-  // const {selectedProduct: selectedProductId, products} = useSelector(
-  //   state => state.shelf,
-  // );
+  const {currentBusiness} = useSelector(state => state.auth);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -69,9 +67,9 @@ const AddProduct = ({route: {params}}) => {
         colors: [...params?.product?.colors],
         category: params?.product?.category._id,
         price: params?.product?.price?.toString(),
-        sizes: [params?.product?.size],
+        sizes: [...params?.product?.size],
         qty: params?.product?.qty,
-        quantity_unit: 'pieces',
+        quantity_unit: params?.product?.unit,
       });
     }
   }, [params?.product?._id]);
@@ -168,13 +166,13 @@ const AddProduct = ({route: {params}}) => {
           price: details?.price,
           category: details?.category,
           qty: details?.qty,
-          size: details?.sizes[0],
+          size: details?.sizes,
           unit: details?.quantity_unit,
         };
 
         await AboutBusinessService.updateBusinessProduct(
           data,
-          selectedProductId,
+          params?.product?._id,
         );
 
         toast.show({
@@ -185,19 +183,20 @@ const AddProduct = ({route: {params}}) => {
 
         resetState();
 
-        dispatch(fetchProductsOnShelf());
+        dispatch(fetchProductsOnShelf(currentBusiness?._id));
         setLoading(false);
-        navigation.navigate('view_products');
+        navigation.navigate('drawer', {screen: 'products'});
       } else {
         // const formData = new FormData();
         let formData = new FormData();
         formData.append('product_name', details.name);
         formData.append('price', details.price);
         formData.append('category', details.category);
-        formData.append('size', details.sizes[0]);
+        // formData.append('size', details.sizes[0]);
         formData.append('qty', details.qty);
         formData.append('unit', details.quantity_unit);
         formData.append('min_order', 2);
+        formData.append('business', currentBusiness?._id);
 
         // details?.colors.forEach(color => {
         //   formData.append('colors', color);
@@ -214,9 +213,9 @@ const AddProduct = ({route: {params}}) => {
           formData.append('colors', c);
         });
 
-        // details.sizes.forEach(s => {
-        //   formData.append('size', s);
-        // });
+        details.sizes.forEach(s => {
+          formData.append('size', s);
+        });
 
         await AboutBusinessService.createBusinessProduct(formData);
 
@@ -230,7 +229,7 @@ const AddProduct = ({route: {params}}) => {
 
         dispatch(fetchProductsOnShelf());
         setLoading(false);
-        navigation.navigate('view_products');
+        navigation.navigate('drawer', {screen: 'products'});
       }
 
       // navigation.navigate('view_products');
@@ -299,6 +298,9 @@ const AddProduct = ({route: {params}}) => {
         // console.log(uploadedImages);
       })
       .catch(err => {
+        if (err.code === 'E_PICKER_CANCELLED') {
+          return false;
+        }
         toast.show({
           title: 'Error!',
           status: 'error',

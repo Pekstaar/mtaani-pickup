@@ -16,9 +16,13 @@ import AboutBusinessService from '../../services/AboutBusinessService';
 import Selector from '../../components/Seller/business_details/Selector';
 import Toast from '../../components/general/toasts';
 import {LoadingButton, SubmitButton} from '../Credentials';
-import {fetchProfileDetails, storeDetailsToLocalStorage} from '../../src/Utils';
+import {
+  fetchAndStoreBusinesDetails,
+  fetchProfileDetails,
+  storeDetailsToLocalStorage,
+} from '../../src/Utils';
 import {useDispatch} from 'react-redux';
-import {setUser} from '../../Redux/reducers/authSlice';
+import {setBusinesses, setUser} from '../../Redux/reducers/authSlice';
 
 const INITIAL_REGION = {
   latitude: -1.286389,
@@ -83,10 +87,10 @@ const Last = ({route: {params}}) => {
   // };
 
   const validateCredentials = () => {
-    if (details?.till === '') {
+    if (details?.till && details.till.length > 6) {
       toast.show({
         render: () => {
-          return <Toast.error message={'please pass in your till number!'} />;
+          return <Toast.error message={'Invalid till number!'} />;
         },
         duration: 2300,
       });
@@ -139,11 +143,17 @@ const Last = ({route: {params}}) => {
       });
 
       // console.log(fetchedDetails);user
+      if (!params?.mode) {
+        // store details to redux
+        dispatch(setUser(fetchedDetails));
 
-      // store details to redux
-      dispatch(setUser(fetchedDetails));
+        const userBusinesses = await fetchAndStoreBusinesDetails();
 
-      await storeDetailsToLocalStorage('user', fetchedDetails);
+        // console.log(userBusinesses[0]);
+        dispatch(setBusinesses(userBusinesses));
+
+        await storeDetailsToLocalStorage('user', fetchedDetails);
+      }
 
       toast.show({
         render: () => {

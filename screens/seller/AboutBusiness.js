@@ -25,24 +25,21 @@ import {TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
 import Toast from '../../components/general/toasts';
 
-const AboutBusiness = ({
-  route: {
-    params: {user},
-  },
-}) => {
+const AboutBusiness = ({route: {params}}) => {
   const toast = useToast();
+  const {user} = params;
 
   const [details, setDetails] = useState({
     bName: '',
     itemSold: '',
     category: '',
+    other: '',
   });
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-
   // console.log(user)/
 
   const [businessLogo, setBusinessLogo] = useState(null);
@@ -73,7 +70,9 @@ const AboutBusiness = ({
         formData.append('name', details?.bName);
         formData.append('user_id', user?._id);
         formData.append('what_u_sale', details?.itemSold);
-        formData.append('category', details?.category?.id);
+        details?.category?.id
+          ? formData.append('category', details?.category?.id)
+          : formData.append('other', details?.other);
 
         const imageURI = businessLogo?.path;
         const splitImageURI = imageURI?.split('/');
@@ -98,7 +97,11 @@ const AboutBusiness = ({
         setLoading(false);
 
         console.log(r);
-        navigation.navigate('last', {business: r?.biz, user});
+        navigation.navigate('last', {
+          business: r?.biz,
+          user,
+          mode: params?.mode,
+        });
         return;
       } catch (error) {
         console.log(error);
@@ -157,6 +160,9 @@ const AboutBusiness = ({
     //
   };
 
+  const handleOther = name => {
+    setDetails(prev => ({...prev, other: name, itemSold: ''}));
+  };
   const toggleCategoryInput = () => {
     setShowCategoryInput(!showCategoryInput);
   };
@@ -329,7 +335,7 @@ const AboutBusiness = ({
                   space={2}
                   mt={1}
                   py={'2'}>
-                  {categories.map((cat, i) => (
+                  {categories?.slice(0, 8).map((cat, i) => (
                     <CategoryButton
                       key={i}
                       name={cat?.name}
@@ -348,11 +354,9 @@ const AboutBusiness = ({
               {showCategoryInput && (
                 <LabeledInput
                   label={'category'}
-                  placeholder={'e.g. shoes'}
-                  value={details?.itemSold}
-                  handleChange={name =>
-                    setDetails(prev => ({...prev, itemSold: name}))
-                  }
+                  placeholder={'e.g. Phone Accessories'}
+                  value={details?.other}
+                  handleChange={handleOther}
                 />
               )}
             </VStack>
@@ -365,22 +369,24 @@ const AboutBusiness = ({
               <SubmitButton text={'NEXT'} handlePress={handleSubmit} />
             )}
 
-            <TouchableOpacity onPress={handleSkip}>
-              <Center
-                bg={'secondary'}
-                borderRadius={'full'}
-                mt={4}
-                width={'full'}
-                py={2.5}>
-                <Text
-                  color={'white'}
-                  textTransform={'uppercase'}
-                  fontSize={'md'}
-                  fontWeight={'700'}>
-                  Skip
-                </Text>
-              </Center>
-            </TouchableOpacity>
+            {!params?.mode && (
+              <TouchableOpacity onPress={handleSkip}>
+                <Center
+                  bg={'secondary'}
+                  borderRadius={'full'}
+                  mt={4}
+                  width={'full'}
+                  py={2.5}>
+                  <Text
+                    color={'white'}
+                    textTransform={'uppercase'}
+                    fontSize={'md'}
+                    fontWeight={'700'}>
+                    Skip
+                  </Text>
+                </Center>
+              </TouchableOpacity>
+            )}
           </Box>
 
           {/* </Button> */}

@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const DashboardHeader = ({user}) => {
+const DashboardHeader = ({user, business}) => {
   const navigation = useNavigation();
   // const {isActive = true} = props;
 
@@ -27,7 +27,7 @@ const DashboardHeader = ({user}) => {
           source={
             user?.token
               ? {
-                  uri: user?.business?.logo,
+                  uri: business?.logo,
                 }
               : assets.profile
           }

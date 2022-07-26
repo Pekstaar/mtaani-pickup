@@ -15,9 +15,9 @@ const initialState = {
 
 export const fetchProductsOnShelf = createAsyncThunk(
   'shelf/fetch_products',
-  async thunkApi => {
+  async (id, thunkApi) => {
     try {
-      return await AboutBusinessService.fetchProducts();
+      return await AboutBusinessService.fetchProducts(id);
     } catch (e) {
       const message =
         e?.response?.data?.error?.message ||
@@ -25,7 +25,7 @@ export const fetchProductsOnShelf = createAsyncThunk(
         e?.message ||
         e;
 
-      console.log(e.response);
+      console.log(e);
 
       return thunkApi.rejectWithValue(message);
     }

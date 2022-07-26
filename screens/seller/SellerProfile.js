@@ -15,9 +15,17 @@ import {Header} from '../Login';
 import {useSelector} from 'react-redux';
 
 import {LabeledInput} from '../../components/Input';
+import {SubmitButton} from '../Credentials';
+import {useNavigation} from '@react-navigation/native';
 
 const SellerProfile = () => {
-  const {user} = useSelector(state => state.auth);
+  const {user, currentBusiness} = useSelector(state => state.auth);
+
+  const navigation = useNavigation();
+
+  const handleAddBusiness = () => {
+    navigation.navigate('about_business', {user, mode: 'add'});
+  };
 
   return (
     <Box safeArea px={'2'}>
@@ -35,9 +43,9 @@ const SellerProfile = () => {
               position={'relative'}>
               <Image
                 source={
-                  user?.business?.logo
+                  currentBusiness.logo
                     ? {
-                        uri: user?.business?.logo,
+                        uri: currentBusiness.logo,
                       }
                     : assets.empty
                 }
@@ -67,7 +75,7 @@ const SellerProfile = () => {
 
             {/* Text */}
             <Text color="gray.800" fontSize={'md'} fontWeight={600} mt={4}>
-              {user?.f_name + ' ' + user?.l_name}
+              {currentBusiness?.name}
             </Text>
           </Center>
           {/* name */}
@@ -77,7 +85,7 @@ const SellerProfile = () => {
               <LabeledInput
                 label={'Business/shop name'}
                 placeholder={'e.g. Business name'}
-                value={user?.business?.name}
+                value={currentBusiness.name}
                 disabled={true}
                 handleChange={name =>
                   setDetails(prev => ({...prev, itemSold: name}))
@@ -89,7 +97,7 @@ const SellerProfile = () => {
               <LabeledInput
                 label={'What do you sell?'}
                 placeholder={'e.g. shoes'}
-                value={user?.business?.what_u_sale}
+                value={currentBusiness.what_u_sale}
                 disabled={true}
                 handleChange={name =>
                   setDetails(prev => ({...prev, itemSold: name}))
@@ -101,7 +109,7 @@ const SellerProfile = () => {
               <LabeledInput
                 label={'Till Number'}
                 placeholder={'enter your business till number'}
-                value={user?.business?.till_No?.toString()}
+                value={currentBusiness.till_No?.toString()}
                 disabled={true}
                 // handleChange={name =>
                 //   setDetails(prev => ({...prev, itemSold: name}))
@@ -113,13 +121,18 @@ const SellerProfile = () => {
               <LabeledInput
                 label={'Mpesa phone Number'}
                 placeholder={'enter your mpesa phone number'}
-                value={user?.business?.Mpesa_No?.toString()}
+                value={currentBusiness.Mpesa_No?.toString()}
                 disabled={true}
                 // handleChange={name =>
                 //   setDetails(prev => ({...prev, itemSold: name}))
                 // }
               />
             </Box>
+
+            <SubmitButton
+              text={'Add Business'}
+              handlePress={handleAddBusiness}
+            />
           </VStack>
         </VStack>
       </ScrollView>

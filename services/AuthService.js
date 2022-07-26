@@ -51,7 +51,7 @@ const getUserDetails = async id => {
 const getBusinessDetails = async id => {
   await setAuthToken(axios);
 
-  const response = await axios.get(`/business/${id}`);
+  const response = await axios.get(`/businesses`);
 
   return response.data;
 };

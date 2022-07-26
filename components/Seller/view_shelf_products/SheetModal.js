@@ -94,15 +94,6 @@ const SheetModal = ({product, isOpen, onClose, onEdit, handleDeliver}) => {
                 fontSize={'lg'}>
                 {product?.product_name}
               </Box>
-              <Box
-                w={'1/2'}
-                flexDir={'row'}
-                _text={{fontWeight: '600', fontSize: '13', color: '#696969'}}>
-                <Text color={'muted.500'} fontSize={'xs'}>
-                  Size:{' '}
-                </Text>
-                {product?.size}
-              </Box>
 
               <Box
                 w={'1/2'}
@@ -161,6 +152,16 @@ const SheetModal = ({product, isOpen, onClose, onEdit, handleDeliver}) => {
                   Colors:{' '}
                 </Text>
                 {product?.colors?.map(c => `${c}, `)}
+              </Box>
+
+              <Box
+                w={'1/2'}
+                flexDir={'row'}
+                _text={{fontWeight: '600', fontSize: '13', color: '#696969'}}>
+                <Text color={'muted.500'} fontSize={'xs'}>
+                  Size:{' '}
+                </Text>
+                {product?.size?.map(s => `${s} `)}
               </Box>
             </HStack>
 

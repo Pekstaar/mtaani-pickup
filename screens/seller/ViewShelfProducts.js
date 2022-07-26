@@ -38,6 +38,7 @@ const ViewShelfProducts = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {products, isLoading} = useSelector(state => state.shelf);
+  const {currentBusiness} = useSelector(state => state.auth);
 
   const [currentProduct, setCurrentProduct] = useState({});
   const [viewModal, setViewModal] = useState(false);
@@ -50,7 +51,9 @@ const ViewShelfProducts = () => {
   };
 
   const fetchShelfProducts = () => {
-    dispatch(fetchProductsOnShelf());
+    if (!products || products.length === 0) {
+      dispatch(fetchProductsOnShelf(currentBusiness?._id));
+    }
   };
 
   const handleLayoutChange = layout => {
@@ -92,55 +95,59 @@ const ViewShelfProducts = () => {
         {/* list */}
         {/* {empty && <EmptyShelf />} */}
 
-        <ScrollView mb={'100px'}>
-          {currentLayout === 'grid' ? (
-            <Stack
-              flexDirection={'row'}
-              flexWrap={'wrap'}
-              //   px={'3'}
-              justifyContent={'flex-start'}>
-              {products?.map((item, index) => (
-                <Product
-                  handlePress={() => {
-                    setCurrentProduct(item);
-                    setViewModal(true);
-                  }}
-                  key={index}
-                  details={item}
-                />
-              ))}
-            </Stack>
-          ) : (
-            <VStack space={2} p={3}>
-              {products?.map(item => {
-                console.log(item._id === currentProduct?._id);
-                return (
-                  <Box key={item?._id}>
-                    {item._id === currentProduct?._id ? (
-                      <ViewFull
-                        onEdit={handleSelectProduct}
-                        onClose={() => setCurrentProduct({})}
-                        product={item}
-                      />
-                    ) : (
-                      <ProductListView
-                        handleViewDetails={() => {
-                          setCurrentProduct(item);
-                        }}
-                        product={item}
-                        handleDeliver={() =>
-                          navigation.navigate('deliver_product')
-                        }
-                      />
-                    )}
-                  </Box>
-                );
-              })}
-            </VStack>
-          )}
-        </ScrollView>
+        {products?.length === 0 ? (
+          <EmptyShelf />
+        ) : (
+          <ScrollView mb={'100px'}>
+            {currentLayout === 'grid' ? (
+              <Stack
+                flexDirection={'row'}
+                flexWrap={'wrap'}
+                //   px={'3'}
+                justifyContent={'flex-start'}>
+                {products?.map((item, index) => (
+                  <Product
+                    handlePress={() => {
+                      setCurrentProduct(item);
+                      setViewModal(true);
+                    }}
+                    key={index}
+                    details={item}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              <VStack space={2} p={3}>
+                {products?.map(item => {
+                  console.log(item._id === currentProduct?._id);
+                  return (
+                    <Box key={item?._id}>
+                      {item._id === currentProduct?._id ? (
+                        <ViewFull
+                          onEdit={handleSelectProduct}
+                          onClose={() => setCurrentProduct({})}
+                          product={item}
+                        />
+                      ) : (
+                        <ProductListView
+                          handleViewDetails={() => {
+                            setCurrentProduct(item);
+                          }}
+                          product={item}
+                          handleDeliver={() =>
+                            navigation.navigate('deliver_product')
+                          }
+                        />
+                      )}
+                    </Box>
+                  );
+                })}
+              </VStack>
+            )}
+          </ScrollView>
+        )}
       </Box>
-      {!currentProduct._id && (
+      {!currentProduct?._id && (
         <Button
           onPress={() => navigation?.navigate('add_product')}
           bg={'primary'}
@@ -235,15 +242,6 @@ const ViewFull = ({product, handleDeliver, onEdit, onClose}) => {
             fontSize={'lg'}>
             {product?.product_name}
           </Box>
-          <Box
-            w={'1/2'}
-            flexDir={'row'}
-            _text={{fontWeight: '600', fontSize: '13', color: '#696969'}}>
-            <Text color={'muted.500'} fontSize={'xs'}>
-              Size:{' '}
-            </Text>
-            {product?.size}
-          </Box>
 
           <Box
             w={'1/2'}
@@ -302,6 +300,16 @@ const ViewFull = ({product, handleDeliver, onEdit, onClose}) => {
               Colors:{' '}
             </Text>
             {product?.colors?.map(c => `${c}, `)}
+          </Box>
+
+          <Box
+            w={'1/2'}
+            flexDir={'row'}
+            _text={{fontWeight: '600', fontSize: '13', color: '#696969'}}>
+            <Text color={'muted.500'} fontSize={'xs'}>
+              Size:{' '}
+            </Text>
+            {product?.size.map(s => `${s} `)}
           </Box>
         </HStack>
 

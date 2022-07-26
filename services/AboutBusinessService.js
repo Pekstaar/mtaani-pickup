@@ -11,7 +11,6 @@ const fetchBusinessCategories = async () => {
 
 const fetchBusinessCategoriesNoAuth = async () => {
   const response = await axios.get(`/busines-categories`);
-
   return response.data;
 };
 
@@ -66,12 +65,13 @@ const updateBusinessProduct = async (pData, id) => {
   console.log(r);
 };
 
-const fetchProducts = async () => {
+const fetchProducts = async id => {
   await setAuthToken(axios);
 
-  const res = await axios.get('/products');
+  const res = await axios.get(`/products/${id}`);
 
-  return res.data.products;
+  console.log(res?.data);
+  return res.data?.products;
 };
 
 const AboutBusinessService = {

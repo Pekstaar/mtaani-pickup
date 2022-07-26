@@ -27,8 +27,12 @@ import AsyncStorageService from '../services/AsyncStorageService';
 import Toast from '../components/general/toasts';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {fetchProfileDetails, storeDetailsToLocalStorage} from '../src/Utils';
-import {setUser} from '../Redux/reducers/authSlice';
+import {
+  fetchAndStoreBusinesDetails,
+  fetchProfileDetails,
+  storeDetailsToLocalStorage,
+} from '../src/Utils';
+import {setBusinesses, setUser} from '../Redux/reducers/authSlice';
 // import {loginWithFacebook, loginWithGoogle} from '../Redux/reducers/authSlice';
 
 const Login = () => {
@@ -68,9 +72,13 @@ const Login = () => {
       setPageLoading(true);
 
       const user = await JSON.parse(await AsyncStorageService.getData('user'));
+      const businesses = await JSON.parse(
+        await AsyncStorageService?.getData('businesses'),
+      );
 
       if (user?.token) {
         dispatch(setUser(user));
+        businesses && dispatch(setBusinesses(businesses));
 
         setPageLoading(false);
 
@@ -139,13 +147,17 @@ const Login = () => {
         password,
       })
         .then(async user => {
-          // await AsyncStorageService.setData('user', JSON.stringify(user));
+          await AsyncStorageService.setData('user', JSON.stringify(user));
+
           // fetch profile details
           const fetchedDetails = await fetchProfileDetails(user?._id, {
             token: user?.token,
           });
 
-          // console.log(fetchedDetails);
+          // businesses owned by user
+          const userBusinesses = await fetchAndStoreBusinesDetails();
+
+          dispatch(setBusinesses(userBusinesses));
 
           // store details to redux
           dispatch(setUser(fetchedDetails));
@@ -170,6 +182,7 @@ const Login = () => {
           }
         })
         .catch(e => {
+          console.log(e);
           toast.show({
             render: () => {
               return (
@@ -217,30 +230,33 @@ const Login = () => {
 
       // console.log(response);
 
-      const userExistsInDb = response.status === 201;
+      const userExistsInDb = parseInt(response.status) === 201;
       const userDoesNotExist = response.status === 200;
 
-      if (userExistsInDb && response?.data?.phone_number) {
+      if (userExistsInDb) {
         await AsyncStorageService?.setData(
           'user',
           JSON.stringify(response?.data),
         );
+
         // setLoading(false);
         const fetchedDetails = await fetchProfileDetails(response?.data?._id, {
           token: response?.data?.token,
         });
-        // console.log(response?.data?.token);
+        // businesses owned by user
+        const userBusinesses = await fetchAndStoreBusinesDetails();
 
-        // console.log(fetchedDetails);
+        // console.log(userBusinesses[0]);
+        dispatch(setBusinesses(userBusinesses));
+
+        // console.log(response?.data?.token);
 
         // store details to redux
         dispatch(setUser(fetchedDetails));
 
-        console.log('Fetched Social details: ', fetchProfileDetails);
-
         await storeDetailsToLocalStorage('user', fetchedDetails);
 
-        // navigation.navigate(NEXT_SCREEN);
+        navigation.navigate(NEXT_SCREEN);
 
         toast.show({
           render: () => {
@@ -250,12 +266,15 @@ const Login = () => {
           duration: TOAST_PROPS.duration,
         });
       } else if (userDoesNotExist) {
+        // console.log(response?.data);
         // setLoading(false);
 
-        navigation.navigate('credentials', {
+        navigation.navigate('roles', {
           details: {
             name: userDetails?.name,
             email: userDetails?.email,
+            token: response.data?.token,
+            _id: response.data?._id,
           },
           socialLogin: true,
         });

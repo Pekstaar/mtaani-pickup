@@ -56,17 +56,17 @@ const ProductListView = ({product, handleViewDetails, handleDeliver}) => {
               flexDir={'row'}
               _text={{fontWeight: '700', color: '#696969', fontSize: 'xs'}}>
               <Text color={'muted.500'} fontSize={'12'}>
-                Category:{' '}
+                Stock:{' '}
               </Text>
-              {product?.category.name}
+              {product?.qty}
             </Box>
             <Box
               flexDir={'row'}
               _text={{fontWeight: '700', color: '#696969', fontSize: 'xs'}}>
               <Text color={'muted.500'} fontSize={'12px'}>
-                Colors:{' '}
+                Category:{' '}
               </Text>
-              {product?.colors?.map(c => `${c}, `)}
+              {product?.category?.name}
             </Box>
           </Box>
           <Box flexDir={'row'} justifyContent={'flex-end'} py={'1'} px={'2'}>

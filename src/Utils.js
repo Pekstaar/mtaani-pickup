@@ -7,6 +7,7 @@ export const MODAL_TIMEOUT = 2500;
 
 export const logoutUser = async callback => {
   await AsyncStorage.removeItem('user');
+  await AsyncStorage.removeItem('businesses');
   callback();
 };
 
@@ -34,13 +35,20 @@ export const fetchProfileDetails = async (userId, otherUserDetails) => {
   // fetch user details
   const userDetails = await AuthService.getUserDetails(userId);
   // fetch business details
-  const businessDetails = await AuthService.getBusinessDetails(userId);
-  // return combined object of user and business details
+
   return {
     ...userDetails?.userObj,
     ...otherUserDetails,
-    business: {...businessDetails?.Bus},
   };
+};
+
+export const fetchAndStoreBusinesDetails = async () => {
+  const businessDetails = await AuthService.getBusinessDetails();
+  // return combined object of user and business details
+
+  await storeDetailsToLocalStorage('businesses', businessDetails?.bussiness);
+
+  return businessDetails?.bussiness;
 };
 
 export const storeDetailsToLocalStorage = async (name, details) => {

@@ -35,7 +35,8 @@ const RoleButton = ({pressed, handleRoleButtonPress, currentRole}) => {
             source={
               currentRole?.toLowerCase() === 'agent'
                 ? assets.agent
-                : currentRole?.toLowerCase() === 'client'
+                : currentRole?.toLowerCase() === 'client' ||
+                  currentRole?.toLowerCase() === 'seller'
                 ? assets.store
                 : currentRole?.toLowerCase() === 'rider'
                 ? assets.rider

@@ -13,16 +13,19 @@ import {
 } from 'native-base';
 import React, {useEffect, useState, useMemo} from 'react';
 import {TouchableOpacity} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Toast from '../components/general/toasts';
 import {LabeledInput} from '../components/Input';
+import {setUser} from '../Redux/reducers/authSlice';
 import AsyncStorageService from '../services/AsyncStorageService';
 import AuthService from '../services/AuthService';
+import {fetchProfileDetails, storeDetailsToLocalStorage} from '../src/Utils';
 import {Header} from './Login';
 // import Success from '../components/general/toasts'
 
 const Credentials = ({route}) => {
   const {selectedRole} = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
   const [credentials, setCredentials] = useState({
     firstName: '',
@@ -123,7 +126,7 @@ const Credentials = ({route}) => {
 
   useEffect(() => {
     setLoading(false);
-    if (route.params) {
+    if (route.params?.details) {
       toast.show({
         render: () => {
           return <Toast.info message={'Please Provide the details above'} />;
@@ -153,11 +156,12 @@ const Credentials = ({route}) => {
     if (credentials?.socialAuth) {
       //
       try {
-        await AuthService?.updateUser({
+        const r = await AuthService?.updateUser({
           f_name: credentials?.firstName,
           l_name: credentials?.lastName,
           email: credentials?.email,
           phone_number: credentials?.phone,
+          role: role,
         });
 
         toast.show({
@@ -168,13 +172,35 @@ const Credentials = ({route}) => {
           duration: TOAST_PROPS.duration,
         });
 
-        if (
-          await JSON.parse(await AsyncStorageService.getData('user'))?.token
-        ) {
-          navigation.navigate('main');
+        await AsyncStorageService.setData(
+          'user',
+          JSON.stringify(route.params?.details),
+        );
+
+        if (route?.params.details?.token) {
+          const cUser = await fetchProfileDetails(route?.params?.details?._id, {
+            token: route?.params?.details?.token,
+          });
+
+          dispatch(setUser(cUser));
+
+          await storeDetailsToLocalStorage('user', cUser);
+
+          navigation.navigate('about_business', {
+            user: cUser,
+          });
+
+          console.log(cUser);
+          return;
         } else {
           navigation.navigate('Login');
         }
+
+        // if (
+        //   await JSON.parse(await AsyncStorageService.getData('user'))?.token
+        // ) {
+        //   navigation.navigate('main');
+        // }
 
         setLoading(false);
       } catch (error) {
@@ -293,7 +319,7 @@ const Credentials = ({route}) => {
               <Box height={20}>
                 <LabeledInput
                   label={'Phone Number'}
-                  placeholder={'+254'}
+                  placeholder={'07...'}
                   value={credentials.phone}
                   handleChange={phone =>
                     setCredentials(prev => ({...prev, phone}))

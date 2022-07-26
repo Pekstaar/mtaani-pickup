@@ -5,6 +5,8 @@ import AuthService from '../../services/AuthService';
 let user;
 const initialState = {
   user: user,
+  currentBusiness: {},
+  businesses: [],
   roles: [],
   selectedRole: null,
   isError: false,
@@ -156,6 +158,13 @@ export const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    setBusinesses: (state, action) => {
+      state.businesses = action.payload;
+      state.currentBusiness = action.payload[0];
+    },
+    setCurrentBusiness: (state, action) => {
+      state.currentBusiness = action.payload;
+    },
 
     reset: state => {
       state.isError = false;
@@ -279,6 +288,12 @@ export const authSlice = createSlice({
   },
 });
 
-export const {reset, setSelectedRole, setUser} = authSlice.actions;
+export const {
+  reset,
+  setSelectedRole,
+  setUser,
+  setCurrentBusiness,
+  setBusinesses,
+} = authSlice.actions;
 
 export default authSlice.reducer;

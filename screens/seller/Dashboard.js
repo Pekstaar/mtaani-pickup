@@ -22,56 +22,62 @@ import AsyncStorageService from '../../services/AsyncStorageService';
 import SendPackage from '../../components/Seller/Dashboard/SendPackage';
 import TrackingSnippet from '../../components/Seller/Dashboard/TrackingSnippet';
 import NotificationToolTip from '../../components/Seller/Dashboard/NotificationToolTip';
+import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
 
 const Dashboard = () => {
   // const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const {user} = useSelector(state => state.auth);
+  const {user, currentBusiness, businesses} = useSelector(state => state.auth);
 
-  const getToken = async () => {
-    try {
-      const fcmToken = await messaging().getToken();
+  // const getToken = async () => {
+  //   try {
+  //     const fcmToken = await messaging().getToken();
 
-      if (fcmToken) {
-        console.log(fcmToken);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  //     if (fcmToken) {
+  //       console.log(fcmToken);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const fetchCurrentBusinessProducts = () => {
+    dispatch(fetchProductsOnShelf(currentBusiness?._id));
   };
-
   useEffect(() => {
-    console.log('User is:', user);
+    console.log(businesses);
+    // console.log('User is:', user, currentBusiness);
+    fetchCurrentBusinessProducts();
   }, [user?.token]);
 
-  useEffect(() => {
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in background', remoteMessage);
-    });
+  // useEffect(() => {
+  //   messaging().setBackgroundMessageHandler(async remoteMessage => {
+  //     console.log('Message handled in background', remoteMessage);
+  //   });
 
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
 
-      console.log(remoteMessage);
-    });
+  //     console.log(remoteMessage);
+  //   });
 
-    getToken();
+  //   getToken();
 
-    return unsubscribe;
-  }, []);
+  //   return unsubscribe;
+  // }, []);
 
   return (
     <>
-      {!user?.business?._id && <NotificationController />}
+      {<NotificationController />}
 
       {/* header */}
-      <DashboardHeader user={user} />
+      <DashboardHeader user={user} business={currentBusiness} />
       <Box safeArea p={3} pb={'16'} bg={'white'}>
         <ScrollView>
-          {!user?.business?._id && <NotificationToolTip user={user} />}
+          {!currentBusiness?._id && <NotificationToolTip user={user} />}
           {/* send package panel */}
-          <SendPackage user={user} />
+          <SendPackage user={user} business={currentBusiness} />
           {/* Tracking snippet */}
           <TrackingSnippet />
         </ScrollView>
