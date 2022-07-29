@@ -78,7 +78,7 @@ const Head = ({handlePress, business}) => (
       {/* details */}
       <Box>
         <Text fontSize={'md'} fontWeight={'700'}>
-          {business.name}
+          {business?.name}
         </Text>
         <Text fontSize={'xs'}>View account</Text>
       </Box>

@@ -9,7 +9,7 @@ import {
   Pressable,
 } from 'native-base';
 // import Fontiso from 'react-native-vector-icons/Fontisto';
-import {TouchableOpacity} from 'react-native';
+import {KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -50,108 +50,112 @@ const Selector = ({
 
       <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
         <Actionsheet.Content py={5} minH={SIZES.height * 0.9}>
-          <Pressable
-            _pressed={{opacity: '80'}}
-            onPress={onClose}
-            borderRadius={'full'}
-            p={'1'}
-            position={'absolute'}
-            top={'5'}
-            right={'5'}
-            bg={'trueGray.100'}>
-            <Icon
-              color={'trueGray.500'}
-              size={'5'}
-              as={<Ionicons name={'close'} />}
-            />
-          </Pressable>
-          <Box
-            flexDir={'row'}
-            w={'full'}
-            alignItems={'center'}
-            px={'3'}
-            mb={'2'}
-            py={'2'}
-            _text={{
-              fontSize: 'lg',
-              textTransform: 'uppercase',
-              fontWeight: '700',
-            }}>
-            <Box
-              width={1}
-              mr={'2'}
-              my={1}
-              height={'full'}
+          <KeyboardAvoidingView
+            behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+            style={{flex: 1}}>
+            <Pressable
+              _pressed={{opacity: '80'}}
+              onPress={onClose}
               borderRadius={'full'}
-              bg={'primary'}
-            />
-            MTAANI AGENTS LIST
-          </Box>
-
-          <SearchInput />
-
-          <Actionsheet.Item disabled py={'2'}>
-            <HStack>
+              p={'1'}
+              position={'absolute'}
+              top={'5'}
+              right={'5'}
+              bg={'trueGray.100'}>
+              <Icon
+                color={'trueGray.500'}
+                size={'5'}
+                as={<Ionicons name={'close'} />}
+              />
+            </Pressable>
+            <Box
+              flexDir={'row'}
+              w={'full'}
+              alignItems={'center'}
+              px={'3'}
+              mb={'2'}
+              py={'2'}
+              _text={{
+                fontSize: 'lg',
+                textTransform: 'uppercase',
+                fontWeight: '700',
+              }}>
               <Box
-                w={'1/2'}
-                _text={{
-                  fontWeight: '600',
-                  fontSize: 'md',
-                  color: 'trueGray.700',
-                }}>
-                Name
-              </Box>
+                width={1}
+                mr={'2'}
+                my={1}
+                height={'full'}
+                borderRadius={'full'}
+                bg={'primary'}
+              />
+              MTAANI AGENTS LIST
+            </Box>
 
-              <Box
-                w={'1/2'}
-                _text={{
-                  fontWeight: '600',
-                  fontSize: 'md',
-                  color: 'trueGray.700',
-                }}>
-                Location
-              </Box>
-            </HStack>
-          </Actionsheet.Item>
+            <SearchInput />
 
-          <ScrollView>
-            {list?.map(item => (
-              <Actionsheet.Item
-                py={0}
-                key={item?._id}
-                _pressed={{
-                  bg: 'trueGray.200',
-                  borderRadius: 'sm',
-                }}
-                onPress={() => onSelect(item)}>
-                <HStack
-                  py={'1.5'}
-                  borderBottomWidth="1.5"
-                  borderColor={'primary'}
-                  alignItems={'center'}>
-                  <Box
-                    w={'1/2'}
-                    _text={{
-                      fontWeight: '600',
-                      color: 'trueGray.800',
-                    }}>
-                    {item?.agent_location}
-                  </Box>
+            <Actionsheet.Item disabled py={'2'}>
+              <HStack>
+                <Box
+                  w={'1/2'}
+                  _text={{
+                    fontWeight: '600',
+                    fontSize: 'md',
+                    color: 'trueGray.700',
+                  }}>
+                  Name
+                </Box>
 
-                  <Box
-                    w={'1/2'}
-                    _text={{
-                      fontWeight: '600',
-                      color: 'trueGray.800',
-                      fontSize: 'xs',
-                      textTransform: 'uppercase',
-                    }}>
-                    {item?.agent_description}
-                  </Box>
-                </HStack>
-              </Actionsheet.Item>
-            ))}
-          </ScrollView>
+                <Box
+                  w={'1/2'}
+                  _text={{
+                    fontWeight: '600',
+                    fontSize: 'md',
+                    color: 'trueGray.700',
+                  }}>
+                  Location
+                </Box>
+              </HStack>
+            </Actionsheet.Item>
+
+            <ScrollView>
+              {list?.map(item => (
+                <Actionsheet.Item
+                  py={0}
+                  key={item?._id}
+                  _pressed={{
+                    bg: 'trueGray.200',
+                    borderRadius: 'sm',
+                  }}
+                  onPress={() => onSelect(item)}>
+                  <HStack
+                    py={'1.5'}
+                    borderBottomWidth="1.5"
+                    borderColor={'primary'}
+                    alignItems={'center'}>
+                    <Box
+                      w={'1/2'}
+                      _text={{
+                        fontWeight: '600',
+                        color: 'trueGray.800',
+                      }}>
+                      {item?.agent_location}
+                    </Box>
+
+                    <Box
+                      w={'1/2'}
+                      _text={{
+                        fontWeight: '600',
+                        color: 'trueGray.800',
+                        fontSize: 'xs',
+                        textTransform: 'uppercase',
+                      }}>
+                      {item?.agent_description}
+                    </Box>
+                  </HStack>
+                </Actionsheet.Item>
+              ))}
+            </ScrollView>
+          </KeyboardAvoidingView>
         </Actionsheet.Content>
       </Actionsheet>
     </>

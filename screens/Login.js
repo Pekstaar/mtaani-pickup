@@ -162,24 +162,24 @@ const Login = () => {
           // store details to redux
           dispatch(setUser(fetchedDetails));
 
-          await storeDetailsToLocalStorage('user', fetchedDetails);
+          storeDetailsToLocalStorage('user', fetchedDetails).then(() => {
+            toast.show({
+              render: () => {
+                return <Toast.success message={'Login successful!!'} />;
+              },
+              placement: TOAST_PROPS.placement,
+              duration: TOAST_PROPS.duration,
+            });
 
-          toast.show({
-            render: () => {
-              return <Toast.success message={'Login successful!!'} />;
-            },
-            placement: TOAST_PROPS.placement,
-            duration: TOAST_PROPS.duration,
+            // console.log(user);
+            setLoading(false);
+            setPhone('');
+            setPassword('');
+
+            if (user?.token) {
+              navigation.navigate(NEXT_SCREEN);
+            }
           });
-
-          // console.log(user);
-          setLoading(false);
-          setPhone('');
-          setPassword('');
-
-          if (user?.token) {
-            navigation.navigate(NEXT_SCREEN);
-          }
         })
         .catch(e => {
           console.log(e);

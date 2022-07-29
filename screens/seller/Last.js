@@ -23,6 +23,7 @@ import {
 } from '../../src/Utils';
 import {useDispatch} from 'react-redux';
 import {setBusinesses, setUser} from '../../Redux/reducers/authSlice';
+import AsyncStorageService from '../../services/AsyncStorageService';
 
 const INITIAL_REGION = {
   latitude: -1.286389,
@@ -53,14 +54,12 @@ const Last = ({route: {params}}) => {
   // console.log(params?.business);
 
   useEffect(() => {
-    console.log(params);
-
     setLoading(false);
     const fetchAgents = () => {
       AboutBusinessService.fetchAgents()
         .then(r => {
           setAgents(r?.locations);
-          console.log(r.locations);
+          // console.log(r.locations);
         })
         .catch(err => {
           console.log(err);
@@ -74,17 +73,6 @@ const Last = ({route: {params}}) => {
     setSelectedAgent(agent);
     setShowSelector(false);
   };
-  // const handleRegionChange = region => {
-  //   setDetails(prev => ({...prev, region}));
-  //   console.log(region);
-  // };
-
-  // const navigation = useNavigation();
-
-  // const handleSubmit = () => {
-  //   console.log(details);
-  //   navigation.navigate('rider_details');
-  // };
 
   const validateCredentials = () => {
     if (details?.till && details.till.length > 6) {
@@ -142,18 +130,11 @@ const Last = ({route: {params}}) => {
         token: params?.user?.token,
       });
 
-      // console.log(fetchedDetails);user
-      if (!params?.mode) {
-        // store details to redux
-        dispatch(setUser(fetchedDetails));
+      dispatch(setUser(fetchedDetails));
 
-        const userBusinesses = await fetchAndStoreBusinesDetails();
+      const userBusinesses = await fetchAndStoreBusinesDetails();
 
-        // console.log(userBusinesses[0]);
-        dispatch(setBusinesses(userBusinesses));
-
-        await storeDetailsToLocalStorage('user', fetchedDetails);
-      }
+      dispatch(setBusinesses(userBusinesses));
 
       toast.show({
         render: () => {

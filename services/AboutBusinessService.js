@@ -43,6 +43,12 @@ const addBusinessDetails = async (id, data) => {
   return response.data;
 };
 
+const updateBusiness = async (id, data) => {
+  const response = await axios.put(`/business/${id}`, data);
+
+  return response.data;
+};
+
 const createBusinessProduct = async formData => {
   await setAuthToken(axios);
 
@@ -83,6 +89,7 @@ const AboutBusinessService = {
   updateBusinessProduct,
   addBusinessDetails,
   fetchAgents,
+  updateBusiness,
 };
 
 export default AboutBusinessService;

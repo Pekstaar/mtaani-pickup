@@ -59,11 +59,11 @@ const Verification = ({route: {params}}) => {
 
     AuthService.activateUser({id: user?._id, code})
       .then(async r => {
-        console.log(r);
-
         dispatch(setUser({...user, token: r?.token}));
 
         await storeDetailsToLocalStorage('user', {...user, token: r?.token});
+
+        // console.log('v', {...user, token: r?.token});
 
         toast.show({
           render: () => {

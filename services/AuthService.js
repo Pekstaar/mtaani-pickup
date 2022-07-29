@@ -48,11 +48,12 @@ const getUserDetails = async id => {
   return response.data;
 };
 
-const getBusinessDetails = async id => {
+const getBusinessDetails = async () => {
   await setAuthToken(axios);
 
   const response = await axios.get(`/businesses`);
 
+  console.log(response.data);
   return response.data;
 };
 

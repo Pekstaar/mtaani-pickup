@@ -1,7 +1,6 @@
 import React, {useEffect, useMemo} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
-  Dashboard,
   SalesAnalytics,
   SellerCustomers,
   SendPackage,

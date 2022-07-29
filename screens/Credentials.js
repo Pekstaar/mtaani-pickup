@@ -240,6 +240,7 @@ const Credentials = ({route}) => {
               duration: TOAST_PROPS.duration,
             });
 
+            // console.log(saved);
             navigation.navigate('verification', {user: saved});
           }
           setLoading(false);

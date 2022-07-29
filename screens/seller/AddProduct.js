@@ -227,7 +227,7 @@ const AddProduct = ({route: {params}}) => {
 
         resetState();
 
-        dispatch(fetchProductsOnShelf());
+        dispatch(fetchProductsOnShelf(currentBusiness?._id));
         setLoading(false);
         navigation.navigate('drawer', {screen: 'products'});
       }

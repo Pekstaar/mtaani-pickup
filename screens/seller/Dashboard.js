@@ -7,7 +7,7 @@ import {
   Text,
   VStack,
 } from 'native-base';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import assets from '../../constants/assets';
 import {useNavigation} from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
@@ -23,6 +23,8 @@ import SendPackage from '../../components/Seller/Dashboard/SendPackage';
 import TrackingSnippet from '../../components/Seller/Dashboard/TrackingSnippet';
 import NotificationToolTip from '../../components/Seller/Dashboard/NotificationToolTip';
 import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
+import SwitchBusinessModal from '../../components/Seller/Dashboard/SwitchBusinessModal';
+import {useState} from 'react';
 
 const Dashboard = () => {
   // const navigation = useNavigation();
@@ -30,6 +32,7 @@ const Dashboard = () => {
 
   const {user, currentBusiness, businesses} = useSelector(state => state.auth);
 
+  const [openSwitch, setOpenSwitch] = useState(false);
   // const getToken = async () => {
   //   try {
   //     const fcmToken = await messaging().getToken();
@@ -42,14 +45,21 @@ const Dashboard = () => {
   //   }
   // };
 
+  const handleCloseSwitch = useCallback(() => {
+    setOpenSwitch(false);
+  }, []);
+
+  const onOpenSwitch = () => {
+    setOpenSwitch(true);
+  };
+
   const fetchCurrentBusinessProducts = () => {
     dispatch(fetchProductsOnShelf(currentBusiness?._id));
   };
   useEffect(() => {
-    console.log(businesses);
-    // console.log('User is:', user, currentBusiness);
+    console.log('User is:', user, currentBusiness);
     fetchCurrentBusinessProducts();
-  }, [user?.token]);
+  }, [user?.token, currentBusiness?._id]);
 
   // useEffect(() => {
   //   messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -69,10 +79,20 @@ const Dashboard = () => {
 
   return (
     <>
-      {<NotificationController />}
-
+      {/* {<NotificationController />} */}
+      <SwitchBusinessModal
+        user={user}
+        isOpen={openSwitch}
+        onClose={handleCloseSwitch}
+        businesses={businesses}
+        current={currentBusiness?._id}
+      />
       {/* header */}
-      <DashboardHeader user={user} business={currentBusiness} />
+      <DashboardHeader
+        switchAccount={onOpenSwitch}
+        user={user}
+        business={currentBusiness}
+      />
       <Box safeArea p={3} pb={'16'} bg={'white'}>
         <ScrollView>
           {!currentBusiness?._id && <NotificationToolTip user={user} />}

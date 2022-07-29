@@ -18,12 +18,10 @@ import {useNavigation} from '@react-navigation/native';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ImagePicker from 'react-native-image-crop-picker';
-import AsyncStorageService from '../../services/AsyncStorageService';
 import AboutBusinessService from '../../services/AboutBusinessService';
 import {LoadingButton, SubmitButton} from '../Credentials';
-import {TouchableOpacity} from 'react-native';
-import {useSelector} from 'react-redux';
 import Toast from '../../components/general/toasts';
+import CButton from '../../components/general/Buttons';
 
 const AboutBusiness = ({route: {params}}) => {
   const toast = useToast();
@@ -40,7 +38,6 @@ const AboutBusiness = ({route: {params}}) => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-  // console.log(user)/
 
   const [businessLogo, setBusinessLogo] = useState(null);
 
@@ -60,9 +57,18 @@ const AboutBusiness = ({route: {params}}) => {
     }
   };
 
+  const resetState = () => {
+    setDetails({
+      bName: '',
+      itemSold: '',
+      category: '',
+      other: '',
+    });
+    setBusinessLogo(null);
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
-    // console.log(businessLogo);
 
     if (businessLogo) {
       try {
@@ -87,7 +93,7 @@ const AboutBusiness = ({route: {params}}) => {
         const r = await AboutBusinessService.setBusinessCategoryDetails(
           formData,
         );
-
+        console;
         toast.show({
           render: () => {
             return <Toast.success message={r?.message} />;
@@ -96,7 +102,9 @@ const AboutBusiness = ({route: {params}}) => {
 
         setLoading(false);
 
-        console.log(r);
+        // console.log(r);
+
+        resetState();
         navigation.navigate('last', {
           business: r?.biz,
           user,
@@ -120,48 +128,24 @@ const AboutBusiness = ({route: {params}}) => {
 
       // navigation.navigate('last');
     } else {
-      const formData = new FormData();
-      formData.append('name', details?.bName);
-      formData.append('user_id', user?._id);
-      formData.append('what_u_sale', details?.itemSold);
-      formData.append('category', details?.category?.id);
+      toast.show({
+        render: () => {
+          return (
+            <Toast.error message="Please provide a logo for your business" />
+          );
+        },
+      });
 
-      try {
-        const r = await AboutBusinessService.setBusinessCategoryDetails(
-          formData,
-        );
+      setLoading(false);
 
-        toast.show({
-          render: () => {
-            return <Toast.success message={r?.message} />;
-          },
-        });
-        setLoading(false);
-        return;
-      } catch (error) {
-        console.log(error);
-
-        // const err = JSON.stringify(
-        //   error?.response.data.message || error?.response.data,
-        // );
-
-        toast.show({
-          render: () => {
-            return <Toast.error message={error.response.data?.message} />;
-          },
-        });
-
-        setLoading(false);
-
-        return;
-      }
+      return;
     }
 
     //
   };
 
   const handleOther = name => {
-    setDetails(prev => ({...prev, other: name, itemSold: ''}));
+    setDetails(prev => ({...prev, other: name}));
   };
   const toggleCategoryInput = () => {
     setShowCategoryInput(!showCategoryInput);
@@ -216,8 +200,6 @@ const AboutBusiness = ({route: {params}}) => {
         businessCategories.Categories.map(({name, _id}) =>
           cats.push({name, id: _id}),
         );
-
-        console.log(cats);
 
         setCategories(cats);
         // } else {
@@ -370,22 +352,17 @@ const AboutBusiness = ({route: {params}}) => {
             )}
 
             {!params?.mode && (
-              <TouchableOpacity onPress={handleSkip}>
-                <Center
-                  bg={'secondary'}
-                  borderRadius={'full'}
-                  mt={4}
-                  width={'full'}
-                  py={2.5}>
-                  <Text
-                    color={'white'}
-                    textTransform={'uppercase'}
-                    fontSize={'md'}
-                    fontWeight={'700'}>
-                    Skip
-                  </Text>
-                </Center>
-              </TouchableOpacity>
+              <CButton.outlined
+                text={'skip'}
+                mt={'4'}
+                borderWidth={'1.5'}
+                _text={{
+                  color: 'secondary',
+                  fontWeight: '800',
+                  textTransform: 'uppercase',
+                }}
+                onPress={handleSkip}
+              />
             )}
           </Box>
 

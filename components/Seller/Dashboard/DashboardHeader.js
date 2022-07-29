@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const DashboardHeader = ({user, business}) => {
+const DashboardHeader = ({user, business, switchAccount}) => {
   const navigation = useNavigation();
   // const {isActive = true} = props;
 
@@ -22,7 +22,14 @@ const DashboardHeader = ({user, business}) => {
       py={3}
       shadow={'1'}
       bg={'#fff'}>
-      <Pressable shadow={'1'} borderRadius={'full'} bg={'white'}>
+      <Pressable
+        shadow={'1'}
+        borderRadius={'full'}
+        bg={'white'}
+        _pressed={{
+          opacity: '70',
+        }}
+        onPress={switchAccount}>
         <Image
           source={
             user?.token
