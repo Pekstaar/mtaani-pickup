@@ -69,7 +69,7 @@ const DrawerNav = ({navigation}) => {
           }}
         />
         <Drawer.Screen
-          name="Send package"
+          name="Send"
           component={SendPackage}
           options={{
             drawerIcon: ({color}) => (

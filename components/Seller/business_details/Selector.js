@@ -27,7 +27,7 @@ const Selector = ({
   return (
     <>
       <Pressable onPress={onOpen}>
-        <Box>{label}</Box>
+        <Box _text={{fontWeight: '600'}}>{label}</Box>
         <HStack
           my={'2'}
           p={'3'}
@@ -50,24 +50,24 @@ const Selector = ({
 
       <Actionsheet isOpen={isOpen} onClose={onClose} size="full">
         <Actionsheet.Content py={5} minH={SIZES.height * 0.9}>
+          <Pressable
+            _pressed={{opacity: '80'}}
+            onPress={onClose}
+            borderRadius={'full'}
+            p={'1'}
+            position={'absolute'}
+            top={'3'}
+            right={'3'}
+            bg={'trueGray.100'}>
+            <Icon
+              color={'trueGray.500'}
+              size={'5'}
+              as={<Ionicons name={'close'} />}
+            />
+          </Pressable>
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             style={{flex: 1}}>
-            <Pressable
-              _pressed={{opacity: '80'}}
-              onPress={onClose}
-              borderRadius={'full'}
-              p={'1'}
-              position={'absolute'}
-              top={'5'}
-              right={'5'}
-              bg={'trueGray.100'}>
-              <Icon
-                color={'trueGray.500'}
-                size={'5'}
-                as={<Ionicons name={'close'} />}
-              />
-            </Pressable>
             <Box
               flexDir={'row'}
               w={'full'}

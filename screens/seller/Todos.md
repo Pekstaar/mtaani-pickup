@@ -25,6 +25,14 @@ WEEK 2
 <!-- _ other color input prefilling -->
 <!-- _ clear photo on update product -->
 
-\_ validate add product fields polish social authentication
+<!-- \_ validate add product fields polish social authentication -->
 
-View Product: stock,price
+<!-- View Product: stock,price -->
+
+WEEK 3
+
+<!-- polish social authentication -->
+<!-- polish view products -->
+
+- update dashboard
+- create atleast 1 delivery form

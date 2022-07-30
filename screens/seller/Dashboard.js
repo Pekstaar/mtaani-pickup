@@ -2,6 +2,7 @@ import {
   Box,
   Center,
   HStack,
+  Icon,
   Image,
   ScrollView,
   Text,
@@ -25,6 +26,8 @@ import NotificationToolTip from '../../components/Seller/Dashboard/NotificationT
 import {fetchProductsOnShelf} from '../../Redux/reducers/productsOnShelfSlice';
 import SwitchBusinessModal from '../../components/Seller/Dashboard/SwitchBusinessModal';
 import {useState} from 'react';
+
+import {Home} from '../../assets';
 
 const Dashboard = () => {
   // const navigation = useNavigation();
@@ -93,7 +96,7 @@ const Dashboard = () => {
         user={user}
         business={currentBusiness}
       />
-      <Box safeArea p={3} pb={'16'} bg={'white'}>
+      <Box safeArea p={3} pb={'16'} bg={'bg'}>
         <ScrollView>
           {!currentBusiness?._id && <NotificationToolTip user={user} />}
           {/* send package panel */}

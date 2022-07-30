@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
@@ -36,7 +36,6 @@ import CreateRiderProfile from './screens/rider/CreateRiderProfile';
 import LocationPickerDemo from './screens/seller/AddAddress';
 import {Platform} from 'react-native';
 import DrawerNav from './components/navigation/DrawerNav';
-import AsyncStorageService from './services/AsyncStorageService';
 import BusinessRequired from './screens/BusinessRequired';
 // import {LocalNotification} from './src/services/LocalPushController';
 // import messaging from '@react-native-firebase/messaging';
@@ -47,8 +46,11 @@ const Stack = createStackNavigator();
 const App = () => {
   const colorTheme = {
     primary: COLORS.primary,
-    primary_light: COLORS.primary_light,
+    primary_light: COLORS.primaryLight,
+    primaryPale: COLORS.primaryPale,
     secondary: COLORS.secondary,
+    bg: COLORS.background,
+    lightGray: COLORS.lightGray,
   };
 
   const theme = extendTheme({

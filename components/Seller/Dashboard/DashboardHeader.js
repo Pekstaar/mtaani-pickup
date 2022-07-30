@@ -5,6 +5,7 @@ import {assets} from '../../../constants';
 import {useNavigation} from '@react-navigation/native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {Menu} from '../../../assets';
 
 const DashboardHeader = ({user, business, switchAccount}) => {
   const navigation = useNavigation();
@@ -36,7 +37,7 @@ const DashboardHeader = ({user, business, switchAccount}) => {
               ? {
                   uri: business?.logo,
                 }
-              : assets.profile
+              : assets.empty
           }
           alt="profile pic"
           resizeMode={'cover'}
@@ -47,11 +48,7 @@ const DashboardHeader = ({user, business, switchAccount}) => {
       </Pressable>
 
       <Pressable onPress={handleOpenDrawer}>
-        <Icon
-          size={'6'}
-          color={'trueGray.700'}
-          as={<AntDesign name={'menu-unfold'} />}
-        />
+        <Menu width={18} height={18} />
 
         {/* {isActive && <ActiveNotificationLabel />} */}
       </Pressable>

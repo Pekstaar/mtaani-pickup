@@ -1,6 +1,5 @@
 import empty from '../assets/images/empty.png';
 import empty_2 from '../assets/icons/empty.png';
-import profile from '../assets/images/profile_pic.webp';
 import pickupLogo from '../assets/icons/logo.jpg';
 import motorMobile from '../assets/images/bike.jpg';
 import bgImage from '../assets/images/image_bg.jpg';
@@ -16,7 +15,6 @@ import deliver from '../assets/images/delivery_rider.webp';
 
 export default {
   empty,
-  profile,
   pickupLogo,
   motorMobile,
   bgImage,

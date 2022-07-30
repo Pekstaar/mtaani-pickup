@@ -4,14 +4,16 @@ const {width, height} = Dimensions.get('window');
 export const COLORS = {
   // base colors
   primary: '#FED100', // yellow
-  primary_light: '#FEF5C7', // light yellow
-  secondary: '#131717', // gray
+  primaryLight: '#FDF7D3', // light yellow
+  primaryPale: '#FFFAE7', // light yellow
+  secondary: '#27272D', // black
+  background: '#FBFCFE',
 
   // colors
   black: '#131717',
   white: '#FFFFFF',
 
-  lightGray: '#F5F5F6',
+  lightGray: '#F2F3F5',
   lightGray2: '#CECECD',
   lightGray3: '#EFEFF1',
   lightGray4: '#F8F8F9',

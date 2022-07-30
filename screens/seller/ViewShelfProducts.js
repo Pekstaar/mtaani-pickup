@@ -44,7 +44,7 @@ const ViewShelfProducts = () => {
   const [viewModal, setViewModal] = useState(false);
   // const [products, setProducts] = useState(shelfProducts);
   const [currentLayout, setCurrentLayout] = useState('list');
-  const [empty, setEmpty] = useState(true);
+  // const [empty, setEmpty] = useState(true);
 
   const handleClose = () => {
     setViewModal(false);

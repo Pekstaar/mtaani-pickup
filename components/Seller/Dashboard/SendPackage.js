@@ -1,51 +1,18 @@
-import {
-  Box,
-  Center,
-  HStack,
-  Icon,
-  Image,
-  Pressable,
-  Text,
-  VStack,
-} from 'native-base';
-import React, {useEffect, useMemo} from 'react';
-import {assets} from '../../../constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {Box, HStack, Icon, Image, Pressable, Text, VStack} from 'native-base';
+import React from 'react';
+
+import Entypo from 'react-native-vector-icons/Entypo';
 import {SubmitButton} from '../../../screens/Credentials';
-import {useState} from 'react';
-import AboutBusinessService from '../../../services/AboutBusinessService';
-import Selector from '../business_details/Selector';
-import {LabeledInput} from '../../Input';
+import {Doorstep, Storage, Store} from '../../../assets';
+import {useNavigation} from '@react-navigation/native';
 
 const SendPackage = () => {
-  const [currentView, setCurrentView] = useState('agent');
-
-  const [agents, setAgents] = useState([]);
-  const [selectedAgent, setSelectedAgent] = useState({});
-  const [showSelector, setShowSelector] = useState(false);
-  const handleSelectAgent = agent => {
-    setSelectedAgent(agent);
-    setShowSelector(false);
-  };
-
-  useEffect(() => {
-    const fetchAgents = () => {
-      AboutBusinessService.fetchAgents()
-        .then(r => {
-          setAgents(r?.locations);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    };
-
-    fetchAgents();
-  }, []);
+  const navigation = useNavigation();
 
   return (
     <Box px={'3'} mb={'2'}>
       {/* card */}
-      <VStack space={'4'}>
+      <VStack space={'3'}>
         {/* image */}
         <Box h={'170px'}>
           <Image
@@ -76,72 +43,40 @@ const SendPackage = () => {
             </Text>
           </Box>
         </Box>
-        {/* inputs */}
-        <SelectDelivery
-          title={'Agent Delivery'}
-          handlePress={() => setCurrentView('agent')}
-          isCurrent={currentView === 'agent'}
-        />
-        {currentView === 'agent' && (
-          <VStack bg={'#F2F3F5'} p={'3'} borderRadius={'xl'}>
-            <AgentCard
-              list={agents}
-              onClose={() => setShowSelector(false)}
-              onOpen={() => setShowSelector(true)}
-              handleSelectAgent={handleSelectAgent}
-              isOpen={showSelector}
-              text={'Select your local agent'}
-              label={'From agent'}
-            />
 
-            <AgentCard
-              list={agents}
-              onClose={() => setShowSelector(false)}
-              onOpen={() => setShowSelector(true)}
-              handleSelectAgent={handleSelectAgent}
-              isOpen={showSelector}
-              text={"Select customer's pickup agent"}
-              label={'To agent'}
-            />
-          </VStack>
-        )}
-
-        <SelectDelivery
-          title={'Doorstep Delivery'}
-          handlePress={() => setCurrentView('doorstep')}
-          isCurrent={currentView === 'doorstep'}
+        <SendItem
+          icon={<Store height={40} width={40} />}
+          title={'Agent to Agent'}
+          desc={'send a package from your local agent'}
+          handlePress={() =>
+            navigation.navigate('drawer', {
+              screen: 'Home',
+              params: {
+                screen: 'send_package',
+              },
+            })
+          }
         />
-        {currentView === 'doorstep' && (
-          <VStack bg={'#F2F3F5'} p={'3'} borderRadius={'xl'}>
-            <Box height={20}>
-              <LabeledInput
-                placeholder={'Location'}
-                //   value={details?.mpesaPhone}
-                //   handleChange={phone =>
-                //     setDetails(prev => ({...prev, mpesaPhone: phone}))
-                //   }
-              />
-            </Box>
-            <Box height={20}>
-              <LabeledInput
-                placeholder={'Hse./Office/floor'}
-                //   value={details?.mpesaPhone}
-                //   handleChange={phone =>
-                //     setDetails(prev => ({...prev, mpesaPhone: phone}))
-                //   }
-              />
-            </Box>
-            <Box height={20}>
-              <LabeledInput
-                placeholder={'Selecto Rider'}
-                //   value={details?.mpesaPhone}
-                //   handleChange={phone =>
-                //     setDetails(prev => ({...prev, mpesaPhone: phone}))
-                //   }
-              />
-            </Box>
-          </VStack>
-        )}
+
+        <SendItem
+          icon={<Doorstep height={40} width={40} />}
+          title={'Doorstep delivery'}
+          desc={'send a package from your local agent'}
+        />
+
+        <SendItem
+          icon={<Storage height={40} width={40} />}
+          title={'Rent a shelf Drop off'}
+          desc={'send a package from your local agent'}
+          handlePress={() =>
+            navigation.navigate('drawer', {
+              screen: 'Home',
+              params: {
+                screen: 'products',
+              },
+            })
+          }
+        />
 
         <SubmitButton text="Send Package " />
       </VStack>
@@ -152,64 +87,98 @@ const SendPackage = () => {
 
 export default SendPackage;
 
-const SelectDelivery = ({isCurrent = false, title, handlePress}) => (
-  <Pressable onPress={handlePress}>
-    <HStack
-      space={'4'}
-      p={'3'}
-      borderColor={isCurrent ? 'primary' : 'black'}
-      borderWidth={'1'}
-      alignItems={'center'}
-      borderRadius={'xl'}>
-      <Center
-        w={'3'}
-        h={'3'}
-        borderRadius={'full'}
-        borderWidth={'1'}
-        p={'0.5'}
-        borderColor={isCurrent ? 'primary' : 'black'}>
-        {isCurrent && (
-          <Icon
-            color={'primary'}
-            as={<Ionicons name={'ios-checkmark-sharp'} />}
-          />
-        )}
-      </Center>
+const SendItem = ({icon, title, desc, handlePress}) => (
+  <Pressable
+    p={'2'}
+    bg={'white'}
+    shadow={'1'}
+    borderRadius={'xl'}
+    onPress={handlePress}
+    _pressed={{bg: 'trueGray.100'}}>
+    <HStack space={'4'} alignItems={'center'} justifyContent={'space-around'}>
+      {/* icon */}
+      <Box p={'3'} bg={'primary_light'} borderRadius={'xl'}>
+        {icon}
+      </Box>
+      {/* text */}
+      <Box maxWidth={'5/6'}>
+        <Text fontWeight={'black'} fontSize={'md'}>
+          {title}
+        </Text>
 
-      <Box
-        flexGrow={'1'}
-        _text={{
-          fontWeight: '700',
-        }}>
-        {title}
+        <Text fontWeight={'600'} color={'trueGray.500'} fontSize={'xs'}>
+          {desc}
+        </Text>
       </Box>
 
+      {/* right icon */}
       <Icon
-        size={6}
-        color={isCurrent ? 'primary' : 'black'}
-        as={<Ionicons name={isCurrent ? 'chevron-up' : 'chevron-down'} />}
+        color={'secondary'}
+        size={'6'}
+        as={<Entypo name={'chevron-right'} />}
       />
     </HStack>
   </Pressable>
 );
 
-const AgentCard = ({
-  list,
-  onClose,
-  onOpen,
-  handleSelectAgent,
-  isOpen,
-  text,
-  label,
-}) => (
-  <Selector
-    onSelect={handleSelectAgent}
-    // Text={selectedAgent?.agent_location}
-    isOpen={isOpen}
-    placeHolderText={text}
-    onClose={onClose}
-    onOpen={onOpen}
-    list={list}
-    label={label}
-  />
-);
+// const SelectDelivery = ({isCurrent = false, title, handlePress}) => (
+//   <Pressable onPress={handlePress}>
+//     <HStack
+//       space={'4'}
+//       p={'3'}
+//       borderColor={isCurrent ? 'primary' : 'black'}
+//       borderWidth={'1'}
+//       alignItems={'center'}
+//       borderRadius={'xl'}>
+//       <Center
+//         w={'3'}
+//         h={'3'}
+//         borderRadius={'full'}
+//         borderWidth={'1'}
+//         p={'0.5'}
+//         borderColor={isCurrent ? 'primary' : 'black'}>
+//         {isCurrent && (
+//           <Icon
+//             color={'primary'}
+//             as={<Ionicons name={'ios-checkmark-sharp'} />}
+//           />
+//         )}
+//       </Center>
+
+//       <Box
+//         flexGrow={'1'}
+//         _text={{
+//           fontWeight: '700',
+//         }}>
+//         {title}
+//       </Box>
+
+//       <Icon
+//         size={6}
+//         color={isCurrent ? 'primary' : 'black'}
+//         as={<Ionicons name={isCurrent ? 'chevron-up' : 'chevron-down'} />}
+//       />
+//     </HStack>
+//   </Pressable>
+// );
+
+// const AgentCard = ({
+//   list,
+//   onClose,
+//   onOpen,
+//   handleSelectAgent,
+//   isOpen,
+//   text,
+//   label,
+// }) => (
+//   <Selector
+//     onSelect={handleSelectAgent}
+//     // Text={selectedAgent?.agent_location}
+//     isOpen={isOpen}
+//     placeHolderText={text}
+//     onClose={onClose}
+//     onOpen={onOpen}
+//     list={list}
+//     label={label}
+//   />
+// );
